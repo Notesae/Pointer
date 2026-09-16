@@ -12,6 +12,12 @@
 
 [原尺寸 PNG](preview/Cat%20Paw%20Cursor%20Theme%20Preview.png) · [矢量预览](preview/Cat%20Paw%20Cursor%20Theme%20Preview.svg) · [资源与热点清单](assets/manifest.json)
 
+## Linux 动画预览
+
+下图从发布安装包的真实 Xcursor 帧导出。**Animated 只让 Busy / Working 爪印环旋转；Normal、Link 和点击没有动态反馈。** 独立猫爪跟随与拍击仍需后续 Companion。PNG 状态表是静态预览。
+
+![Linux 实际忙碌动画](preview/Cat%20Paw%20Linux%20Animation.gif)
+
 ## 第一阶段交付
 
 - Pink Paw / Coffee Paw 两个配色。猫爪均为四个小肉垫与一个大肉垫。
