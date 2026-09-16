@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 theme=json.loads((ROOT/'theme.json').read_text())
 manifest=json.loads((ROOT/'assets/manifest.json').read_text())
-states={'normal','link','click','busy','help','text','precision','move','resize-h','resize-v','resize-d1','resize-d2','drag','disabled'}
+states={'normal','link','busy','help','text','precision','move','resize-h','resize-v','resize-d1','resize-d2','drag','disabled'}
 expected={(c,s,n) for c in theme['colorways'] for s in theme['sizes'] for n in states}
 actual={(i['color'],i['size'],i['state']) for i in manifest['cursors']}
 assert expected==actual and len(actual)==len(manifest['cursors'])
@@ -28,7 +28,21 @@ assert set(theme['colorways'])=={'pink','coffee'}, 'This release has exactly two
 for level in ('small','medium','detail'):
     repaired=ET.parse(ROOT/f'assets/masters/{level}/pointer-coffee.svg').getroot()
     assert any(n.attrib.get('data-detail')=='fourth-toe' for n in repaired.iter()), 'Missing coffee toe repair'
-assert len(manifest['compositions'])==len(states)*len(theme['colorways'])
+assert len(manifest['compositions'])==(len(states)+1)*len(theme['colorways'])
+assert not list((ROOT/'assets/states').glob('*/*/click.svg'))
+assert not list((ROOT/'preview/raster').glob('*/*/click.png'))
+assert {(a['color'],a['size']) for a in manifest['companionAnimations']}=={(c,s) for c in theme['colorways'] for s in theme['sizes']}
+for item in manifest['companionAnimations']:
+    assert 'hotspot' not in item and set(item['frames'])=={'press','rebound','rest'}
+    assert item['events']=={'pointerdown':['press'],'pointerup':['rebound','rest']}
+    for pose,rel in item['frames'].items():
+        root=ET.parse(ROOT/rel).getroot()
+        assert root.attrib['width']==str(item['size'])
+        png=ROOT/'preview/companion'/item['color']/str(item['size'])/f'click-{pose}.png'
+        assert struct.unpack('>II',png.read_bytes()[16:24])==(item['size'],item['size'])
+    assert len({(ROOT/rel).read_text() for rel in item['frames'].values()})==3
+click_refs=[c for c in manifest['compositions'] if c['state']=='click']
+assert all(c['layer']=='companion' and c['file'].startswith('assets/companion/') for c in click_refs)
 for f in (ROOT/'assets').rglob('*.svg'):
     root=ET.parse(f).getroot()
     ids=[n.attrib['id'] for n in root.iter() if 'id' in n.attrib]
@@ -55,4 +69,4 @@ else:
         # Crosshair/resize etc. have real content at the interaction origin.
         assert alpha.getpixel((hx,hy))>0,(f,'empty hotspot')
     print('PNG transparency, non-clipping and hotspot checks passed.')
-print(f'Validated {len(actual)} state/size/color combinations and 28 two-layer references.')
+print(f'Validated {len(actual)} cursor combinations, 28 review references and 36 isolated Companion keyframes; no Click system export.')

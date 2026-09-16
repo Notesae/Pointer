@@ -20,3 +20,11 @@ Hover：抬起 3px、旋转 −5°。Click：全周期 180ms，最多三条短�
 文字、精准选择与缩放时按预览省略完整猫爪，避免遮挡目标。Companion 必须点击穿透，不修改系统热点，不抢输入焦点。关闭或崩溃后仍由完整系统主题服务。
 
 此处不引入平台 hook、守护进程或轮询实现。Wayland 下能否获得全局指针事件、绘制全局层，需要针对 compositor 选择能力允许的方式，不能预先承诺通用支持。
+
+## 已交付的 Click 关键帧
+
+`../assets/companion/<color>/<size>/` 提供 `click-press.svg`、`click-rebound.svg`、`click-rest.svg`，分别对应 0.88 / 1.05 / 1.0 倍率。它们只包含猫爪，无箭头或系统热点；输入事件与帧顺序记录在 `assets/manifest.json` 的 `companionAnimations`。
+
+按下触发 press；松开按 rebound → rest 恢复。靠近 Pointer 的位移由未来运行程序根据实时位置计算。Link 表示当前位置的光标角色，Click 表示输入反馈：点击普通区域或文本时也可能播放拍击，不能把 Click 当作 Link 的别名。
+
+这些是静态关键帧资源，尚无输入监听、动画插值或运行程序。

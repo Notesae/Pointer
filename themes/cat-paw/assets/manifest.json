@@ -23,16 +23,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "pink",
-      "size": 24,
-      "file": "assets/states/pink/24/click.svg",
-      "hotspot": [
-        2,
-        2
-      ]
-    },
-    {
       "state": "busy",
       "color": "pink",
       "size": 24,
@@ -157,16 +147,6 @@
       "color": "pink",
       "size": 32,
       "file": "assets/states/pink/32/link.svg",
-      "hotspot": [
-        3,
-        2
-      ]
-    },
-    {
-      "state": "click",
-      "color": "pink",
-      "size": 32,
-      "file": "assets/states/pink/32/click.svg",
       "hotspot": [
         3,
         2
@@ -303,16 +283,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "pink",
-      "size": 48,
-      "file": "assets/states/pink/48/click.svg",
-      "hotspot": [
-        4,
-        4
-      ]
-    },
-    {
       "state": "busy",
       "color": "pink",
       "size": 48,
@@ -437,16 +407,6 @@
       "color": "pink",
       "size": 64,
       "file": "assets/states/pink/64/link.svg",
-      "hotspot": [
-        6,
-        5
-      ]
-    },
-    {
-      "state": "click",
-      "color": "pink",
-      "size": 64,
-      "file": "assets/states/pink/64/click.svg",
       "hotspot": [
         6,
         5
@@ -583,16 +543,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "pink",
-      "size": 96,
-      "file": "assets/states/pink/96/click.svg",
-      "hotspot": [
-        9,
-        8
-      ]
-    },
-    {
       "state": "busy",
       "color": "pink",
       "size": 96,
@@ -717,16 +667,6 @@
       "color": "pink",
       "size": 128,
       "file": "assets/states/pink/128/link.svg",
-      "hotspot": [
-        12,
-        10
-      ]
-    },
-    {
-      "state": "click",
-      "color": "pink",
-      "size": 128,
-      "file": "assets/states/pink/128/click.svg",
       "hotspot": [
         12,
         10
@@ -863,16 +803,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "coffee",
-      "size": 24,
-      "file": "assets/states/coffee/24/click.svg",
-      "hotspot": [
-        2,
-        2
-      ]
-    },
-    {
       "state": "busy",
       "color": "coffee",
       "size": 24,
@@ -997,16 +927,6 @@
       "color": "coffee",
       "size": 32,
       "file": "assets/states/coffee/32/link.svg",
-      "hotspot": [
-        3,
-        2
-      ]
-    },
-    {
-      "state": "click",
-      "color": "coffee",
-      "size": 32,
-      "file": "assets/states/coffee/32/click.svg",
       "hotspot": [
         3,
         2
@@ -1143,16 +1063,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "coffee",
-      "size": 48,
-      "file": "assets/states/coffee/48/click.svg",
-      "hotspot": [
-        4,
-        4
-      ]
-    },
-    {
       "state": "busy",
       "color": "coffee",
       "size": 48,
@@ -1277,16 +1187,6 @@
       "color": "coffee",
       "size": 64,
       "file": "assets/states/coffee/64/link.svg",
-      "hotspot": [
-        6,
-        5
-      ]
-    },
-    {
-      "state": "click",
-      "color": "coffee",
-      "size": 64,
-      "file": "assets/states/coffee/64/click.svg",
       "hotspot": [
         6,
         5
@@ -1423,16 +1323,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "coffee",
-      "size": 96,
-      "file": "assets/states/coffee/96/click.svg",
-      "hotspot": [
-        9,
-        8
-      ]
-    },
-    {
       "state": "busy",
       "color": "coffee",
       "size": 96,
@@ -1563,16 +1453,6 @@
       ]
     },
     {
-      "state": "click",
-      "color": "coffee",
-      "size": 128,
-      "file": "assets/states/coffee/128/click.svg",
-      "hotspot": [
-        12,
-        10
-      ]
-    },
-    {
       "state": "busy",
       "color": "coffee",
       "size": 128,
@@ -1688,169 +1568,439 @@
       "state": "normal",
       "color": "pink",
       "file": "assets/source-svg/pink/normal.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "link",
       "color": "pink",
       "file": "assets/source-svg/pink/link.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "click",
       "color": "pink",
-      "file": "assets/source-svg/pink/click.svg",
+      "file": "assets/companion/pink/click-reference.svg",
+      "layer": "companion",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "busy",
       "color": "pink",
       "file": "assets/source-svg/pink/busy.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "help",
       "color": "pink",
       "file": "assets/source-svg/pink/help.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "text",
       "color": "pink",
       "file": "assets/source-svg/pink/text.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "precision",
       "color": "pink",
       "file": "assets/source-svg/pink/precision.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "move",
       "color": "pink",
       "file": "assets/source-svg/pink/move.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-h",
       "color": "pink",
       "file": "assets/source-svg/pink/resize-h.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-v",
       "color": "pink",
       "file": "assets/source-svg/pink/resize-v.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-d1",
       "color": "pink",
       "file": "assets/source-svg/pink/resize-d1.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-d2",
       "color": "pink",
       "file": "assets/source-svg/pink/resize-d2.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "drag",
       "color": "pink",
       "file": "assets/source-svg/pink/drag.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "disabled",
       "color": "pink",
       "file": "assets/source-svg/pink/disabled.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "normal",
       "color": "coffee",
       "file": "assets/source-svg/coffee/normal.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "link",
       "color": "coffee",
       "file": "assets/source-svg/coffee/link.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "click",
       "color": "coffee",
-      "file": "assets/source-svg/coffee/click.svg",
+      "file": "assets/companion/coffee/click-reference.svg",
+      "layer": "companion",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "busy",
       "color": "coffee",
       "file": "assets/source-svg/coffee/busy.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "help",
       "color": "coffee",
       "file": "assets/source-svg/coffee/help.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "text",
       "color": "coffee",
       "file": "assets/source-svg/coffee/text.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "precision",
       "color": "coffee",
       "file": "assets/source-svg/coffee/precision.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "move",
       "color": "coffee",
       "file": "assets/source-svg/coffee/move.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-h",
       "color": "coffee",
       "file": "assets/source-svg/coffee/resize-h.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-v",
       "color": "coffee",
       "file": "assets/source-svg/coffee/resize-v.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-d1",
       "color": "coffee",
       "file": "assets/source-svg/coffee/resize-d1.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "resize-d2",
       "color": "coffee",
       "file": "assets/source-svg/coffee/resize-d2.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "drag",
       "color": "coffee",
       "file": "assets/source-svg/coffee/drag.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
     },
     {
       "state": "disabled",
       "color": "coffee",
       "file": "assets/source-svg/coffee/disabled.svg",
+      "layer": "composition",
       "purpose": "review only, not a system cursor"
+    }
+  ],
+  "companionAnimations": [
+    {
+      "animation": "click",
+      "color": "pink",
+      "size": 24,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/pink/24/click-press.svg",
+        "rebound": "assets/companion/pink/24/click-rebound.svg",
+        "rest": "assets/companion/pink/24/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "pink",
+      "size": 32,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/pink/32/click-press.svg",
+        "rebound": "assets/companion/pink/32/click-rebound.svg",
+        "rest": "assets/companion/pink/32/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "pink",
+      "size": 48,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/pink/48/click-press.svg",
+        "rebound": "assets/companion/pink/48/click-rebound.svg",
+        "rest": "assets/companion/pink/48/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "pink",
+      "size": 64,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/pink/64/click-press.svg",
+        "rebound": "assets/companion/pink/64/click-rebound.svg",
+        "rest": "assets/companion/pink/64/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "pink",
+      "size": 96,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/pink/96/click-press.svg",
+        "rebound": "assets/companion/pink/96/click-rebound.svg",
+        "rest": "assets/companion/pink/96/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "pink",
+      "size": 128,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/pink/128/click-press.svg",
+        "rebound": "assets/companion/pink/128/click-rebound.svg",
+        "rest": "assets/companion/pink/128/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "coffee",
+      "size": 24,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/coffee/24/click-press.svg",
+        "rebound": "assets/companion/coffee/24/click-rebound.svg",
+        "rest": "assets/companion/coffee/24/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "coffee",
+      "size": 32,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/coffee/32/click-press.svg",
+        "rebound": "assets/companion/coffee/32/click-rebound.svg",
+        "rest": "assets/companion/coffee/32/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "coffee",
+      "size": 48,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/coffee/48/click-press.svg",
+        "rebound": "assets/companion/coffee/48/click-rebound.svg",
+        "rest": "assets/companion/coffee/48/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "coffee",
+      "size": 64,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/coffee/64/click-press.svg",
+        "rebound": "assets/companion/coffee/64/click-rebound.svg",
+        "rest": "assets/companion/coffee/64/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "coffee",
+      "size": 96,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/coffee/96/click-press.svg",
+        "rebound": "assets/companion/coffee/96/click-rebound.svg",
+        "rest": "assets/companion/coffee/96/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
+    },
+    {
+      "animation": "click",
+      "color": "coffee",
+      "size": 128,
+      "events": {
+        "pointerdown": [
+          "press"
+        ],
+        "pointerup": [
+          "rebound",
+          "rest"
+        ]
+      },
+      "frames": {
+        "press": "assets/companion/coffee/128/click-press.svg",
+        "rebound": "assets/companion/coffee/128/click-rebound.svg",
+        "rest": "assets/companion/coffee/128/click-rest.svg"
+      },
+      "purpose": "paw-only keyframes; no cursor hotspot or system slot"
     }
   ]
 }

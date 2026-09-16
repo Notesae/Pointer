@@ -11,6 +11,8 @@ from html import escape
 ROOT = Path(__file__).resolve().parents[1]
 THEME = json.loads((ROOT / 'theme.json').read_text())
 STATES = [('normal','Normal','正常'),('link','Link','链接'),('click','Click','按下'),('busy','Busy','忙碌'),('help','Help','帮助'),('text','Text','文本'),('precision','Precision','精准'),('move','Move','移动'),('resize-h','Resize H','水平缩放'),('resize-v','Resize V','垂直缩放'),('resize-d1','Resize D1','对角 ↖↘'),('resize-d2','Resize D2','对角 ↗↙'),('drag','Drag','拖动'),('disabled','Disabled','不可用')]
+CURSOR_STATES = [entry for entry in STATES if entry[0] != 'click']
+CLICK_POSES = {'press': .88, 'rebound': 1.05, 'rest': 1.0}
 FUR = THEME['palette']['fur']
 EDGE = THEME['palette']['outline']
 
@@ -65,7 +67,7 @@ def line(d,size):
 
 
 def cursor(state,color,size=64):
-    if state in ('normal','link','click','drag'):
+    if state in ('normal','link','drag'):
         return arrow(color,size)
     if state=='help':
         q=path('M43 15 C43 7 57 7 57 16 C57 21 50 21 50 27','none',EDGE,3.8)
@@ -103,7 +105,7 @@ def cursor(state,color,size=64):
 
 
 def composition(state,color,size=64):
-    s=cursor(state,color,size)
+    s=cursor('normal' if state=='click' else state,color,size)
     # Technical cursors and busy deliberately do not gain a full paw.
     if state not in ('normal','link','click','help','drag','disabled'): return group(s,'translate(20 10)')
     x,y,scale,angle=59,38,.77,0
@@ -151,9 +153,9 @@ def preview():
         s+=text(1718,y+18,'暖白猫毛  /  '+('樱花粉肉垫' if color=='pink' else '柔咖肉垫'),17,extra='text-anchor="end"')
         for i,(state,en,cn) in enumerate(STATES):
             x=70+(i%7)*239; cy=y+48+(i//7)*211
-            s+=rect(x,cy,226,197,'#FFFCFA',18,'#EBDDD4')
+            s+=rect(x,cy,226,197,'#F4E7DE' if state=='click' else '#FFFCFA',18,'#D7B7A2' if state=='click' else '#EBDDD4')
             s+=group(composition(state,color,128),f'translate({x+47} {cy+13}) scale(1.2)')
-            s+=text(x+16,cy+151,en,17,weight=600)+text(x+16,cy+177,cn,14,'#A08779')
+            s+=text(x+16,cy+151,en,17,weight=600)+text(x+16,cy+177,'Companion · 点击关键帧' if state=='click' else cn,14,'#A08779')
     s+=path('M70 1393 L1730 1393','none','#E5D6CC',1)
     s+=text(70,1442,'小尺寸检查',28,weight=600)+text(295,1440,'实际像素 · 优先 32 / 48 px · 大小分别优化轮廓与细节',17,'#A08779')
     for k,color in enumerate(THEME['colorways']):
@@ -171,7 +173,7 @@ def preview():
             s+=group(paw(color,size),f'translate({dx+size+6} {y+15}) scale({size*.55/64})')
             s+=text(dx,y+94,str(size)+'px',13,'#E9D5C9')
         s+=text(657,y+40,'96 / 128 px',17,weight=600)+text(657,y+67,'另附独立 SVG',14,'#A08779')
-    s+=text(70,1774,'动效关键姿态',27,weight=600)+text(295,1772,'静态设计目标；Companion 在视觉确认后开发',17,'#A08779')
+    s+=text(70,1774,'动效关键姿态',27,weight=600)+text(295,1772,'Click 是输入反馈，无独立系统光标项；此处仅展示关键姿态',17,'#A08779')
     for i,(state,label,desc) in enumerate([('normal','FOLLOW','65 ms  /  16 px'),('link','HOVER','抬起 3 px  /  −5°'),('click','PRESS','0.88 → 1.05 → 1.0'),('drag','DRAG','靠近  /  旋转 8°'),('busy','BUSY','8 爪印  /  1000 ms')]):
         x=70+i*336
         s+=group(composition(state,'pink'),f'translate({x+4} 1790) scale(1.12)')
@@ -219,7 +221,7 @@ def audit():
     s=rect(0,0,1400,640,'#FCF7F3')
     s+=text(20,29,'NATIVE PIXELS / 32 & 48 px / SYSTEM LAYER ONLY',18,weight=600)
     for row,(color,size) in enumerate([('pink',32),('pink',48),('coffee',32),('coffee',48)]):
-        for col,(state,en,cn) in enumerate(STATES):
+        for col,(state,en,cn) in enumerate(CURSOR_STATES):
             x,y=col*100,row*145+45
             s+=text(x+5,y+18,f'{color} {size}',13)
             s+=group(cursor(state,color,size),f'translate({x+20} {y+30}) scale({size/64})')
@@ -228,28 +230,41 @@ def audit():
 
 
 def main():
-    manifest={'phase':'visual-review','coordinateSystem':'hotspots use output SVG pixels, rounded to integer; canonical 64x64 geometry','cursors':[],'compositions':[]}
+    manifest={'phase':'visual-review','coordinateSystem':'hotspots use output SVG pixels, rounded to integer; canonical 64x64 geometry','cursors':[],'compositions':[],'companionAnimations':[]}
     for color in THEME['colorways']:
         for size in THEME['sizes']:
             write(f'assets/paw-{color}/{size}/paw.svg',svg(paw(color,size),size,title=f'{color} paw {size}px'))
             write(f'assets/paw-{color}/{size}/disabled.svg',svg(paw(color,size,True),size,title=f'Disabled paw {size}px'))
             write(f'assets/pointer/{color}/{size}/arrow.svg',svg(arrow(color,size),size,title=f'{color} arrow {size}px'))
-            for state,en,cn in STATES:
+            for state,en,cn in CURSOR_STATES:
                 rel=f'assets/states/{color}/{size}/{state}.svg'
                 body=cursor(state,color,size)
                 write(rel,svg(body,size,title=f'{en} · {color} · {size}px'))
-                hx,hy=(6,5) if state in ('normal','link','click','help','drag') else ((6.78,6.15) if state=='busy' else (32,32))
+                hx,hy=(6,5) if state in ('normal','link','help','drag') else ((6.78,6.15) if state=='busy' else (32,32))
                 manifest['cursors'].append({'state':state,'color':color,'size':size,'file':rel,'hotspot':[round(hx*size/64),round(hy*size/64)]})
+            # Retire the old misleading Click system export on rebuild.
+            for obsolete in [f'assets/states/{color}/{size}/click.svg', f'preview/raster/{color}/{size}/click.png']:
+                (ROOT/obsolete).unlink(missing_ok=True)
+            frames={}
+            for pose,scale in CLICK_POSES.items():
+                rel=f'assets/companion/{color}/{size}/click-{pose}.svg'
+                body=group(paw(color,size),f'translate(32 32) scale({scale}) translate(-32 -32)')
+                write(rel,svg(body,size,title=f'Companion click {pose} · {color} · {size}px'))
+                frames[pose]=rel
+            manifest['companionAnimations'].append({'animation':'click','color':color,'size':size,
+                'events':{'pointerdown':['press'],'pointerup':['rebound','rest']},
+                'frames':frames,'purpose':'paw-only keyframes; no cursor hotspot or system slot'})
+        (ROOT/f'assets/source-svg/{color}/click.svg').unlink(missing_ok=True)
         for state,en,cn in STATES:
-            rel=f'assets/source-svg/{color}/{state}.svg'
+            rel=(f'assets/companion/{color}/click-reference.svg' if state=='click' else f'assets/source-svg/{color}/{state}.svg')
             write(rel,svg(composition(state,color,128),112,96,'0 0 112 96',f'{en} · {color} · two-layer composition reference'))
-            manifest['compositions'].append({'state':state,'color':color,'file':rel,'purpose':'review only, not a system cursor'})
+            manifest['compositions'].append({'state':state,'color':color,'file':rel,'layer':'companion' if state=='click' else 'composition','purpose':'review only, not a system cursor'})
         write(f'assets/source-svg/paw-{color}.svg',svg(paw(color,128),title=f'{color} editable paw master'))
         write(f'assets/source-svg/pointer-{color}.svg',svg(arrow(color,128),title=f'{color} editable pointer master'))
     write('assets/manifest.json',json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     preview()
     audit()
     detail_preview()
-    print(f"Built {len(manifest['cursors'])} cursor SVGs, 28 compositions, 6 sizes, {len(THEME['colorways'])} palettes.")
+    print(f"Built {len(manifest['cursors'])} cursor SVGs, 28 review compositions, 36 Companion keyframes, 6 sizes, {len(THEME['colorways'])} palettes.")
 
 if __name__=='__main__': main()

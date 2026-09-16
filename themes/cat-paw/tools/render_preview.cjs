@@ -21,6 +21,13 @@ async function main() {
     await fs.mkdir(path.dirname(dest), { recursive: true });
     await sharp(path.join(root, item.file)).png().toFile(dest);
   }
-  console.log('Rendered overview and 168 native-size transparent PNGs.');
+  for (const animation of manifest.companionAnimations) {
+    for (const [pose, source] of Object.entries(animation.frames)) {
+      const dest = path.join(root, 'preview/companion', animation.color, String(animation.size), `click-${pose}.png`);
+      await fs.mkdir(path.dirname(dest), { recursive: true });
+      await sharp(path.join(root, source)).png().toFile(dest);
+    }
+  }
+  console.log(`Rendered ${manifest.cursors.length} cursor PNGs and ${manifest.companionAnimations.length * 3} Companion keyframe PNGs.`);
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

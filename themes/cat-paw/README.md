@@ -1,6 +1,6 @@
 # Cat Paw / 猫爪动态光标
 
-**Phase 1 · 视觉审核稿 v0.3.0。** 这次交付为可编辑 SVG、透明 PNG、预览与构建工具。尚未提供 Xcursor、CUR/ANI 安装包，也没有 Companion 程序。
+**Phase 1 · 视觉审核稿 v0.3.1。** 这次交付为可编辑 SVG、透明 PNG、预览与构建工具。尚未提供 Xcursor、CUR/ANI 安装包，也没有 Companion 程序。
 
 一个带小爪印与蝴蝶结铃铛装饰的传统箭头，身后跟着一只独立的暖白猫爪。箭头负责准确定位；猫爪负责姿态与反馈。与 IceGem 完全独立。
 
@@ -13,8 +13,9 @@
 ## 第一阶段交付
 
 - Pink Paw / Coffee Paw 两个配色。猫爪均为四个小肉垫与一个大肉垫。
-- Normal、Link、Click、Busy、Help、Text、Precision、Move、Resize H/V/D1/D2、Drag、Disabled 共 14 状态。
-- 每个配色分别提供 24、32、48、64、96、128px 的系统光标 SVG：共 168 个，并附同尺寸透明 PNG。
+- 保留 14 种视觉场景：13 种光标角色参考，以及单独归类的 Click Companion 反馈。
+- 两个配色 × 六种尺寸 × 13 种光标资源，共 156 个 SVG 与同尺寸透明 PNG；不含 Click 系统光标。资源角色不等同于 Windows 安装槽位，平台映射在后续打包阶段确定。
+- Click 独立提供按下、回弹、恢复三张猫爪关键帧：两色六尺寸共 36 个 SVG 与 PNG，无系统热点或安装槽位。
 - 独立的箭头与猫爪 SVG，以及 28 张双层关系参考图。双层参考图用于审核，不直接作为系统光标打包。
 - 预览显示放大状态与浅／深背景实际尺寸样例；在查看器按 100% 查看才是原始像素。
 
@@ -32,7 +33,7 @@
 
 Busy 的 8 个爪印交替采用粉色和咖啡色，并有透明度梯度。当前 SVG 为一个静态关键帧，旋转帧将在平台打包阶段实现。
 
-Normal / Link / Click / Drag 的系统箭头目前有意相同：参考图中的抬起、拍下、旋转发生在独立猫爪上。视觉通过后，平台主题需补充适合无 Companion 使用的链接／抓取反馈映射，并审核其可辨识性。参考图的间距是布局示意；运行时 16px 距离需由 Companion 根据实际光标大小和位置计算，不能把整张参考图当作跟随效果。
+Normal / Link / Drag 的箭头目前相同：参考图中的抬起、旋转发生在独立猫爪上。Click 只属于 Companion 输入反馈，拍下期间系统仍显示所在位置的 Arrow / Link / Text 等角色，不切换到 Click 光标。视觉通过后，平台主题需补充适合无 Companion 使用的链接／抓取反馈映射，并审核其可辨识性。参考图的间距是布局示意；运行时 16px 距离需由 Companion 根据实际光标大小和位置计算，不能把整张参考图当作跟随效果。
 
 ## 资源目录
 
@@ -44,13 +45,15 @@ cat-paw/
     pointer/<color>/<size>/        独立传统箭头
     paw-pink/<size>/               独立猫爪及灰化版本
     paw-coffee/<size>/
-    states/<color>/<size>/         14 个系统光标状态
+    states/<color>/<size>/         13 种光标资源，不含 Click
+    companion/<color>/<size>/      Click 猫爪三姿态关键帧，无热点
     source-svg/                   64px 母版与双层审核图
     manifest.json                 状态清单、尺寸、热点
   preview/
     Cat Paw Cursor Theme Preview.png
     Cat Paw Cursor Theme Preview.svg
-    raster/<color>/<size>/         系统状态透明 PNG
+    raster/<color>/<size>/         光标角色透明 PNG
+    companion/<color>/<size>/      Companion 关键帧透明 PNG
   tools/                          确定性构建与校验
   linux/                          Phase 2 预留说明
   windows/                        Phase 3 预留说明
@@ -75,6 +78,19 @@ npm run validate
 ```
 
 验证覆盖：全部状态／配色／尺寸组合、SVG 解析、热点范围、PNG 像素尺寸、不含脚本或外部图片，以及小尺寸细节简化。安装 Pillow 时额外检查每个 PNG 非空、边缘未被裁切、热点落在可见像素上。这些是资产检查，不等同于 Linux/Windows 实机兼容性验收。
+
+## Link 与 Click 的边界
+
+| 项目 | 类型 | 交付位置 | Windows 安装映射 |
+|---|---|---|---|
+| Link | 光标角色，表示链接选择 | `assets/states/.../link.svg` | `IDC_HAND` / 链接选择 |
+| Click | 鼠标按下／松开的输入反馈 | `assets/companion/` | 无独立槽位，不能由 INF 安装为 Click |
+
+点击可发生在 Arrow、Link 或 Text 等角色上，不能把点击事件合并为 Link。单独安装 `.cur` / `.ani` 主题不会获得按点击触发的猫爪拍击。Companion 后续监听输入事件驱动关键帧；本次没有实现事件监听或动画运行程序。
+
+主预览保留 Click 的视觉审核格，使用不同底色并标注 Companion。原尺寸系统层检查图不再包含 Click。清单中 `cursors` 仅列光标资源，`companionAnimations` 单独列关键帧、输入事件和路径。
+
+依据：[Microsoft — About Cursors](https://learn.microsoft.com/en-us/windows/win32/menurc/about-cursors)、[WM_LBUTTONDOWN](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-lbuttondown)。
 
 ## 后续阶段
 
