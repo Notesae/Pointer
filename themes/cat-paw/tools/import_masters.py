@@ -64,7 +64,7 @@ def main():
                 if name=='pointer-coffee':
                     # The generated coffee mark had three toes. Copy its left toe
                     # to the missing lower-left position: now exactly four + one.
-                    repair=ET.SubElement(wrapper,f'{{{NS}}}g',{'data-detail':'fourth-toe','transform':'translate(668 302) scale(.72) translate(-674 -272)'})
+                    repair=ET.SubElement(wrapper,f'{{{NS}}}g',{'data-detail':'fourth-toe','transform':'translate(665 307) scale(.96) translate(-674 -272)'})
                     repair.append(copy.deepcopy(toe))
                 dest=ROOT/'assets/masters'/level/(name+'.svg');dest.parent.mkdir(parents=True,exist_ok=True)
                 ET.ElementTree(root).write(dest,encoding='unicode',xml_declaration=False)

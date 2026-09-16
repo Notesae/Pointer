@@ -11,6 +11,9 @@ async function main() {
   await sharp(audit + '.svg').png().toFile(audit + '.png');
   const detail = path.join(root, 'preview', 'Cat Paw Detail Review');
   await sharp(detail + '.svg').png().toFile(detail + '.png');
+  await sharp(path.join(root, 'assets/masters/detail/pointer-coffee.svg'), { density: 432 })
+    .flatten({ background: '#FFF9F5' }).png()
+    .toFile(path.join(root, 'preview/Coffee Paw Pointer Detail.png'));
   const manifest = JSON.parse(await fs.readFile(path.join(root, 'assets/manifest.json'), 'utf8'));
   // Native-size PNGs are a review aid, not CUR/Xcursor binaries.
   for (const item of manifest.cursors) {
