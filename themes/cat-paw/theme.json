@@ -1,8 +1,8 @@
 {
   "id": "cat-paw",
   "name": "Cat Paw",
-  "version": "0.3.1",
-  "phase": "visual-review",
+  "version": "0.4.0",
+  "phase": "linux-theme",
   "sizes": [
     24,
     32,
@@ -74,5 +74,11 @@
       "duration": 1000
     },
     "maxFps": 60
+  },
+  "linux": {
+    "version": "0.4.0-linux.1",
+    "nativeValidation": "passed",
+    "desktopValidation": "pending",
+    "package": "dist/CatPaw-0.4.0-Linux.tar.gz"
   }
 }

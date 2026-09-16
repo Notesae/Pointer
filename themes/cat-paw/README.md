@@ -1,6 +1,8 @@
 # Cat Paw / 猫爪动态光标
 
-**Phase 1 · 视觉审核稿 v0.3.1。** 这次交付为可编辑 SVG、透明 PNG、预览与构建工具。尚未提供 Xcursor、CUR/ANI 安装包，也没有 Companion 程序。
+**Phase 2 · Linux 原生主题已交付，版本 0.4.0。** Pink / Coffee 两色各有动态／静态版，提供六档尺寸、安装／恢复／卸载工具。[下载 Linux 安装包](dist/CatPaw-0.4.0-Linux.tar.gz?raw=true) · [Zorin 安装说明](linux/) · [Linux 实际角色预览](preview/Cat%20Paw%20Linux%20Roles.png)。
+
+已通过原生 Xcursor 加载和隔离安装测试；Zorin 桌面、多屏和 HiDPI 实机验收尚未完成。Windows 与 Companion 尚未实现。
 
 一个带小爪印与蝴蝶结铃铛装饰的传统箭头，身后跟着一只独立的暖白猫爪。箭头负责准确定位；猫爪负责姿态与反馈。与 IceGem 完全独立。
 
@@ -33,7 +35,7 @@
 
 Busy 的 8 个爪印交替采用粉色和咖啡色，并有透明度梯度。当前 SVG 为一个静态关键帧，旋转帧将在平台打包阶段实现。
 
-Normal / Link / Drag 的箭头目前相同：参考图中的抬起、旋转发生在独立猫爪上。Click 只属于 Companion 输入反馈，拍下期间系统仍显示所在位置的 Arrow / Link / Text 等角色，不切换到 Click 光标。视觉通过后，平台主题需补充适合无 Companion 使用的链接／抓取反馈映射，并审核其可辨识性。参考图的间距是布局示意；运行时 16px 距离需由 Companion 根据实际光标大小和位置计算，不能把整张参考图当作跟随效果。
+第一阶段素材中的 Normal / Link / Drag 箭头相同；Linux 实现已为 Link / Grab / Grabbing 增加固定的小猫爪姿态以区分角色，见 Linux 实际角色预览。Click 只属于 Companion 输入反馈，拍下期间系统仍显示所在位置的 Arrow / Link / Text 等角色，不切换到 Click 光标。这些原生状态不要求运行 Companion，但不具备独立延迟跟随。参考图的间距是布局示意；运行时 16px 距离需由 Companion 根据实际光标大小和位置计算，不能把整张参考图当作跟随效果。
 
 ## 资源目录
 
@@ -55,7 +57,8 @@ cat-paw/
     raster/<color>/<size>/         光标角色透明 PNG
     companion/<color>/<size>/      Companion 关键帧透明 PNG
   tools/                          确定性构建与校验
-  linux/                          Phase 2 预留说明
+  linux/                          Phase 2 构建、安装、校验与打包工具
+  dist/                           Linux 安装包与 SHA-256
   windows/                        Phase 3 预留说明
   companion/                      Phase 4 配置与行为约定
 ```
@@ -94,9 +97,9 @@ npm run validate
 
 ## 后续阶段
 
-只有用户确认视觉后才继续：
+当前进度：
 
-1. Phase 2：优先 Linux / Zorin，构建标准 Xcursor 主题、状态别名、动画帧、`index.theme` 和安装／卸载流程。GNOME / Zorin / X11 / Wayland 下分别验证。
+1. Phase 2：已提供标准 Xcursor、状态别名、Busy / Progress 动画、`index.theme` 与安装／卸载流程。原生文件及安装测试通过；GNOME / Zorin 的 X11 / Wayland 桌面验收待进行。
 2. Phase 3：Windows `.cur` / `.ani` 与 `install.inf`，按清单保留准确热点。
 3. Phase 4：可选 Cat Paw Companion，独立透明层与事件驱动跟随。系统主题单独安装时仍可用。
 

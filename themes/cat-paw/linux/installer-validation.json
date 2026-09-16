@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "tests": 10,
+  "environment": "temporary homes; mocked gsettings, not a real desktop",
+  "coverage": [
+    "install and color/mode switching",
+    "first backup retained",
+    "restore",
+    "active-theme uninstall",
+    "preserve later theme and IceGem files",
+    "no-apply install/uninstall without backup",
+    "apply-failure rollback",
+    "uninstall-failure rollback",
+    "unowned directory refusal",
+    "source and destination symlink boundary checks"
+  ]
+}

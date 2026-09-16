@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "checks": [
+    "SHA-256",
+    "safe archive extraction",
+    "four real themes installed into temporary home",
+    "all native files and aliases preserved",
+    "no gsettings access",
+    "all four themes archived on uninstall"
+  ],
+  "desktopModified": false
+}

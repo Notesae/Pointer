@@ -213,7 +213,7 @@ def detail_preview():
         s+=group(paw('pink',size),f'translate({x+size+14} 825) scale({size/64})')
         s+=text(x,925,str(size)+' px',16,'#A98977')
     s+=text(53,1021,'手绘质感母稿 → SVG 路径  /  第一阶段：视觉资产',16,'#B1917F')
-    s+=text(1448,1021,'尚未进入 Linux / Windows / Companion 开发',16,'#B1917F',extra='text-anchor="end"')
+    s+=text(1448,1021,'Linux 主题已提供；Windows / Companion 尚未开发',16,'#B1917F',extra='text-anchor="end"')
     write('preview/Cat Paw Detail Review.svg',svg(s,W,H,f'0 0 {W} {H}','Cat Paw revised shape and material review'))
 
 

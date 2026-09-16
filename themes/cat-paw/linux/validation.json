@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "checks": [
+    "Xcursor structure",
+    "premultiplied alpha",
+    "hotspots",
+    "frame delays",
+    "libXcursor loading",
+    "theme alias resolution"
+  ],
+  "counts": {
+    "themes": 4,
+    "canonical_files": 64,
+    "native_file_loads": 384,
+    "native_alias_loads": 296
+  },
+  "zorin_desktop": "NOT RUN: desktop/session/HiDPI must be tested on Zorin"
+}

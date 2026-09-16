@@ -1,0 +1,2 @@
+Pillow>=10
+# SVG rasterization also needs Node.js + sharp (install ../package.json).
