@@ -20,10 +20,14 @@ for item in manifest['cursors']:
     png=ROOT/'preview/raster'/item['color']/str(size)/(item['state']+'.png')
     data=png.read_bytes()
     assert data[:8]==b'\x89PNG\r\n\x1a\n' and struct.unpack('>II',data[16:24])==(size,size),png
-    # No text/fonts, external links or bitmap tracing in usable cursor assets.
+    # No text/fonts, external links or embedded bitmaps in usable cursor assets.
     for node in root.iter():
         assert node.tag not in {ns+'text',ns+'image',ns+'script',ns+'foreignObject'},f
         assert not any('href' in k for k in node.attrib),f
+assert set(theme['colorways'])=={'pink','coffee'}, 'This release has exactly two requested colorways.'
+for level in ('small','medium','detail'):
+    repaired=ET.parse(ROOT/f'assets/masters/{level}/pointer-coffee.svg').getroot()
+    assert any(n.attrib.get('data-detail')=='fourth-toe' for n in repaired.iter()), 'Missing coffee toe repair'
 assert len(manifest['compositions'])==len(states)*len(theme['colorways'])
 for f in (ROOT/'assets').rglob('*.svg'):
     root=ET.parse(f).getroot()

@@ -1,0 +1,154 @@
+[
+  {
+    "file": "assets/masters/small/pointer-pink.svg",
+    "paths": 208,
+    "preset": {
+      "filter_speckle": 28,
+      "color_precision": 6,
+      "layer_difference": 12,
+      "length_threshold": 6
+    },
+    "opticalCorrection": "medium palette preserves four toes; subpixel glints removed"
+  },
+  {
+    "file": "assets/masters/small/pointer-coffee.svg",
+    "paths": 215,
+    "preset": {
+      "filter_speckle": 28,
+      "color_precision": 6,
+      "layer_difference": 12,
+      "length_threshold": 6
+    },
+    "opticalCorrection": "medium palette preserves four toes; subpixel glints removed"
+  },
+  {
+    "file": "assets/masters/small/text.svg",
+    "paths": 5,
+    "preset": {
+      "filter_speckle": 28,
+      "color_precision": 6,
+      "layer_difference": 12,
+      "length_threshold": 6
+    }
+  },
+  {
+    "file": "assets/masters/small/paw-pink.svg",
+    "paths": 8,
+    "preset": {
+      "filter_speckle": 28,
+      "color_precision": 6,
+      "layer_difference": 12,
+      "length_threshold": 6
+    }
+  },
+  {
+    "file": "assets/masters/small/paw-coffee.svg",
+    "paths": 9,
+    "preset": {
+      "filter_speckle": 28,
+      "color_precision": 6,
+      "layer_difference": 12,
+      "length_threshold": 6
+    }
+  },
+  {
+    "file": "assets/masters/medium/pointer-pink.svg",
+    "paths": 208,
+    "preset": {
+      "filter_speckle": 6,
+      "color_precision": 7,
+      "layer_difference": 8,
+      "length_threshold": 4
+    }
+  },
+  {
+    "file": "assets/masters/medium/pointer-coffee.svg",
+    "paths": 215,
+    "preset": {
+      "filter_speckle": 6,
+      "color_precision": 7,
+      "layer_difference": 8,
+      "length_threshold": 4
+    }
+  },
+  {
+    "file": "assets/masters/medium/text.svg",
+    "paths": 165,
+    "preset": {
+      "filter_speckle": 6,
+      "color_precision": 7,
+      "layer_difference": 8,
+      "length_threshold": 4
+    }
+  },
+  {
+    "file": "assets/masters/medium/paw-pink.svg",
+    "paths": 229,
+    "preset": {
+      "filter_speckle": 6,
+      "color_precision": 7,
+      "layer_difference": 8,
+      "length_threshold": 4
+    }
+  },
+  {
+    "file": "assets/masters/medium/paw-coffee.svg",
+    "paths": 266,
+    "preset": {
+      "filter_speckle": 6,
+      "color_precision": 7,
+      "layer_difference": 8,
+      "length_threshold": 4
+    }
+  },
+  {
+    "file": "assets/masters/detail/pointer-pink.svg",
+    "paths": 579,
+    "preset": {
+      "filter_speckle": 4,
+      "color_precision": 8,
+      "layer_difference": 4,
+      "length_threshold": 3
+    }
+  },
+  {
+    "file": "assets/masters/detail/pointer-coffee.svg",
+    "paths": 618,
+    "preset": {
+      "filter_speckle": 4,
+      "color_precision": 8,
+      "layer_difference": 4,
+      "length_threshold": 3
+    }
+  },
+  {
+    "file": "assets/masters/detail/text.svg",
+    "paths": 455,
+    "preset": {
+      "filter_speckle": 4,
+      "color_precision": 8,
+      "layer_difference": 4,
+      "length_threshold": 3
+    }
+  },
+  {
+    "file": "assets/masters/detail/paw-pink.svg",
+    "paths": 1022,
+    "preset": {
+      "filter_speckle": 4,
+      "color_precision": 8,
+      "layer_difference": 4,
+      "length_threshold": 3
+    }
+  },
+  {
+    "file": "assets/masters/detail/paw-coffee.svg",
+    "paths": 1262,
+    "preset": {
+      "filter_speckle": 4,
+      "color_precision": 8,
+      "layer_difference": 4,
+      "length_threshold": 3
+    }
+  }
+]

@@ -1,7 +1,7 @@
 {
   "id": "cat-paw",
   "name": "Cat Paw",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "phase": "visual-review",
   "sizes": [
     24,
@@ -22,13 +22,21 @@
       "name": "Pink Paw",
       "pad": "#F4A6AE",
       "padLight": "#FFD0D4",
-      "padEdge": "#CF8790"
+      "padEdge": "#CF8790",
+      "artwork": {
+        "pointer": "pointer-pink",
+        "paw": "paw-pink"
+      }
     },
     "coffee": {
       "name": "Coffee Paw",
       "pad": "#9A6652",
       "padLight": "#C89278",
-      "padEdge": "#815442"
+      "padEdge": "#815442",
+      "artwork": {
+        "pointer": "pointer-coffee",
+        "paw": "paw-coffee"
+      }
     }
   },
   "defaults": {
