@@ -49,8 +49,8 @@ class Source:
         try:
             self.root=self.x.XDefaultRootWindow(self.display);opcode=I();event=I();error=I()
             if not self.x.XQueryExtension(self.display,b'XInputExtension',C.byref(opcode),C.byref(event),C.byref(error)):raise RuntimeError('XInput2 unavailable')
-            self.opcode=opcode.value;major=I(2);minor=I(0)
-            if self.xi.XIQueryVersion(self.display,C.byref(major),C.byref(minor))!=0:raise RuntimeError('XInput 2.0 required')
+            self.opcode=opcode.value;major=I(2);minor=I(1)
+            if self.xi.XIQueryVersion(self.display,C.byref(major),C.byref(minor))!=0 or (major.value,minor.value)<(2,1):raise RuntimeError('XInput 2.1 required for continuous events during text selection')
             bits=(C.c_ubyte*3)()
             for number in (15,16,17):bits[number//8]|=1<<(number%8)
             mask=Mask(1,len(bits),bits) # XIAllMasterDevices; raw button press/release + motion only.

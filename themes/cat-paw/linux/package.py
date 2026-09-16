@@ -7,7 +7,7 @@ import tarfile
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
-DEST=ROOT/'dist/CatPaw-0.5.0-Linux.tar.gz'
+DEST=ROOT/'dist/CatPaw-0.5.1-Linux.tar.gz'
 
 def package():
     required=['Install.sh','install.py','README.md','manifest.json','validation.json','installer-validation.json']

@@ -1,8 +1,8 @@
-> **0.5.0 更新：安装脚本已集成 X11 猫爪跟随、点击回弹和开机启动。使用与限制见 [Companion](companion/README.md)。**
+> **0.5.1 更新：安装脚本已集成 X11 猫爪跟随、点击回弹和开机启动。使用与限制见 [Companion](companion/README.md)。**
 
 # Cat Paw / 猫爪动态光标
 
-**Phase 2 · Linux 原生主题已交付，版本 0.5.0。** Pink / Coffee 两色各有动态／静态版，提供六档尺寸、安装／恢复／卸载工具。[下载 Linux 安装包](dist/CatPaw-0.5.0-Linux.tar.gz?raw=true) · [Zorin 安装说明](linux/) · [Linux 实际角色预览](preview/Cat%20Paw%20Linux%20Roles.png)。
+**Phase 2 · Linux 原生主题已交付，版本 0.5.1。** Pink / Coffee 两色各有动态／静态版，提供六档尺寸、安装／恢复／卸载工具。[下载 Linux 安装包](dist/CatPaw-0.5.1-Linux.tar.gz?raw=true) · [Zorin 安装说明](linux/) · [Linux 实际角色预览](preview/Cat%20Paw%20Linux%20Roles.png)。
 
 已通过原生 Xcursor 加载和隔离安装测试；Zorin 桌面、多屏和 HiDPI 实机验收尚未完成。Windows 尚未实现；X11 Companion 已提供。
 

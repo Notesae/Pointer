@@ -21,7 +21,8 @@ def config(values):
     return result
 
 HOVER={'hand','hand1','hand2','pointer','pointing_hand','openhand','grab','e29285e634086352946a0e7090d73106'}
-HIDDEN={'text','xterm','ibeam','vertical-text','crosshair','cross','tcross','plus','watch','wait','progress','left_ptr_watch',
+TEXT={'text','xterm','ibeam','vertical-text'}
+HIDDEN={'crosshair','cross','tcross','plus','watch','wait','progress','left_ptr_watch',
         'not-allowed','no-drop','crossed_circle','forbidden','move','fleur','all-scroll','size_all',
         'sb_h_double_arrow','sb_v_double_arrow','bd_double_arrow','fd_double_arrow','size_hor','size_ver',
         'size_fdiag','size_bdiag','top_side','bottom_side','left_side','right_side','top_left_corner','top_right_corner',
@@ -29,6 +30,7 @@ HIDDEN={'text','xterm','ibeam','vertical-text','crosshair','cross','tcross','plu
 
 def classify(name):
     name=(name or '').lower()
+    if name in TEXT:return 'text'
     if name in HIDDEN or 'resize' in name:return 'hidden'
     if name in ('grabbing','closedhand','208530c400c041818281048008011002'):return 'drag'
     return 'hover' if name in HOVER else 'normal'
@@ -39,13 +41,18 @@ class Motion:
         self.vx=self.vy=0.;self.role='normal';self.down=False;self.drag=False
         self.press_origin=(x,y);self.last_input=now;self.idle_used=False;self.idle_start=None
         self.release=None;self.scale=1.;self.angle=0.;self.last=now
+        self.squash=1.;self.lift=0.;self.press_time=now
         self.x,self.y=self.target()
 
     def target(self):
         c=self.cfg;distance=c['pawDistance'];strength=c['animationStrength']
         distance-=5*strength if self.down and c['clickAnimation'] else 0
-        # Offset beyond the visible arrow, while retaining a perceptible gap.
-        return self.px+c['cursorSize']*(.56+.4*c['pawScale'])+distance, self.py+c['cursorSize']*(.60+.4*c['pawScale'])+distance-(3*strength if self.role=='hover' else 0)
+        # Distance is a single diagonal gap, not an extra full gap on BOTH axes.
+        radius=c['cursorSize']*.4*c['pawScale']
+        if self.role=='text':
+            return self.px+radius*.65+max(4,distance*.3), self.py+c['cursorSize']*.30+radius*.65
+        return (self.px+c['cursorSize']*.42+(radius+distance)*.7071,
+                self.py+c['cursorSize']*.53+(radius+distance)*.7071-(3*strength if self.role=='hover' else 0))
 
     def pointer(self,x,y,now):
         if (x,y)!=(self.px,self.py):
@@ -54,7 +61,7 @@ class Motion:
 
     def button(self,pressed,now):
         self.down=pressed;self.last_input=now;self.idle_used=False;self.idle_start=None
-        if pressed:self.press_origin=(self.px,self.py);self.release=None
+        if pressed:self.press_time=now;self.press_origin=(self.px,self.py);self.release=None
         else:self.release=now if self.cfg['clickAnimation'] else None;self.drag=False
 
     def set_role(self,name):
@@ -63,7 +70,7 @@ class Motion:
 
     def idle_due(self,now):
         return (self.cfg['idleAnimation'] and self.cfg['animationStrength']>0 and not self.down
-                and self.role!='hidden' and not self.idle_used
+                and self.role not in ('hidden','text') and not self.idle_used
                 and now-self.last_input>=self.cfg['idleDelay']/1000)
 
     def start_idle(self,now):
@@ -73,7 +80,7 @@ class Motion:
         dt=max(0,min(.05,now-self.last));self.last=now;c=self.cfg
         tx,ty=self.target()
         if c['followAnimation'] and c['animationStrength']>0:
-            omega=3/(c['followDelay']/1000)
+            omega=3/((min(40,c['followDelay']) if self.role=='text' and self.down else c['followDelay'])/1000)
             for pos,vel,target in [('x','vx',tx),('y','vy',ty)]:
                 delta=getattr(self,pos)-target;v=getattr(self,vel);decay=math.exp(-omega*dt)
                 temp=(v+omega*delta)*dt
@@ -91,12 +98,27 @@ class Motion:
                 else:self.release=None
         blend=1-math.exp(-dt/0.022) if dt else 0
         self.scale+=(wanted-self.scale)*blend
-        angle=(8 if self.drag or self.role=='drag' else -5 if self.role=='hover' else 0)*strength
+        # A soft pad flattens on contact, then stretches briefly on release.
+        deformation=.075*strength if self.down and c['clickAnimation'] else 0.
+        if self.release is not None and c['clickAnimation']:
+            t=max(0,min(1,(now-self.release)/.18))
+            deformation=-.05*strength*math.sin(math.pi*t)
+        self.squash+=((1+deformation)-self.squash)*blend
+        lift=0.
+        if self.release is not None and c['clickAnimation']:
+            lift=-2.5*strength*math.sin(math.pi*max(0,min(1,(now-self.release)/.18)))
+        angle=(2 if self.role=='text' and self.drag else 8 if self.drag or self.role=='drag' else -5 if self.role=='hover' else 0)*strength
+        if c['followAnimation'] and strength>0 and not self.down and self.role!='text':
+            angle+=max(-7,min(7,self.vx*.009))*strength
         if self.idle_start is not None:
-            t=(now-self.idle_start)/.45
-            if t<1:angle+=2*strength*math.sin(t*math.tau);active=True
+            t=(now-self.idle_start)/.65
+            if t<1:
+                envelope=math.sin(math.pi*t)**2
+                angle+=5*strength*math.sin(t*math.tau)*envelope
+                lift-=2*strength*envelope;active=True
             else:self.idle_start=None
+        self.lift+=(lift-self.lift)*blend
         self.angle+=(angle-self.angle)*blend
-        settled=math.hypot(self.x-tx,self.y-ty)<.1 and math.hypot(self.vx,self.vy)<1 and abs(self.scale-wanted)<.002 and abs(self.angle-angle)<.05
-        if settled:self.x,self.y=tx,ty;self.vx=self.vy=0;self.scale=wanted;self.angle=angle
+        settled=math.hypot(self.x-tx,self.y-ty)<.1 and math.hypot(self.vx,self.vy)<1 and abs(self.scale-wanted)<.002 and abs(self.angle-angle)<.05 and abs(self.squash-(1+deformation))<.002 and abs(self.lift-lift)<.02
+        if settled:self.x,self.y=tx,ty;self.vx=self.vy=0;self.scale=wanted;self.angle=angle;self.squash=1+deformation;self.lift=lift
         return not settled or active

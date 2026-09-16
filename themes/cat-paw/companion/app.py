@@ -128,16 +128,16 @@ class Companion:
 
     def tick(self):
         now=time.monotonic();active=self.model.step(now);self.frames+=1
-        if self.model.down and now-self.model.last_input<.15:active=True
+        if self.model.down and now-self.model.press_time<.15:active=True
         monitor=self.window.get_display().get_monitor_at_point(round(self.model.px),round(self.model.py))
         geometry=monitor.get_geometry() if monitor else self.window.get_screen().get_monitor_geometry(0)
         radius=self.cfg['cursorSize']*.4*self.cfg['pawScale']*1.1+4
         x=max(geometry.x+radius,min(geometry.x+geometry.width-radius,self.model.x))
         y=max(geometry.y+radius,min(geometry.y+geometry.height-radius,self.model.y))
-        self.window.move(round(x-self.side/2),round(y-self.side/2));self.window.queue_draw()
+        self.window.move(round(x-self.side/2),round(y+self.model.lift-self.side/2));self.window.queue_draw()
         if not active:
             self.frame_source=0
-            if not self.model.idle_used and self.model.cfg['idleAnimation'] and not self.model.down and self.model.cfg['animationStrength']>0:
+            if self.model.role!='text' and not self.model.idle_used and self.model.cfg['idleAnimation'] and not self.model.down and self.model.cfg['animationStrength']>0:
                 delay=max(1,math.ceil((self.model.last_input+self.model.cfg['idleDelay']/1000-now)*1000))
                 self.idle_source=GLib.timeout_add(delay,self.idle)
             self.status();return False
@@ -151,10 +151,10 @@ class Companion:
         cr.set_operator(cairo.OPERATOR_SOURCE);cr.set_source_rgba(0,0,0,0);cr.paint();cr.set_operator(cairo.OPERATOR_OVER)
         if not hasattr(self,'model'):return False
         pix=self.pixbufs[self.cfg['pawColor']]
-        size=self.cfg['cursorSize']*.8*self.cfg['pawScale']*self.model.scale
-        cr.save();cr.translate(self.side/2,self.side/2);cr.rotate(math.radians(self.model.angle));cr.scale(size/pix.get_width(),size/pix.get_height())
+        size=self.cfg['cursorSize']*.8*self.cfg['pawScale']*self.model.scale*(.65 if self.model.role=='text' else 1)
+        cr.save();cr.translate(self.side/2,self.side/2);cr.rotate(math.radians(self.model.angle));cr.scale(size*self.model.squash/pix.get_width(),size/self.model.squash/pix.get_height())
         cr.translate(-pix.get_width()/2,-pix.get_height()/2);Gdk.cairo_set_source_pixbuf(cr,pix,0,0);cr.paint();cr.restore()
-        if self.model.down and time.monotonic()-self.model.last_input<.14 and self.cfg['clickAnimation'] and self.model.cfg['animationStrength']>0:
+        if self.model.down and time.monotonic()-self.model.press_time<.14 and self.cfg['clickAnimation'] and self.model.cfg['animationStrength']>0:
             cr.set_source_rgba(.85,.55,.50,.85);cr.set_line_width(1.4)
             for a in (-130,-90,-50):
                 angle=math.radians(a);r=size*.58

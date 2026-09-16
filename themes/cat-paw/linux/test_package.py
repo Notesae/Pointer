@@ -12,7 +12,7 @@ import tarfile
 import tempfile
 
 HERE=Path(__file__).resolve().parent
-archive=HERE.parent/'dist/CatPaw-0.5.0-Linux.tar.gz'
+archive=HERE.parent/'dist/CatPaw-0.5.1-Linux.tar.gz'
 assert hashlib.sha256(archive.read_bytes()).hexdigest()==archive.with_suffix('.gz.sha256').read_text().split()[0]
 with tempfile.TemporaryDirectory(prefix='catpaw-package-') as tmp:
     root=Path(tmp)

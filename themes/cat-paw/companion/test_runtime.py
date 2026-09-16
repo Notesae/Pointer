@@ -40,10 +40,10 @@ with tempfile.TemporaryDirectory() as tmp:
         x.XFlush.argtypes=[C.c_void_p];x.XDefaultRootWindow.argtypes=[C.c_void_p];x.XDefaultRootWindow.restype=C.c_ulong
         xt.XTestFakeMotionEvent.argtypes=[C.c_void_p,C.c_int,C.c_int,C.c_int,C.c_ulong]
         xt.XTestFakeButtonEvent.argtypes=[C.c_void_p,C.c_uint,C.c_int,C.c_ulong]
-        def move(a,b):xt.XTestFakeMotionEvent(d,0,a,b,0);x.XFlush(d);time.sleep(.25)
-        def button(v):xt.XTestFakeButtonEvent(d,1,int(v),0);x.XFlush(d);time.sleep(.25)
+        def move(a,b):xt.XTestFakeMotionEvent(d,0,a,b,0);x.XFlush(d);time.sleep(.4)
+        def button(v):xt.XTestFakeButtonEvent(d,1,int(v),0);x.XFlush(d);time.sleep(.4)
         def state():return json.loads(diag.read_text())
-        move(250,240);assert state()['inputEvents']>0 and abs(state()['x']-296.72)<1,state()
+        move(250,240);assert state()['inputEvents']>0 and abs(state()['x']-(250+32*.42+(32*.4+16)*.7071))<1,state()
         button(True);assert state()['pressed'] and abs(state()['scale']-.88)<.01,state()
         move(290,250);assert state()['dragging'] and state()['angle']==8,state()
         button(False);assert not state()['pressed'] and abs(state()['scale']-1)<.01,state()
@@ -61,9 +61,22 @@ with tempfile.TemporaryDirectory() as tmp:
         time.sleep(2.5);before=state();ticks=Path(f'/proc/{app.pid}/stat').read_text().split()[13:15];time.sleep(.5)
         assert state()['frames']==before['frames'] and not before['frameTimer'] and not before['idleTimer'],state()
         assert Path(f'/proc/{app.pid}/stat').read_text().split()[13:15]==ticks,'CPU used while settled'
-        cursor2=x.XCreateFontCursor(d,152);fix.XFixesSetCursorName(d,cursor2,b'xterm');x.XDefineCursor(d,x.XDefaultRootWindow(d),cursor2);x.XFlush(d);time.sleep(.1)
-        assert not state()['visible'],state()
-        print('PASS: motion, press/rebound, drag, hover, text hiding, empty input shape, settled rendering/CPU, isolated X11 events')
+        cursor2=x.XCreateFontCursor(d,152);fix.XFixesSetCursorName(d,cursor2,b'xterm');x.XDefineCursor(d,x.XDefaultRootWindow(d),cursor2);x.XFlush(d);time.sleep(.4)
+        assert state()['visible'] and state()['role']=='text' and not state()['idleTimer'],state()
+        assert abs(state()['x']-(290+32*.4*.65+16*.3))<.1,state()
+        # Another client grabs the pointer, as selection widgets and menus do.
+        x.XGrabPointer.argtypes=[C.c_void_p,C.c_ulong,C.c_int,C.c_uint,C.c_int,C.c_int,C.c_ulong,C.c_ulong,C.c_ulong]
+        x.XUngrabPointer.argtypes=[C.c_void_p,C.c_ulong]
+        assert x.XGrabPointer(d,x.XDefaultRootWindow(d),0,(1<<6)|(1<<2)|(1<<3),1,1,0,cursor2,0)==0
+        button(True)
+        previous=state()['inputEvents']
+        move(420,280)
+        assert state()['inputEvents']>previous and state()['pressed'],'Lost raw motion during selection grab: '+str(state())
+        assert abs(state()['x']-(420+32*.4*.65+4))<.1,state()
+        button(False)
+        assert not state()['pressed'],'Lost release during selection grab'
+        x.XUngrabPointer(d,0);x.XFlush(d)
+        print('PASS: motion, press/rebound, drag, hover, compact text placement, selection grab continuity, empty input shape, settled rendering/CPU, isolated X11 events')
     finally:
         if app and app.poll() is None:app.terminate();app.wait(timeout=3)
         server.terminate();server.wait(timeout=3)
