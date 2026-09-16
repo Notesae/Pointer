@@ -1,0 +1,36 @@
+{
+  "id": "cat-paw",
+  "name": "Cat Paw",
+  "version": "0.1.0",
+  "phase": "visual-review",
+  "sizes": [24, 32, 48, 64, 96, 128],
+  "palette": {
+    "fur": "#FFF9F5",
+    "furShade": "#EEE0D7",
+    "outline": "#796056",
+    "disabled": "#A8A1A0"
+  },
+  "colorways": {
+    "pink": {"name": "Pink Paw", "pad": "#F4A6AE", "padLight": "#FFD0D4", "padEdge": "#CF8790"},
+    "coffee": {"name": "Coffee Paw", "pad": "#9A6652", "padLight": "#C89278", "padEdge": "#815442"}
+  },
+  "defaults": {
+    "pawColor": "pink",
+    "pawDistance": 16,
+    "pawScale": 1.0,
+    "followDelay": 65,
+    "animationStrength": 1.0,
+    "clickAnimation": true,
+    "idleAnimation": true,
+    "followAnimation": true
+  },
+  "motionSpec": {
+    "units": "px / ms / degrees; design targets, not a running companion",
+    "hover": {"lift": 3, "rotation": -5},
+    "click": {"downScale": 0.88, "reboundScale": 1.05, "duration": 180},
+    "idle": {"wait": 1600, "rotation": 2, "cycles": 1},
+    "drag": {"rotation": 8, "distance": 11},
+    "busy": {"prints": 8, "duration": 1000},
+    "maxFps": 60
+  }
+}

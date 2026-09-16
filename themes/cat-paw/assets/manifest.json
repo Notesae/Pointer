@@ -1,0 +1,1856 @@
+{
+  "phase": "visual-review",
+  "coordinateSystem": "hotspots use output SVG pixels, rounded to integer; canonical 64x64 geometry",
+  "cursors": [
+    {
+      "state": "normal",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/normal.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/link.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/click.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/busy.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/help.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/text.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/precision.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/move.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/resize-h.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/resize-v.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/resize-d1.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/resize-d2.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/drag.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "size": 24,
+      "file": "assets/states/pink/24/disabled.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/normal.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/link.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/click.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/busy.svg",
+      "hotspot": [
+        3,
+        3
+      ]
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/help.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/text.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/precision.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/move.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/resize-h.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/resize-v.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/resize-d1.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/resize-d2.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/drag.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "size": 32,
+      "file": "assets/states/pink/32/disabled.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/normal.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/link.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/click.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/busy.svg",
+      "hotspot": [
+        5,
+        5
+      ]
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/help.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/text.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/precision.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/move.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/resize-h.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/resize-v.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/resize-d1.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/resize-d2.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/drag.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "size": 48,
+      "file": "assets/states/pink/48/disabled.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/normal.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/link.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/click.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/busy.svg",
+      "hotspot": [
+        7,
+        6
+      ]
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/help.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/text.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/precision.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/move.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/resize-h.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/resize-v.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/resize-d1.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/resize-d2.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/drag.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "size": 64,
+      "file": "assets/states/pink/64/disabled.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/normal.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/link.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/click.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/busy.svg",
+      "hotspot": [
+        10,
+        9
+      ]
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/help.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/text.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/precision.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/move.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/resize-h.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/resize-v.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/resize-d1.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/resize-d2.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/drag.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "size": 96,
+      "file": "assets/states/pink/96/disabled.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/normal.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/link.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/click.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/busy.svg",
+      "hotspot": [
+        14,
+        12
+      ]
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/help.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/text.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/precision.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/move.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/resize-h.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/resize-v.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/resize-d1.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/resize-d2.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/drag.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "size": 128,
+      "file": "assets/states/pink/128/disabled.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/normal.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/link.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/click.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/busy.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/help.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/text.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/precision.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/move.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/resize-h.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/resize-v.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/resize-d1.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/resize-d2.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/drag.svg",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "size": 24,
+      "file": "assets/states/coffee/24/disabled.svg",
+      "hotspot": [
+        12,
+        12
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/normal.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/link.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/click.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/busy.svg",
+      "hotspot": [
+        3,
+        3
+      ]
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/help.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/text.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/precision.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/move.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/resize-h.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/resize-v.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/resize-d1.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/resize-d2.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/drag.svg",
+      "hotspot": [
+        3,
+        2
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "size": 32,
+      "file": "assets/states/coffee/32/disabled.svg",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/normal.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/link.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/click.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/busy.svg",
+      "hotspot": [
+        5,
+        5
+      ]
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/help.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/text.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/precision.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/move.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/resize-h.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/resize-v.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/resize-d1.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/resize-d2.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/drag.svg",
+      "hotspot": [
+        4,
+        4
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "size": 48,
+      "file": "assets/states/coffee/48/disabled.svg",
+      "hotspot": [
+        24,
+        24
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/normal.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/link.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/click.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/busy.svg",
+      "hotspot": [
+        7,
+        6
+      ]
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/help.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/text.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/precision.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/move.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/resize-h.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/resize-v.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/resize-d1.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/resize-d2.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/drag.svg",
+      "hotspot": [
+        6,
+        5
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "size": 64,
+      "file": "assets/states/coffee/64/disabled.svg",
+      "hotspot": [
+        32,
+        32
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/normal.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/link.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/click.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/busy.svg",
+      "hotspot": [
+        10,
+        9
+      ]
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/help.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/text.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/precision.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/move.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/resize-h.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/resize-v.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/resize-d1.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/resize-d2.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/drag.svg",
+      "hotspot": [
+        9,
+        8
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "size": 96,
+      "file": "assets/states/coffee/96/disabled.svg",
+      "hotspot": [
+        48,
+        48
+      ]
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/normal.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/link.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/click.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/busy.svg",
+      "hotspot": [
+        14,
+        12
+      ]
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/help.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/text.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/precision.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/move.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/resize-h.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/resize-v.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/resize-d1.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/resize-d2.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/drag.svg",
+      "hotspot": [
+        12,
+        10
+      ]
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "size": 128,
+      "file": "assets/states/coffee/128/disabled.svg",
+      "hotspot": [
+        64,
+        64
+      ]
+    }
+  ],
+  "compositions": [
+    {
+      "state": "normal",
+      "color": "pink",
+      "file": "assets/source-svg/pink/normal.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "link",
+      "color": "pink",
+      "file": "assets/source-svg/pink/link.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "click",
+      "color": "pink",
+      "file": "assets/source-svg/pink/click.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "busy",
+      "color": "pink",
+      "file": "assets/source-svg/pink/busy.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "help",
+      "color": "pink",
+      "file": "assets/source-svg/pink/help.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "text",
+      "color": "pink",
+      "file": "assets/source-svg/pink/text.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "precision",
+      "color": "pink",
+      "file": "assets/source-svg/pink/precision.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "move",
+      "color": "pink",
+      "file": "assets/source-svg/pink/move.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-h",
+      "color": "pink",
+      "file": "assets/source-svg/pink/resize-h.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-v",
+      "color": "pink",
+      "file": "assets/source-svg/pink/resize-v.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-d1",
+      "color": "pink",
+      "file": "assets/source-svg/pink/resize-d1.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-d2",
+      "color": "pink",
+      "file": "assets/source-svg/pink/resize-d2.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "drag",
+      "color": "pink",
+      "file": "assets/source-svg/pink/drag.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "disabled",
+      "color": "pink",
+      "file": "assets/source-svg/pink/disabled.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "normal",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/normal.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "link",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/link.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "click",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/click.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "busy",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/busy.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "help",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/help.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "text",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/text.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "precision",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/precision.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "move",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/move.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-h",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/resize-h.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-v",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/resize-v.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-d1",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/resize-d1.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "resize-d2",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/resize-d2.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "drag",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/drag.svg",
+      "purpose": "review only, not a system cursor"
+    },
+    {
+      "state": "disabled",
+      "color": "coffee",
+      "file": "assets/source-svg/coffee/disabled.svg",
+      "purpose": "review only, not a system cursor"
+    }
+  ]
+}

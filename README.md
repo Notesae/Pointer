@@ -6,6 +6,7 @@ Windows / Linux 自定义光标主题集合。**每套光标独立目录，主�
 
 | 主题 | 风格 | 配色 | 入口 |
 |---|---|---|---|
+| Cat Paw | 暖白猫咪、独立猫爪、柔和肉垫 | 粉色 / 咖啡色 | [第一阶段视觉预览](themes/cat-paw/) |
 | IceGem | 修长切面、冰透宝石、轻盈微光 | 冰蓝 / 紫罗兰 / 玫瑰粉 / 薄荷绿 / 琥珀 | [预览与安装](themes/icegem/) |
 
 ![IceGem 五色预览](themes/icegem/preview/colorways.png)
