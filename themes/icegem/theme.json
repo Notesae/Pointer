@@ -1,0 +1,21 @@
+{
+  "id": "icegem",
+  "name": "IceGem 冰晶宝石",
+  "version": "4.0",
+  "platform": "Windows",
+  "variants": [
+    "IceBlue",
+    "Violet",
+    "RosePink",
+    "Mint",
+    "Amber"
+  ],
+  "states_per_variant": 18,
+  "sizes": [
+    32,
+    48,
+    64
+  ],
+  "animation_frames": 24,
+  "package": "dist/IceGem-4.0-Color-Collection.zip"
+}
