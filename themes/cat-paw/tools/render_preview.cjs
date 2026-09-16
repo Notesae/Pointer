@@ -9,6 +9,8 @@ async function main() {
   await sharp(preview + '.svg').png().toFile(preview + '.png');
   const audit = path.join(root, 'preview', 'Native Size State Audit');
   await sharp(audit + '.svg').png().toFile(audit + '.png');
+  const detail = path.join(root, 'preview', 'Cat Paw Detail Review');
+  await sharp(detail + '.svg').png().toFile(detail + '.png');
   const manifest = JSON.parse(await fs.readFile(path.join(root, 'assets/manifest.json'), 'utf8'));
   // Native-size PNGs are a review aid, not CUR/Xcursor binaries.
   for (const item of manifest.cursors) {

@@ -1,11 +1,13 @@
 {
   "name": "pointer-cat-paw-assets",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Phase 1 editable SVG assets and deterministic review renders",
   "scripts": {
     "build": "python3 tools/build_assets.py && node tools/render_preview.cjs",
     "validate": "python3 tools/validate_assets.py"
   },
-  "devDependencies": { "sharp": "0.35.4" }
+  "devDependencies": {
+    "sharp": "0.35.4"
+  }
 }

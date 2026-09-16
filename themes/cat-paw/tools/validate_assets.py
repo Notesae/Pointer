@@ -25,7 +25,14 @@ for item in manifest['cursors']:
         assert node.tag not in {ns+'text',ns+'image',ns+'script',ns+'foreignObject'},f
         assert not any('href' in k for k in node.attrib),f
 assert len(manifest['compositions'])==len(states)*len(theme['colorways'])
-for f in (ROOT/'assets').rglob('*.svg'): ET.parse(f)
+for f in (ROOT/'assets').rglob('*.svg'):
+    root=ET.parse(f).getroot()
+    ids=[n.attrib['id'] for n in root.iter() if 'id' in n.attrib]
+    assert len(ids)==len(set(ids)), (f,'duplicate paint definition')
+    for node in root.iter():
+        for value in node.attrib.values():
+            if value.startswith('url(#'):
+                assert value[5:-1] in ids,(f,'missing gradient',value)
 for color in theme['colorways']:
     # Small-size artwork must be deliberately simplified, not only resized.
     small=ET.parse(ROOT/f'assets/paw-{color}/32/paw.svg').getroot()

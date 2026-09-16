@@ -29,36 +29,73 @@ def print_mark(color):
 
 
 def paw(color, size=64, disabled=False):
-    p = THEME['colorways'][color]
-    pad = '#A8A1A0' if disabled else p['pad']
-    light = '#CCC6C4' if disabled else p['padLight']
-    contour = 'M10 29 C4 24 8 14 16 14 C14 4 24 1 30 8 C34 0 44 4 45 13 C55 9 61 20 55 28 C63 37 59 49 51 53 L49 57 L45 56 C39 63 25 63 19 57 L15 58 L14 54 C4 49 2 38 10 29Z'
-    out = path(contour, FUR, '#A38A7E' if size>32 else EDGE, 1.5 if size>32 else 2.4)
-    if size >= 48:
-        out += path('M11 44 C17 54 24 57 33 57 C44 57 52 52 55 43 C54 53 46 61 32 60 C21 60 12 55 11 44Z','#EEE0D7')
-        out += path('M12 31 L16 33 M49 34 L53 31 M18 50 L21 48 M44 50 L47 52','none','#DBCAC0',1.2)
-    # Four toe beans and one large, softly lobed metacarpal pad.
-    for x,y,rx,ry,a in [(15,26,5,6.4,-28),(26,17,5.3,7,-10),(40,17,5.3,7,12),(51,27,4.7,6.2,28)]:
-        out += ellipse(x,y,rx,ry,pad,f'transform="rotate({a} {x} {y})"')
-        if size >= 48:
-            out += ellipse(x-1,y-2,1.8,2.3,light,'opacity=".85"')
-    out += path('M21 39 C22 35 27 32 32 33 C37 29 45 34 46 39 C49 45 44 51 39 50 C34 49 33 52 28 52 C19 53 17 44 21 39Z',pad)
-    if size >=48:
-        out += path('M25 39 C27 36 31 36 33 37','none',light,2.2)
-    return group(out, extra='opacity=".72"' if disabled else '')
+    detailed = size >= 48
+    pad_id = 'gray' if disabled else color
+    contour = ('M11 30 C4 27 6 17 13 15 C11 7 19 3 25 7 '
+               'C29 1 38 3 40 10 C48 5 56 12 53 21 '
+               'C61 24 59 33 55 37 C60 43 57 52 51 55 '
+               'Q51 57 47 56 Q46 61 42 58 Q39 62 36 59 '
+               'Q32 62 30 59 Q26 61 24 58 Q20 59 19 56 '
+               'C13 54 9 49 10 45 Q6 44 8 41 C3 37 6 32 11 30Z')
+    simple = ('M11 30 C4 27 6 17 13 15 C11 7 19 3 25 7 '
+              'C29 1 38 3 40 10 C48 5 56 12 53 21 '
+              'C61 24 59 33 55 37 C63 51 48 60 36 60 '
+              'C20 62 7 53 9 42 C4 38 6 32 11 30Z')
+    contour = contour if detailed else simple
+    out = path(contour,'#CAB5A6','none',extra='transform="translate(.5 1)" opacity=".18"')
+    out += path(contour,'url(#fur)','#C3ADA0' if detailed else '#9B8070',.95 if detailed else 1.8)
+    if detailed:
+        out += path('M13 39 C18 48 27 48 35 47 C44 45 52 40 55 36 C57 46 50 55 40 57 C28 62 15 52 13 39Z','url(#fluff)')
+        # Short tapered locks build a soft wrist, without a photographic texture.
+        for d in ['M12 37 Q15 39 13 44 Q17 43 18 49',
+                  'M17 46 Q21 47 20 53 Q24 50 26 57',
+                  'M25 49 Q29 52 28 57 Q33 54 35 59',
+                  'M35 49 Q40 50 39 56 Q44 51 45 56',
+                  'M45 44 Q50 44 49 51 Q54 46 54 43']:
+            out += path(d,'none','#FFFCF8',1.5)
+        if size >= 64:
+            for i in range(17):
+                a=math.radians(22+i*8)
+                x=33+18*math.cos(a); y=38+15*math.sin(a)
+                dx=2.3*math.cos(a); dy=4.3*math.sin(a)
+                out+=path(f'M{x:.2f} {y:.2f} q{dx*.35:.2f} {dy*.6:.2f} {dx:.2f} {dy:.2f}',
+                          'none','#FFFFFF',.55,extra='opacity=".72"')
+        for d in ['M12 17 Q16 14 19 17','M19 8 Q22 7 24 10','M30 6 Q35 5 37 10','M44 12 Q49 10 51 16']:
+            out += path(d,'none','#FFFFFF',1.2)
+    for x,y,rx,ry,a in [(14,27,4.5,5.8,-26),(23,16,4.8,6.3,-17),(36,13,4.7,6.3,4),(48,23,4.1,5.4,24)]:
+        out += ellipse(x,y+.8,rx+.45,ry+.3,'#D8BEB1','opacity=".23"')
+        out += ellipse(x,y,rx,ry,f'url(#{pad_id}-pad)',f'transform="rotate({a} {x} {y})"')
+        if detailed:
+            out += ellipse(x-1.3,y-2,1.35,1.7,'#FFFFFF','opacity=".42"')
+    bean='M22 37 C22 31 28 28 33 30 C39 26 47 30 47 36 C49 43 43 46 37 47 C31 53 23 53 20 47 C18 43 19 39 22 37Z'
+    out += path(bean,'#DDB6A8','none',extra='transform="translate(.2 .8)" opacity=".25"')
+    out += path(bean,f'url(#{pad_id}-pad)')
+    if detailed:
+        out += path('M25 37 Q26 34 29 34','none','#FFFFFF',1.5,extra='opacity=".5"')
+        out += ellipse(33,33,.8,.7,'#FFFFFF','opacity=".5"')
+    return group(out,'translate(2 1) scale(.94) rotate(-12 32 32)',extra='opacity=".76"' if disabled else '')
 
 
 def arrow(color, size=64):
-    # Geometric hotspot is (6, 5) in the 64-unit source grid.
-    sw = 2.6 if size<=32 else 2
-    d='M6 5 L6 43 Q6 45 8 43 L17 35 L25 51 Q26 53 28 52 L34 49 Q35 48 34 46 L26 31 L40 31 Q43 31 40 29Z'
-    out=path(d,FUR,EDGE,sw)
+    # The visible tip / hotspot stays at (6, 5). Round the body, never the origin.
+    d='M6 5 Q7 5 10 7 L43 30 Q48 34 43 37 L27 42 L13 52 Q8 56 8 49Z'
+    out=path(d,'#B69A86','none',extra='transform="translate(1 1.5)" opacity=".16"')
+    out+=path(d,'url(#pointer)', '#866B5B',1.45 if size>=48 else 2.2)
     if size>=48:
-        out+=path('M10 12 L10 34','none','#FFFFFF',1.4)
-    out+=group(print_mark(THEME['colorways'][color]['pad']),'translate(9 18) scale(.23)')
-    # A small curved tail at the stem, omitted at 24/32 px for legibility.
-    if size>=48:
-        out+=path('M29 42 C36 40 39 46 35 49','none',EDGE,1.5)
+        out+=path('M10 12 L12 44 Q12 46 14 45','none','#FFFFFF',1.4)
+        out+=path('M17 49 L29 40 L42 35','none','#DAC6B9',1.4)
+    out+=group(print_mark(THEME['colorways'][color]['pad']),'translate(11 22) scale(.31) rotate(-12 32 32)')
+    # Small ribbon and golden bell from the supplied reference, clear of the tip.
+    if size>=32:
+        out+=path('M29 41 Q25 37 28 36 Q31 35 33 40 Q34 35 37 38 Q38 41 33 43Z','#B9836B','#88604F',.7)
+        out+=path('M32 42 L35 46','none','#796056',1.4)
+        out+=ellipse(37,50,7.1,7.2,'#BCA18A','opacity=".15" transform="translate(.8 1)"')
+        out+=ellipse(37,50,7.1,7.2,'url(#bell)','stroke="#A57948" stroke-width=".9"')
+        out+=path('M33 46 Q35 43 38 45','none','#FFF3C7',1.8)
+        out+=ellipse(38.2,52,1.4,1.4,'#9C6A3B')
+        out+=path('M38.2 52 L39.3 55','none','#9C6A3B',.8)
+    else:
+        out+=ellipse(35,48,5,5,'#EDBE79','stroke="#9E7855" stroke-width="1.2"')
     return out
 
 
@@ -75,10 +112,13 @@ def cursor(state,color,size=64):
         q+=ellipse(50,33,2,2,EDGE)
         return arrow(color,size)+q
     if state=='text':
-        s=line('M25 14 L39 14 M32 14 L32 51 M25 51 L39 51',size)
-        s+=path('M25 14 L24 8 L29 11 M35 11 L40 8 L39 14','none',EDGE,1.8 if size>32 else 2.5)
-        if size>=48: s+=path('M38 51 C44 55 43 47 41 48','none',THEME['colorways'][color]['pad'],1.8)
-        return s
+        d='M24 15 Q20 14 22 10 L22 6 Q24 4 28 9 L36 9 Q40 4 42 6 L42 10 Q44 14 40 15 L35 15 L35 49 L41 49 Q44 49 44 53 Q44 56 40 56 L24 56 Q20 56 20 53 Q20 49 24 49 L29 49 L29 15Z'
+        out=path(d,'url(#pointer)',EDGE,1.5 if size>=48 else 2)
+        out+=path('M24 8 L24 12 L28 11 M40 8 L40 12 L36 11',THEME['colorways'][color]['pad'])
+        if size>=48:
+            out+=path('M30 18 L30 46','none','#FFFFFF',1)
+            out+=group(print_mark(THEME['colorways'][color]['pad']),'translate(46 42) scale(.19)')
+        return out
     if state=='precision':
         s=line('M32 10 L32 25 M32 39 L32 54 M10 32 L25 32 M39 32 L54 32',size)
         s+=ellipse(32,32,1.5,1.5,EDGE)
@@ -112,7 +152,7 @@ def composition(state,color,size=64):
     s=cursor(state,color,size)
     # Technical cursors and busy deliberately do not gain a full paw.
     if state not in ('normal','link','click','help','drag','disabled'): return group(s,'translate(20 10)')
-    x,y,scale,angle=62,41,.67,0
+    x,y,scale,angle=59,38,.77,0
     if state=='link': y-=3; angle=-5
     if state=='click': x-=6; y-=3; scale*=.88
     if state=='drag': x-=4; angle=8
@@ -122,8 +162,25 @@ def composition(state,color,size=64):
     return s
 
 
+def gradients():
+    defs='<defs>'
+    for name,cx,cy,stops in [
+        ('fur','.38','.22',[(0,'#FFFFFF'),(.65,'#FFF9F5'),(1,'#E9D9CD')]),
+        ('fluff','.4','.2',[(0,'#FFFDF9'),(.6,'#FFF9F5'),(1,'#E7D7CC')]),
+        ('pointer','.32','.22',[(0,'#FFFFFF'),(.7,'#FFF9F5'),(1,'#EFE1D7')]),
+        ('bell','.28','.22',[(0,'#FFF0BF'),(.48,'#F7D491'),(1,'#D99C53')]),
+        ('gray-pad','.3','.2',[(0,'#D9D2CD'),(.4,'#BDB4AE'),(1,'#9E938B')]),
+    ]:
+        defs+=f'<radialGradient id="{name}" cx="{cx}" cy="{cy}" r=".85">'
+        defs+=''.join(f'<stop offset="{offset}" stop-color="{c}"/>' for offset,c in stops)+'</radialGradient>'
+    for color,palette in THEME['colorways'].items():
+        defs+=f'<radialGradient id="{color}-pad" cx=".28" cy=".2" r=".9">'
+        defs+=f'<stop offset="0" stop-color="{palette["padLight"]}"/><stop offset=".46" stop-color="{palette["pad"]}"/><stop offset="1" stop-color="{palette["padEdge"]}"/></radialGradient>'
+    return defs+'</defs>'
+
+
 def svg(body,width=64,height=None,viewbox='0 0 64 64',title='Cat Paw'):
-    return f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height or width}" viewBox="{viewbox}" role="img"><title>{escape(title)}</title>{body}</svg>\n'
+    return f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height or width}" viewBox="{viewbox}" role="img"><title>{escape(title)}</title>{gradients()}{body}</svg>\n'
 
 
 def write(rel,body):
@@ -184,8 +241,41 @@ def preview():
         s+=text(x+135,1836,label,16,weight=600)+text(x+135,1870,desc,14,'#A08779')
     s+=path('M70 1940 L1730 1940','none','#E5D6CC',1)
     s+=text(70,1983,'WARM WHITE  #FFF9F5    ·    PINK  #F4A6AE    ·    COFFEE  #9A6652',15)
-    s+=text(1730,1983,'SVG ASSETS  /  v0.1  /  NOT AN INSTALLER',14,extra='text-anchor="end"')
+    s+=text(1730,1983,'SVG ASSETS  /  v0.2  /  NOT AN INSTALLER',14,extra='text-anchor="end"')
     write('preview/Cat Paw Cursor Theme Preview.svg',svg(s,W,H,f'0 0 {W} {H}','Cat Paw Cursor Theme Preview — Pink and Coffee'))
+
+
+def detail_preview():
+    W,H=1500,1060
+    s=rect(0,0,W,H,'#FCF5EF')
+    s+=group(print_mark('#F4B1B3'),'translate(58 43) scale(.65) rotate(-15 32 32)')
+    s+=text(121,91,'猫爪光标',51,'#946F5E',700)
+    s+=text(124,132,'把温柔的猫爪，带进你的每一次点击',20,'#A17D6A')
+    s+=text(1430,81,'CAT PAW / 02',18,'#A17D6A',extra='text-anchor="end"')
+    s+=text(1430,115,'造型修订 · 视觉待审核',17,'#A17D6A',extra='text-anchor="end"')
+    for index,color in enumerate(THEME['colorways']):
+        x=50+index*710
+        s+=rect(x,173,690,525,'#FFF9F4',28,'#E8D3C5')
+        s+=rect(x+22,195,235,48,'#A77E68',16)
+        s+=text(x+44,229,'粉色猫爪' if color=='pink' else '咖啡猫爪',24,'#FFF9F5',600)
+        s+=group(arrow(color,128),f'translate({x+65} 286) scale(3.15)')
+        s+=group(paw(color,128),f'translate({x+345} 359) scale(3.7)')
+        s+=text(x+57,608,'暖白箭头 · 小爪印 · 蝴蝶结铃铛',18,'#9B7764')
+        s+=text(x+57,648,'指针与猫爪保持分离；装饰不改变尖端热点',17,'#B1917F')
+    s+=rect(50,722,1400,248,'#FFF9F4',28,'#E8D3C5')
+    s+=text(79,770,'细节与实际尺寸',24,'#946F5E',600)
+    s+=group(paw('pink',128),'translate(83 805) scale(1.7)')
+    s+=text(220,834,'四个小肉垫 + 一个大肉垫',18,'#946F5E')
+    s+=text(220,867,'浅色毛尖 / 柔和阴影 / 轻微高光',17,'#A98977')
+    s+=text(220,907,'24 / 32px 单独简化，48px 起保留层次',16,'#A98977')
+    for j,size in enumerate([24,32,48,64]):
+        x=664+j*184
+        s+=group(arrow('pink',size),f'translate({x} 812) scale({size/64})')
+        s+=group(paw('pink',size),f'translate({x+size+14} 825) scale({size/64})')
+        s+=text(x,925,str(size)+' px',16,'#A98977')
+    s+=text(53,1021,'可编辑 SVG 原生绘制  /  第一阶段：视觉资产',16,'#B1917F')
+    s+=text(1448,1021,'尚未进入 Linux / Windows / Companion 开发',16,'#B1917F',extra='text-anchor="end"')
+    write('preview/Cat Paw Detail Review.svg',svg(s,W,H,f'0 0 {W} {H}','Cat Paw revised shape and material review'))
 
 
 def audit():
@@ -222,6 +312,7 @@ def main():
     write('assets/manifest.json',json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     preview()
     audit()
+    detail_preview()
     print(f"Built {len(manifest['cursors'])} cursor SVGs, 28 compositions, 6 sizes, {len(THEME['colorways'])} palettes.")
 
 if __name__=='__main__': main()
