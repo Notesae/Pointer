@@ -4,7 +4,7 @@
 
 ![五色预览](preview/colorways.png)
 
-## 下载与安装
+## Windows 下载与安装
 
 [下载 4.0 五色完整安装包](dist/IceGem-4.0-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
 
@@ -17,6 +17,12 @@
 | 琥珀 | Install-Amber.cmd |
 
 默认动态 multi 方案，无需管理员权限。每色注册独立静态/动态方案，已安装的颜色可在 Windows 鼠标属性 → 指针中切换。安装包内的 IceGem-Colors-Preview.html 支持五色动画预览与悬停测试。
+
+## Linux / Zorin OS
+
+[下载 Linux 4.0 完整安装包](dist/IceGem-4.0-Linux.tar.gz?raw=true) · [安装、换色、恢复与卸载说明](linux/)
+
+五色动态/静态共十套原生 Xcursor 主题，支持 24/32/48/64/96px。解压后进入 `IceGem-Linux`，运行 `bash Install.sh`，默认应用冰蓝动态版、32px，无需 sudo。Linux 构建器与安装脚本位于 `linux/`，复用 `variants/` 中的配色渲染源码。Zorin 桌面显示、动画及多屏/DPI 尚待实机验收。
 
 ## 规格与目录
 

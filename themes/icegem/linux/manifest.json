@@ -1,0 +1,133 @@
+{
+  "version": "4.0-linux.1",
+  "sizes": [
+    24,
+    32,
+    48,
+    64,
+    96
+  ],
+  "themes": [
+    "IceGem-IceBlue-Animated",
+    "IceGem-IceBlue-Static",
+    "IceGem-Violet-Animated",
+    "IceGem-Violet-Static",
+    "IceGem-RosePink-Animated",
+    "IceGem-RosePink-Static",
+    "IceGem-Mint-Animated",
+    "IceGem-Mint-Static",
+    "IceGem-Amber-Animated",
+    "IceGem-Amber-Static"
+  ],
+  "aliases": {
+    "normal": [
+      "left_ptr",
+      "default",
+      "arrow",
+      "top_left_arrow"
+    ],
+    "working": [
+      "left_ptr_watch",
+      "progress",
+      "08e8e1c95fe2fc01f976f1e063a24ccd"
+    ],
+    "busy": [
+      "watch",
+      "wait"
+    ],
+    "help": [
+      "question_arrow",
+      "help",
+      "left_ptr_help",
+      "whats_this"
+    ],
+    "link": [
+      "hand2",
+      "pointer",
+      "hand1",
+      "hand",
+      "e29285e634086352946a0e7090d73106"
+    ],
+    "unavailable": [
+      "crossed_circle",
+      "not-allowed",
+      "forbidden",
+      "no-drop"
+    ],
+    "text": [
+      "xterm",
+      "text",
+      "ibeam"
+    ],
+    "vertical-text": [
+      "vertical-text"
+    ],
+    "precision": [
+      "crosshair",
+      "cross",
+      "tcross",
+      "plus"
+    ],
+    "resize-nwse": [
+      "size_fdiag",
+      "nwse-resize",
+      "nw-resize",
+      "se-resize",
+      "top_left_corner",
+      "bottom_right_corner",
+      "bd_double_arrow"
+    ],
+    "resize-nesw": [
+      "size_bdiag",
+      "nesw-resize",
+      "ne-resize",
+      "sw-resize",
+      "top_right_corner",
+      "bottom_left_corner",
+      "fd_double_arrow"
+    ],
+    "resize-ew": [
+      "sb_h_double_arrow",
+      "ew-resize",
+      "e-resize",
+      "w-resize",
+      "col-resize",
+      "h_double_arrow",
+      "size_hor",
+      "split_h",
+      "left_side",
+      "right_side"
+    ],
+    "resize-ns": [
+      "sb_v_double_arrow",
+      "ns-resize",
+      "n-resize",
+      "s-resize",
+      "row-resize",
+      "v_double_arrow",
+      "size_ver",
+      "split_v",
+      "top_side",
+      "bottom_side"
+    ],
+    "move": [
+      "fleur",
+      "move",
+      "all-scroll",
+      "size_all"
+    ],
+    "alternate": [
+      "up_arrow",
+      "center_ptr"
+    ],
+    "handwriting": [
+      "pencil"
+    ],
+    "location": [
+      "icegem-location"
+    ],
+    "person": [
+      "icegem-person"
+    ]
+  }
+}
