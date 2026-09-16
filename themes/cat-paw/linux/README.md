@@ -1,47 +1,21 @@
-# Cat Paw Linux / Zorin · 0.4.0
+# Linux 安装 · 0.5.0
 
-Phase 2 的原生 Xcursor 交付：**Pink / Coffee 两个配色，各有 Animated / Static 版本**，共四套独立主题。尺寸为 24 / 32 / 48 / 64 / 96 / 128px。
+解压安装包，在解压目录运行 `bash Install.sh --color pink --size 32`。
+默认同时安装主题、启动猫爪跟随和点击动画，并设置登录自启动。
+咖啡色使用 `--color coffee`；只装主题使用 `--theme-only`。
 
-[下载 Linux 安装包](../dist/CatPaw-0.4.0-Linux.tar.gz?raw=true) · [SHA-256](../dist/CatPaw-0.4.0-Linux.tar.gz.sha256) · [实际 Linux 角色预览](../preview/Cat%20Paw%20Linux%20Roles.png)
+`bash Install.sh --action stop` 停止；`--action start` 启动；`--action status` 查看；`--action restore` 停止并恢复原光标；`--action uninstall` 卸载并归档。
 
-## 安装
+**Companion 当前仅支持 Linux X11 合成桌面。** Wayland 可使用系统主题，全局猫爪跟随尚未支持。
+安装器无需 sudo。依赖缺失时提示安装 GTK/Python 系统组件。
 
-解压安装包，进入 `CatPaw-Linux` 文件夹，在该文件夹打开终端：
+完整参数、支持边界和日志位置见 [Companion 使用说明](companion/README.md)（源码中位于 ../companion/README.md）。
 
-```bash
-bash Install.sh
-```
-
-默认安装粉色的动态／静态两套，应用粉色动态版、32px。请使用当前桌面用户，**不要 sudo**。预构建包只需要 Python 3（Zorin 18.1 自带）和 GNOME 的 gsettings；不需要 Node.js、绘图库或编译器。
-
-```bash
-# 咖啡色，48px
-bash Install.sh --color coffee --size 48
-
-# 两个配色都安装，应用粉色动态版
-bash Install.sh --all --color pink
-
-# 使用静态版，关闭系统忙碌动画
-bash Install.sh --color coffee --mode static
-
-# 仅复制文件，不更改桌面配置
-bash Install.sh --all --no-apply
-
-# 恢复首次安装前的主题和尺寸，保留 Cat Paw 文件
-bash Install.sh --action restore
-
-# 卸载：归档 Cat Paw 文件；若仍在使用 Cat Paw 则恢复原主题
-bash Install.sh --action uninstall
-
-# 对于仅复制文件的安装，也可以只归档文件，不读写桌面配置
-bash Install.sh --action uninstall --no-apply
-```
-
-`--no-apply` 卸载不会改变当前设置；如果你曾手动选中了 Cat Paw，应先切换到其他主题。正常卸载发现你已改用 IceGem 等其他主题时，会保留你的当前选择。
+源码构建：运行 build.py（Node + sharp + Pillow），validate.py，test_install.py，package.py，test_package.py。
 
 ## 安装位置与恢复
 
-- 主题：`~/.local/share/icons/CatPaw-<Pink|Coffee>-<Animated|Static>/`
+- 主题：`~/.local/share/icons/CatPaw-<Pink|Coffee>-<Animated|Static|Companion|Companion-Static>/`
 - 兼容搜索入口：`~/.icons/` 下同名链接。
 - 原主题备份及可恢复归档：`~/.local/state/CatPaw-Linux/`。
 - 支持主目录内部的 `XDG_DATA_HOME`、`XDG_STATE_HOME`。
@@ -80,9 +54,9 @@ gsettings set org.gnome.desktop.interface cursor-size 32
 | 抓取／拖动 | grab / grabbing | 箭头与不同姿态的猫爪 |
 | 禁用 | not-allowed / no-drop | 传统禁止符号 |
 
-Animated 的 wait / progress 各为 24 帧，周期准确为 1000ms；Static 使用第一帧。普通移动和链接状态不持续播放动画。动画由系统光标机制显示，没有常驻后台进程。
+Animated 的 wait / progress 各为 24 帧，周期准确为 1000ms；Static 使用第一帧。普通移动和链接状态不持续播放动画。这些 Busy 动画由系统光标机制显示；独立猫爪由 Companion 后台程序显示。
 
-Link / Grab 中的小猫爪是原生光标内的固定静态构图，箭头尖端热点保持一致。它不提供独立跟随延迟。**Click 没有系统光标项，也没有把 `.ani`/Xcursor 动画当成点击监听。** 真正的猫爪滞后跟随、按下拍击、松开回弹仍由未来 Companion 实现。
+Link / Grab 中的小猫爪是原生光标内的固定静态构图，箭头尖端热点保持一致。它不提供独立跟随延迟。**Click 没有系统光标项，也没有把 `.ani`/Xcursor 动画当成点击监听。** 真正的猫爪滞后跟随、按下拍击、松开回弹仍由安装包内的 X11 Companion 实现。
 
 未单独绘制的复制、快捷方式拖放、手写等特殊名称继承 Adwaita。应用使用自己提供的图片光标时，不一定采用桌面主题。
 

@@ -3,10 +3,11 @@
   "checks": [
     "SHA-256",
     "safe archive extraction",
-    "four real themes installed into temporary home",
+    "eight real themes installed into temporary home",
     "all native files and aliases preserved",
+    "packaged Companion install/configure/autostart/uninstall",
     "no gsettings access",
-    "all four themes archived on uninstall"
+    "all eight themes archived on uninstall"
   ],
   "desktopModified": false
 }

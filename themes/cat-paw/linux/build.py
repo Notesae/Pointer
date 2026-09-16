@@ -88,7 +88,7 @@ def encode(images):
 
 def build(node,output):
     art=load_art();output.mkdir(parents=True,exist_ok=True)
-    manifest={'version':'0.4.0-linux.1','sizes':SIZES,'themes':[],'aliases':ALIASES,
+    manifest={'version':'0.5.0-linux.1','sizes':SIZES,'themes':[],'aliases':ALIASES,
               'animation':{'roles':sorted(ANIMATED),'frames':FRAMES,'periodMs':PERIOD},
               'click':'Companion-only; no native role', 'source':'committed Cat Paw SVG masters'}
     with tempfile.TemporaryDirectory(prefix='catpaw-render-') as directory:
@@ -120,7 +120,7 @@ def build(node,output):
                 rendered[state]=[(size,hotspot(state,size),round((f+1)*PERIOD/count)-round(f*PERIOD/count) if count>1 else 0,
                                  Image.open(tmp/f'{color}-{state}-{size}-{f}.png').convert('RGBA'))
                                 for size in SIZES for f in range(count)]
-            for mode in ('Animated','Static'):
+            for mode in ('Animated','Static','Companion','Companion-Static'):
                 name=f'CatPaw-{color.title()}-{mode}';theme=output/name;cursor_dir=theme/'cursors'
                 if theme.exists() and not (theme/'.catpaw-linux').is_file():
                     raise RuntimeError(f'Refusing to overwrite unowned output {theme}')
@@ -131,8 +131,8 @@ def build(node,output):
                 stale={p.name for p in cursor_dir.iterdir()}-expected
                 if stale: raise RuntimeError(f'Unexpected files in output: {stale}')
                 for state,aliases in ALIASES.items():
-                    frames=rendered[state]
-                    if mode=='Static' and state in ANIMATED:
+                    frames=rendered['normal'] if 'Companion' in mode and state in ('link','grab','grabbing') else rendered[state]
+                    if mode.endswith('Static') and state in ANIMATED:
                         frames=[(n,h,0,im) for n,h,_,im in frames[::FRAMES]]
                     canonical=cursor_dir/aliases[0]
                     if canonical.is_symlink(): raise RuntimeError(f'Unexpected canonical symlink {canonical}')

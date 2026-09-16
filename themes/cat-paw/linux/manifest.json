@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0-linux.1",
+  "version": "0.5.0-linux.1",
   "sizes": [
     24,
     32,
@@ -11,8 +11,12 @@
   "themes": [
     "CatPaw-Pink-Animated",
     "CatPaw-Pink-Static",
+    "CatPaw-Pink-Companion",
+    "CatPaw-Pink-Companion-Static",
     "CatPaw-Coffee-Animated",
-    "CatPaw-Coffee-Static"
+    "CatPaw-Coffee-Static",
+    "CatPaw-Coffee-Companion",
+    "CatPaw-Coffee-Companion-Static"
   ],
   "aliases": {
     "normal": [

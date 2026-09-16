@@ -9,7 +9,7 @@ Windows / Linux 自定义光标主题集合。**每套光标独立目录，主�
 | Cat Paw | 暖白猫咪、独立猫爪、柔和肉垫 | 粉色 / 咖啡色 | [视觉预览与 Linux 安装](themes/cat-paw/) |
 | IceGem | 修长切面、冰透宝石、轻盈微光 | 冰蓝 / 紫罗兰 / 玫瑰粉 / 薄荷绿 / 琥珀 | [预览与安装](themes/icegem/) |
 
-[下载 Cat Paw 0.4.0 Linux 两色安装包](themes/cat-paw/dist/CatPaw-0.4.0-Linux.tar.gz?raw=true) · [Zorin 安装说明](themes/cat-paw/linux/)
+[下载 Cat Paw 0.5.0 Linux 两色安装包](themes/cat-paw/dist/CatPaw-0.5.0-Linux.tar.gz?raw=true) · [Zorin 安装说明](themes/cat-paw/linux/)
 
 ![IceGem 五色预览](themes/icegem/preview/colorways.png)
 

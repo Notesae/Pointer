@@ -81,7 +81,7 @@ class InstallerTest(unittest.TestCase):
         self.args.no_apply = True
         install.perform(self.args, self.home)
         self.assertEqual(self.values['cursor-theme'], "'Original'")
-        self.assertEqual(len(list((self.home / '.local/share/icons').glob('CatPaw-*'))), 4)
+        self.assertEqual(len(list((self.home / '.local/share/icons').glob('CatPaw-*'))), 8)
         self.assertFalse((self.home / '.local/state/CatPaw-Linux/before-catpaw.json').exists())
 
 

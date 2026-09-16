@@ -34,7 +34,7 @@ def validate(folder):
         counts['themes'] += 1
         for state, aliases in ALIASES.items():
             path = theme / 'cursors' / aliases[0]
-            frames = FRAMES if theme.name.endswith('Animated') and state in ANIMATED else 1
+            frames = FRAMES if not theme.name.endswith('Static') and state in ANIMATED else 1
             b = path.read_bytes()
             magic, header, version, ntoc = struct.unpack_from('<4I', b)
             assert (magic, header, version, ntoc) == (0x72756358, 16, 0x10000, frames * len(SIZES))
@@ -83,7 +83,7 @@ def validate(folder):
                 lib.XcursorImagesDestroy(loaded)
                 counts['native_alias_loads'] += 1
             counts['canonical_files'] += 1
-    assert counts['themes'] == 4
+    assert counts['themes'] == 8
     result = {'result': 'PASS', 'checks': ['Xcursor structure', 'premultiplied alpha', 'hotspots', 'frame delays', 'libXcursor loading', 'theme alias resolution'], 'counts': counts, 'zorin_desktop': 'NOT RUN: desktop/session/HiDPI must be tested on Zorin'}
     (folder.parent / 'validation.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))

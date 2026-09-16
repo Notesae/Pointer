@@ -11,7 +11,7 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 COLORS = ('Pink', 'Coffee')
-NAMES = tuple(f'CatPaw-{c}-{m}' for c in COLORS for m in ('Animated', 'Static'))
+NAMES = tuple(f'CatPaw-{c}-{m}' for c in COLORS for m in ('Animated', 'Static', 'Companion', 'Companion-Static'))
 OWNER = 'CatPaw-Linux-v1'
 SCHEMA = 'org.gnome.desktop.interface'
 
@@ -142,7 +142,7 @@ def perform(args, home):
             return
 
         chosen = COLORS if args.all else (args.color,)
-        names = [f'CatPaw-{c}-{m}' for c in chosen for m in ('Animated', 'Static')]
+        names = [f'CatPaw-{c}-{m}' for c in chosen for m in ('Animated', 'Static', 'Companion', 'Companion-Static')]
         selected = f'CatPaw-{args.color}-{args.mode.title()}'
         # Check every source and destination before altering installed themes.
         for name in names:
@@ -215,14 +215,39 @@ def main():
     parser.add_argument('--size', type=int, choices=(24, 32, 48, 64, 96, 128), default=32)
     parser.add_argument('--all', action='store_true', help='安装全部两色，应用 --color 选中的颜色')
     parser.add_argument('--no-apply', action='store_true', help='仅安装文件，不修改桌面配置')
-    parser.add_argument('--action', choices=('install', 'restore', 'uninstall'), default='install')
+    parser.add_argument('--action', choices=('install', 'restore', 'uninstall', 'start', 'stop', 'status'), default='install')
+    parser.add_argument('--theme-only', action='store_true', help='只安装系统光标，不安装猫爪跟随')
+    parser.add_argument('--no-autostart', action='store_true')
     args = parser.parse_args()
     if os.geteuid() == 0:
         parser.exit(1, '请用当前桌面用户运行，不要 sudo。\n')
     if args.no_apply and args.action == 'restore':
         parser.error('--no-apply 不能与 restore 同用')
     try:
+        import sys
+        companion = HERE / 'companion' if (HERE / 'companion').is_dir() else HERE.parent / 'companion'
+        sys.path.insert(0, str(companion))
+        from manage import Manager
+        manager = Manager()
+        if args.action in ('start', 'stop', 'status'):
+            if args.action == 'status': print('运行中' if manager.pid() else '未运行')
+            else: getattr(manager, args.action)()
+            return
+        if args.no_apply and manager.pid():
+            raise RuntimeError('Companion 正在运行，请先 --action stop；仅复制模式不会停止它或修改桌面。')
+        if args.action in ('restore', 'uninstall'):
+            manager.stop()
+            manager.autostart(False)
+        elif not args.no_apply:
+            manager.stop()
         perform(args, Path.home())
+        if args.action == 'uninstall': manager.uninstall()
+        elif args.action == 'install' and not args.theme_only:
+            manager.install({'pawColor': args.color.lower(), 'cursorSize': args.size})
+            if not args.no_apply:
+                manager.autostart(not args.no_autostart)
+                manager.start()
+            print('猫爪参数文件：' + str(manager.config))
     except (Exception, KeyboardInterrupt) as error:
         parser.exit(1, f'操作未完成：{error}\n')
 
