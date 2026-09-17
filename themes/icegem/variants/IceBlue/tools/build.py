@@ -2,15 +2,32 @@ from pathlib import Path
 import math, struct, json, io, base64
 from PIL import Image, ImageDraw, ImageFont
 import cairosvg
+from functools import lru_cache
 
 ROOT=Path(__file__).resolve().parents[1]
 SIZES=(32,48,64)
-FRAMES=24
+# 每个角色分别定义 ANI 的 1/60 秒帧时长；静止停留帧避免反复扫光。
+ANIMATIONS={
+    'normal': (2,)*24+(144,),
+    'working': (2,)*48,
+    'busy': (2,)*36,
+    'link': (2,)*24+(72,),
+    'help': (4,)*36,
+    'location': (4,)*36,
+    'person': (4,)*36,
+    **{name:(3,)*36 for name in ('move','resize-ew','resize-ns','resize-nwse','resize-nesw')},
+}
 THEME_SHIFT=0
 THEME_NAME='冰蓝'
 NAMES=[('normal','正常选择','Arrow'),('working','后台忙碌','AppStarting'),('busy','忙碌 / 等待','Wait'),('help','帮助选择','Help'),('link','链接选择','Hand'),('unavailable','不可用','No'),('text','文本选择','IBeam'),('vertical-text','竖排文本选择',''),('precision','精准选择','Crosshair'),('resize-nwse','对角调整 ↖↘','SizeNWSE'),('resize-nesw','对角调整 ↗↙','SizeNESW'),('resize-ew','水平调整','SizeWE'),('resize-ns','垂直调整','SizeNS'),('move','移动','SizeAll'),('alternate','替代选择','UpArrow'),('handwriting','手写','NWPen'),('location','位置选择','Pin'),('person','人员选择','Person')]
 OUTLINE='#334f7b'; BLUE='#9bdcff'; LIGHT='#edfaff'; MID='#70bce7'; LILAC='#d3d1fa'
 def geometry(name,frame=0):
+    """生成固定热点的角色几何，只让切面高光及独立轨道随帧变化。"""
+    # 帧数跟随角色，所有几何运动均周期化；第零帧也是静态方案的基准。
+    rates=ANIMATIONS.get(name,(1,))
+    phase=(frame%len(rates))/len(rates)
+    shimmer=(frame%len(rates))/24 if name in ('normal','link') else phase
+    level=math.sin(math.pi*shimmer)**2
     ops=[]
     def poly(p,c,stroke=OUTLINE,w=.7):ops.append(('poly',p,c,stroke,w))
     def line(p,c=OUTLINE,w=.85):ops.append(('line',p,None,c,w))
@@ -56,10 +73,8 @@ def geometry(name,frame=0):
             line([ia,q,ic],'#efffff',.28)
             line([id,q,ib],'#e3fbff',.24)
         if animated:
-            phase=frame/FRAMES
-            level=math.sin(math.pi*phase)**2
             # A clipped, soft highlight follows the long crystal axis.
-            ops.append(('sweep',p,(a,c,phase,level),None,0))
+            ops.append(('sweep',p,(a,c,shimmer,level),None,0))
             poly([a,b,q],'#ffffff'+f'{round(55*level):02x}',None)
             line([q,b],'#ffffff'+f'{round(100+150*level):02x}',.48)
         line(p+[p[0]],'#233e79',.72 if large else .65)
@@ -70,8 +85,8 @@ def geometry(name,frame=0):
         line([inset[1],inset[2]],'#c8c8ff',.33 if large else .23)
     def orbit(cx,cy,radius,double=False):
         """用匀速旋转的渐亮弧和晶体端点指示忙碌，保持中心与热点不动。"""
-        # 24 帧均匀覆盖一周；双弧用于区分等待与仍可点击的后台运行。
-        angle=2*math.pi*(frame%FRAMES)/FRAMES-math.pi/2
+        # 按该角色的完整帧数匀速转一周，保持最后一帧到第一帧的角速度。
+        angle=2*math.pi*phase-math.pi/2
         ops.append(('ellipse',(cx,cy,radius,radius),None,'#528cdd70',.55))
         for offset in ((0,math.pi) if double else (0,)):
             # 相接的短弧形成由暗到亮的尾迹，避免整圈闪烁。
@@ -93,10 +108,10 @@ def geometry(name,frame=0):
         # Radial-gradient shadows keep every export deterministic; no unsupported SVG blur.
         ops.append(('ellipse',(13.5,28.3,6.7,2.2),'url(#shadow)',None,0))
         ops.append(('ellipse',(14.5,22,7,8),'url(#halo)',None,0))
-        gem(p,large=True,animated=name in ('normal','working'),purple=name=='alternate')
+        gem(p,large=True,animated=name in ('normal','working') or (name in ANIMATIONS and level>1e-8),purple=name=='alternate')
     def arm(angle,inner=1.25,outer=10,width=2.6):
         def tr(x,y):return (16+x*math.cos(angle)-y*math.sin(angle),16+x*math.sin(angle)+y*math.cos(angle))
-        gem([tr(outer,0),tr(inner+2.7,width),tr(inner,0),tr(inner+2.7,-width)])
+        gem([tr(outer,0),tr(inner+2.7,width),tr(inner,0),tr(inner+2.7,-width)],animated=name in ANIMATIONS and level>1e-8)
     if name in ['normal','working','help','unavailable','alternate','location','person']:
         main()
         if name=='working':
@@ -118,7 +133,9 @@ def geometry(name,frame=0):
         for ray in [[(1.5,1.5),(3.2,2.2)],[(11,2),(16.5,2)],[(1.6,11),(3.3,6.6)]]:
             line(ray,'#ffffff',2.8)
             line(ray,'#244780',1.85)
+            # 保留原始射线轮廓；仅提高内部高光，保证静态帧和点击定位不变。
             line(ray,'#91e3ff',.72)
+            if level>1e-8:line(ray,'#ffffff'+f'{round(210*level):02x}',.5)
     elif name=='busy':
         ops.append(('ellipse',(16,28.5,6.4,1.8),'url(#shadow)',None,0))
         ops.append(('ellipse',(16,20,8,10),'url(#halo)',None,0))
@@ -140,7 +157,12 @@ def geometry(name,frame=0):
 def rgba(c):
     c=c.lstrip('#');return tuple(int(c[i:i+2],16) for i in (0,2,4))+(int(c[6:8],16) if len(c)==8 else 255,)
 def render(ops,size):
-    return Image.open(io.BytesIO(cairosvg.svg2png(bytestring=svg(ops).encode(),output_width=size*4,output_height=size*4))).convert('RGBA').resize((size,size),Image.Resampling.LANCZOS)
+    return raster(svg(ops),size)
+
+@lru_cache(maxsize=512)
+def raster(document,size):
+    """缓存相同 SVG 的超采样结果，供单尺寸及多尺寸光标共用；调用者不得修改图像。"""
+    return Image.open(io.BytesIO(cairosvg.svg2png(bytestring=document.encode(),output_width=size*4,output_height=size*4))).convert('RGBA').resize((size,size),Image.Resampling.LANCZOS)
 def svg(ops):
     defs = """<defs>
     <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9f8ff"/><stop offset=".55" stop-color="#a1d8fa"/><stop offset="1" stop-color="#d8dcff"/></linearGradient>
@@ -218,10 +240,14 @@ def cur(name,frame=0,sizes=SIZES):
     return struct.pack('<HHH',0,2,len(sizes))+b''.join(entries+data)
 def chunk(tag,data):return tag+struct.pack('<I',len(data))+data+(b'\0' if len(data)%2 else b'')
 def ani(name,sizes=SIZES):
-    rate=4 if name!='normal' else 5
-    body=b'ACON'+chunk(b'anih',struct.pack('<9I',36,FRAMES,FRAMES,0,0,32,1,rate,1))+chunk(b'rate',struct.pack(f'<{FRAMES}I',*([rate]*FRAMES)))+chunk(b'LIST',b'fram'+b''.join(chunk(b'icon',cur(name,i,sizes)) for i in range(FRAMES)))
+    """按角色的实际帧数及变长停留时间编码 ANI，原生文件与预览共享时间表。"""
+    rates=ANIMATIONS[name]
+    count=len(rates)
+    body=b'ACON'+chunk(b'anih',struct.pack('<9I',36,count,count,0,0,32,1,rates[0],1))+chunk(b'rate',struct.pack(f'<{count}I',*rates))+chunk(b'LIST',b'fram'+b''.join(chunk(b'icon',cur(name,i,sizes)) for i in range(count)))
     return b'RIFF'+struct.pack('<I',len(body))+body
+
 def build():
+    """导出静态资源、逐角色时序 ANI 与使用同一时间表的浏览器预览。"""
     for d in ['src/svg','src/animation','cursors/multi','preview','docs']+[f'cursors/{s}' for s in SIZES]: (ROOT/d).mkdir(parents=True,exist_ok=True)
     manifest=[]
     for name,cn,slot in NAMES:
@@ -231,10 +257,10 @@ def build():
             (ROOT/f'cursors/{n}/icegem-{name}.cur').write_bytes(cur(name,sizes=(n,)))
             render(geometry(name),n).save(ROOT/f'preview/icegem-{name}-{n}.png')
         manifest.append(dict(name=name,label=cn,slot=slot or None,hotspots={str(n):hotspot(name,n) for n in SIZES}))
-    for name in ('normal','working','busy'):
+    for name in ANIMATIONS:
         (ROOT/f'cursors/multi/icegem-{name}.ani').write_bytes(ani(name))
         for n in SIZES:(ROOT/f'cursors/{n}/icegem-{name}.ani').write_bytes(ani(name,(n,)))
-        for i in range(FRAMES):(ROOT/f'src/animation/{name}-{i:02}.svg').write_text(svg(geometry(name,i)))
+        for i in range(len(ANIMATIONS[name])):(ROOT/f'src/animation/{name}-{i:02}.svg').write_text(svg(geometry(name,i)))
     (ROOT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
     sheet=Image.new('RGB',(1200,700),'#f5f8fc');d=ImageDraw.Draw(sheet)
     # Linux 优先使用原预览字体；Windows 等环境缺失时使用 Pillow 内置字体。
@@ -242,7 +268,7 @@ def build():
         font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
     except OSError:
         font=ImageFont.load_default(size=17)
-    d.text((32,22),'ICEGEM 4.1 / ICEBLUE',fill='#334f7b',font=font)
+    d.text((32,22),'ICEGEM 4.2 / ICEBLUE',fill='#334f7b',font=font)
     for i,(name,_,_) in enumerate(NAMES):
         x=30+(i%6)*195;y=80+(i//6)*200
         d.rounded_rectangle((x,y,x+180,y+185),12,fill='white')
@@ -251,10 +277,21 @@ def build():
         for j,bg in enumerate(['#ffffff','#152238','#b9c5ce']):
             tile=Image.new('RGBA',(40,40),bg);tile.alpha_composite(render(geometry(name),32),(4,4));sheet.paste(tile.convert('RGB'),(x+10+j*54,y+139))
     sheet.save(ROOT/'preview/IceGem-Overview.png')
+    # 通过逐帧关键帧时间点表达不同帧率和停留时间，静态模式只显示第一帧。
     cards=[]
+    styles=[]
     for name,cn,slot in NAMES:
-        frames=''.join(f'<span style="animation-delay:-{(FRAMES-i)*(5/60 if name=="normal" else 4/60):.6f}s">{svg_image(geometry(name,i))}</span>' for i in range(FRAMES)) if name in ('normal','working','busy') else svg_image(geometry(name))
-        cards.append(f'<article><div class="large {"anim" if name in ("normal","working","busy") else ""}" style="--duration:{2 if name=="normal" else 1.6}s">{frames}</div><h3>{cn}</h3><small>{name} · {slot or "应用专用"}</small><div class="samples">'+''.join(f'<div style="background:{b}">{svg_image(geometry(name))}</div>' for b in ['white','#172638','#afb9c8'])+'</div></article>')
-    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>IceGem 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}h1{font-weight:450}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500;margin:8px 0}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px;margin-top:18px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center;border:1px solid #dce2eb}.anim span{position:absolute;opacity:0;animation:frame var(--duration) steps(1) infinite}@keyframes frame{0%{opacity:1}4.1666667%{opacity:0}100%{opacity:0}}@media(prefers-reduced-motion:reduce){.anim span{animation:none}.anim span:first-child{opacity:1}}</style><h1>IceGem · 冰蓝光标</h1><p>18 种状态 / 冰蓝切面 / 紧凑中心连接</p><p>上方放大展示，下方为 32px 实际尺寸。正常、后台忙碌、等待展示 24 帧流光动画。浏览器预览不代表 Windows 系统加载验证。</p><main>'+''.join(cards)+'</main></html>'
+        rates=ANIMATIONS.get(name,(1,))
+        elapsed=0
+        frames=[]
+        for i,rate in enumerate(rates):
+            start=elapsed/sum(rates)*100
+            end=(elapsed+rate)/sum(rates)*100
+            key=f'{name}-{i}'
+            styles.append(f'@keyframes {key}{{0%,100%{{opacity:0}}{start:.8f}%{{opacity:1}}{end:.8f}%{{opacity:0}}}}')
+            frames.append(f'<span style="animation:{key} {sum(rates)/60}s steps(1) infinite">{svg_image(geometry(name,i))}</span>')
+            elapsed+=rate
+        cards.append(f'<article><div class="large anim">'+''.join(frames)+f'</div><h3>{cn}</h3><small>{name} · {slot or "应用专用"}</small><div class="samples">'+''.join(f'<div style="background:{bg}">{svg_image(geometry(name))}</div>' for bg in ['white','#172638','#afb9c8'])+'</div></article>')
+    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 12 种原生动效 / 文本与精确状态保持静止</p><p>后台运行与忙碌均为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
     (ROOT/'preview/IceGem-Preview.html').write_text(html)
 if __name__=='__main__':build()

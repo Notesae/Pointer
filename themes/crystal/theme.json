@@ -1,0 +1,13 @@
+{
+  "id": "crystal",
+  "name": "Crystal 切面晶石",
+  "version": "0.1.0-dev",
+  "status": "prototype",
+  "animation": "native body only",
+  "preview_sizes": [
+    32,
+    48,
+    64
+  ],
+  "installable": false
+}

@@ -1,5 +1,6 @@
 from pathlib import Path
 import struct,json
+from build import ANIMATIONS
 ROOT=Path(__file__).resolve().parents[1]
 counts={'cur_files':0,'ani_files':0,'images':0,'ani_frames':0}
 def check_cur(b):
@@ -24,9 +25,12 @@ def chunks(b,start,end):
 for path in sorted((ROOT/'cursors').rglob('*.cur')):check_cur(path.read_bytes());counts['cur_files']+=1
 for path in sorted((ROOT/'cursors').rglob('*.ani')):
  b=path.read_bytes();assert b[:4]==b'RIFF' and b[8:12]==b'ACON' and struct.unpack_from('<I',b,4)[0]+8==len(b)
- cs=dict(chunks(b,12,len(b)));a=struct.unpack('<9I',cs[b'anih']);assert a[0:3]==(36,24,24) and a[8]==1
- rates=struct.unpack('<24I',cs[b'rate']);assert all(x>0 for x in rates)
- frames=list(chunks(cs[b'LIST'],4,len(cs[b'LIST'])));assert cs[b'LIST'][:4]==b'fram' and len(frames)==24
+ # 校验当前角色的实际帧数和精确时长，避免新动画被固定 24 帧规则误判。
+ expected=ANIMATIONS[path.stem.removeprefix('icegem-')]
+ count=len(expected)
+ cs=dict(chunks(b,12,len(b)));a=struct.unpack('<9I',cs[b'anih']);assert a[0:3]==(36,count,count) and a[8]==1
+ rates=struct.unpack(f'<{count}I',cs[b'rate']);assert rates==expected
+ frames=list(chunks(cs[b'LIST'],4,len(cs[b'LIST'])));assert cs[b'LIST'][:4]==b'fram' and len(frames)==count
  assert len(set(data for tag,data in frames))>1
  for tag,data in frames:assert tag==b'icon';check_cur(data);counts['ani_frames']+=1
  counts['ani_files']+=1

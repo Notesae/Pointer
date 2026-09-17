@@ -1,5 +1,5 @@
 {
-  "version": "4.1-linux.1",
+  "version": "4.2-linux.1",
   "sizes": [
     24,
     32,
@@ -129,5 +129,79 @@
     "person": [
       "icegem-person"
     ]
+  },
+  "animation": {
+    "normal": {
+      "frames": 25,
+      "periodMs": 3200
+    },
+    "working": {
+      "frames": 48,
+      "periodMs": 1600
+    },
+    "busy": {
+      "frames": 36,
+      "periodMs": 1200
+    },
+    "help": {
+      "frames": 36,
+      "periodMs": 2400
+    },
+    "link": {
+      "frames": 25,
+      "periodMs": 2000
+    },
+    "unavailable": {
+      "frames": 1,
+      "periodMs": 0
+    },
+    "text": {
+      "frames": 1,
+      "periodMs": 0
+    },
+    "vertical-text": {
+      "frames": 1,
+      "periodMs": 0
+    },
+    "precision": {
+      "frames": 1,
+      "periodMs": 0
+    },
+    "resize-nwse": {
+      "frames": 36,
+      "periodMs": 1800
+    },
+    "resize-nesw": {
+      "frames": 36,
+      "periodMs": 1800
+    },
+    "resize-ew": {
+      "frames": 36,
+      "periodMs": 1800
+    },
+    "resize-ns": {
+      "frames": 36,
+      "periodMs": 1800
+    },
+    "move": {
+      "frames": 36,
+      "periodMs": 1800
+    },
+    "alternate": {
+      "frames": 1,
+      "periodMs": 0
+    },
+    "handwriting": {
+      "frames": 1,
+      "periodMs": 0
+    },
+    "location": {
+      "frames": 36,
+      "periodMs": 2400
+    },
+    "person": {
+      "frames": 36,
+      "periodMs": 2400
+    }
   }
 }

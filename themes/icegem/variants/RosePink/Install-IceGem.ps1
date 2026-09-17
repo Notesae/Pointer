@@ -31,7 +31,7 @@ if([string]::IsNullOrWhiteSpace($localData)){$localData=$env:LOCALAPPDATA}
 if([string]::IsNullOrWhiteSpace($localData)){throw 'Windows did not provide a LocalApplicationData directory.'}
 $root=Join-Path -Path $localData -ChildPath 'IceGem-Managed'
 $backupRoot=Join-Path -Path $localData -ChildPath 'IceGem-Backups'
-Write-Host "IceGem 4.1 RosePink installer | Source: $SourceRoot"
+Write-Host "IceGem 4.2 RosePink installer | Source: $SourceRoot"
 Write-Host "User data: $localData"
 $baseline=Join-Path $backupRoot 'Before-IceGem.clixml'
 $marker=Join-Path $root '.icegem-managed'
@@ -39,6 +39,8 @@ $owner='IceGem-Installer-v2'
 $cursorKey='Control Panel\Cursors'
 $schemeKey='Control Panel\Cursors\Schemes'
 $slots=@('Arrow','Help','AppStarting','Wait','Crosshair','IBeam','NWPen','No','SizeNS','SizeWE','SizeNWSE','SizeNESW','SizeAll','UpArrow','Hand','Pin','Person')
+# 动画角色与构建器保持一致，Static 仍使用全部 CUR 资源。
+$animatedStates=@('normal','working','busy','link','help','location','person','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
 $states=@('normal','help','working','busy','precision','text','handwriting','unavailable','resize-ns','resize-ew','resize-nwse','resize-nesw','move','alternate','link','location','person')
 $schemeNames=@(foreach($prefix in @('IceGem Managed','IceGem IceBlue','IceGem Violet','IceGem RosePink','IceGem Mint','IceGem Amber')){foreach($s in @('multi','32','48','64')){foreach($m in @('Static','Gentle')){"$prefix $m ($s)"}}})
 if(-not ('IceGemNativeV2' -as [type])){
@@ -140,7 +142,7 @@ try {
     } else {
         $source=Join-Path $SourceRoot "cursors\$Size"
         if(-not (Test-Path -LiteralPath $source -PathType Container)){throw "Cursor folder not found: $source. Use -SourceRoot to specify the extracted IceGem folder."}
-        $files=@(foreach($state in $states){"icegem-$state.cur"})+@('icegem-normal.ani','icegem-working.ani','icegem-busy.ani')
+        $files=@(foreach($state in $states){"icegem-$state.cur"})+@(foreach($state in $animatedStates){"icegem-$state.ani"})
         foreach($name in $files){
             $path=Join-Path $source $name
             if(-not (Test-Path -LiteralPath $path -PathType Leaf)){throw "Required file missing: $path"}
@@ -154,7 +156,7 @@ try {
         }
         $linkSource=Join-Path $source 'icegem-link.cur'
         if((Get-FileHash -LiteralPath $linkSource -Algorithm SHA256).Hash -ne $linkExpected[$Size]){
-            throw 'Link resource is not the 4.1 RosePink strong gem click. Extract the complete versioned package into a NEW folder.'
+            throw 'Link resource is not the 4.2 RosePink strong gem click. Extract the complete versioned package into a NEW folder.'
         }
         $before=Capture-Settings
         New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null
@@ -180,7 +182,7 @@ try {
         try {
             foreach($m in @('Static','Gentle')){
                 $paths=@(foreach($state in $states){
-                    $ext=if($m -eq 'Gentle' -and $state -in @('normal','working','busy')){'ani'}else{'cur'}
+                    $ext=if($m -eq 'Gentle' -and $state -in $animatedStates){'ani'}else{'cur'}
                     Join-Path $destination "icegem-$state.$ext"
                 })
                 $title="IceGem RosePink $m ($Size)"
@@ -197,10 +199,11 @@ try {
         Refresh-Cursors
         $verifyKey=[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($cursorKey)
         try {$activeLink=[Environment]::ExpandEnvironmentVariables([string]$verifyKey.GetValue('Hand'))} finally {$verifyKey.Dispose()}
-        $expectedLink=Join-Path $destination 'icegem-link.cur'
+        $linkExtension=if($Mode -eq 'Gentle'){'ani'}else{'cur'}
+        $expectedLink=Join-Path $destination "icegem-link.$linkExtension"
         if($activeLink -ne $expectedLink){throw "Link registry readback mismatch: $activeLink"}
-        if((Get-FileHash -LiteralPath $activeLink -Algorithm SHA256).Hash -ne $linkExpected[$Size]){throw 'Installed Link hash mismatch.'}
-        Write-Host '[VERIFIED] Link Select = 4.1 RosePink STRONG GEM CLICK (file + registry).' -ForegroundColor Cyan
+        if((Get-FileHash -LiteralPath $activeLink -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath (Join-Path $source "icegem-link.$linkExtension") -Algorithm SHA256).Hash){throw 'Installed Link hash mismatch.'}
+        Write-Host '[VERIFIED] Link Select = 4.2 RosePink STRONG GEM CLICK (file + registry).' -ForegroundColor Cyan
         Write-Host "Active Hand: $activeLink"
         $mutationStarted=$false
         Write-Host "Installed and applied: IceGem RosePink $Mode ($Size)" -ForegroundColor Green

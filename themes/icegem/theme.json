@@ -1,7 +1,7 @@
 {
   "id": "icegem",
   "name": "IceGem 冰晶宝石",
-  "version": "4.1",
+  "version": "4.2",
   "platform": "Windows",
   "variants": [
     "IceBlue",
@@ -16,6 +16,8 @@
     48,
     64
   ],
-  "animation_frames": 24,
-  "package": "dist/IceGem-4.1-Color-Collection.zip"
+  "package": "dist/IceGem-4.2-Color-Collection.zip",
+  "animated_states": 12,
+  "animation_timing": "Per-state jiffy tables in variants/*/tools/build.py",
+  "companion": "companion/README.md"
 }

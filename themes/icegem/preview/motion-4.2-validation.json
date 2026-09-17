@@ -1,0 +1,73 @@
+{
+  "version": "4.2",
+  "native": {
+    "colors": 5,
+    "states": 18,
+    "animated_states": 12,
+    "working": {
+      "frames": 48,
+      "period_ms": 1600
+    },
+    "busy": {
+      "frames": 36,
+      "period_ms": 1200
+    },
+    "normal_period_ms": 3200,
+    "windows_cur_files": 360,
+    "windows_ani_files": 240,
+    "windows_loadimage_checks": 450
+  },
+  "passed": [
+    "Five-color CUR/ANI structure and timing",
+    "Motion periodicity, static roles, stable hotspots, unique rotation frames and seam continuity",
+    "Working/busy transparent borders at 24/32/48/64/96px",
+    "Windows LoadImage at 32/48/64px",
+    "Companion motion self-test",
+    "Companion Raw Input registration, event hook, no-activate/click-through/layered styles and per-pixel composition smoke test",
+    "PowerShell parse checks",
+    "Windows package CRC and resource equality",
+    "180 Linux canonical cursor structures, premultiplied alpha, timings, hotspots, aliases and SHA256"
+  ],
+  "not_run": [
+    "Native Linux libXcursor loading for 4.2",
+    "Real desktop installation and continuous playback",
+    "Companion interaction across application mouse grabs and custom cursors",
+    "Mixed-DPI multiple monitors, fullscreen and lock/unlock manual acceptance"
+  ],
+  "reproduce": [
+    "python tools/test_motion.py",
+    "companion/Build.ps1",
+    "companion/IceGem-Companion.exe --self-test",
+    "companion/IceGem-Companion.exe --smoke-test <output.txt>",
+    "python tools/test_package.py"
+  ],
+  "preview": "GIFs are sampled renderer previews; native state loops use their own timing tables.",
+  "companion_refinement": {
+    "base_canvas_px": 32,
+    "dock_from_hotspot_px": [
+      20,
+      20
+    ],
+    "maximum_follow_offset_fraction": 0.1,
+    "shard_heights_px": [
+      11,
+      8.6
+    ],
+    "checks": [
+      "32/48/64px solid facet cores",
+      "compact docking",
+      "bounded follow lag",
+      "smooth drag layout transition"
+    ],
+    "visual_review": "Shared visual direction: slanted silhouettes, ice gradients and fine ridges. Actual-size light/dark inspection passed; desktop acceptance pending.",
+    "small_size_facets": 4,
+    "small_size_smoothing": true,
+    "minimum_opaque_pixel_area_per_scale_squared": 40,
+    "orientation": "Centrally symmetric diamond; fixed 19-degree lean; no movement-driven rotation.",
+    "transition": "101 samples at 32/48/64px: center spacing >=8 scaled pixels, final second shard down-right; outer arc prevents crossover.",
+    "drag_spacing": "Visible gaps checked at 32/48/64px, center distances adjusted for different crystal sizes.",
+    "interaction": "Hover rays beside the main crystal, separated from companion shards; stronger single ring and 240ms four-point flash.",
+    "approved_preview": "120 light/dark runtime frames exactly match the approved main-side previews.",
+    "lighting": "Upper-left highlight and lower-right shaded facets."
+  }
+}

@@ -2,13 +2,13 @@
 
 五色原生 Xcursor 主题：IceBlue（冰蓝）、Violet（紫罗兰）、RosePink（玫瑰粉）、Mint（薄荷绿）、Amber（琥珀）。每色提供 Animated / Static 两套，共 10 套主题。
 
-本版基于 Windows 4.1 的已确认造型：保持缩小后的文本选择、紧凑调整光标、宝石主体与加强点击放射线。没有把 CUR/ANI 改扩展名，而是重新编码为 Linux Xcursor 文件。
+本版基于 Windows 4.2 的已确认造型：保持缩小后的文本选择、紧凑调整光标、宝石主体与加强点击放射线。没有把 CUR/ANI 改扩展名，而是重新编码为 Linux Xcursor 文件。
 
-[下载 Linux 4.1 完整安装包](../dist/IceGem-4.1-Linux.tar.gz?raw=true) · [SHA-256 校验值](../dist/IceGem-4.1-Linux.tar.gz.sha256)
+[下载 Linux 4.2 完整安装包](../dist/IceGem-4.2-Linux.tar.gz?raw=true) · [SHA-256 校验值](../dist/IceGem-4.2-Linux.tar.gz.sha256)
 
 ## 安装：不需要 sudo
 
-解压 `IceGem-4.1-Linux.tar.gz`，进入解压出的 `IceGem-Linux` 文件夹，在空白处右键“在终端打开”，执行：
+解压 `IceGem-4.2-Linux.tar.gz`，进入解压出的 `IceGem-Linux` 文件夹，在空白处右键“在终端打开”，执行：
 
 ```bash
 bash Install.sh
@@ -67,7 +67,7 @@ gsettings set org.gnome.desktop.interface cursor-size 32
 
 - 每套有 18 个基础图形及常用 Linux 别名：default/left_ptr、pointer/hand2、text/xterm、vertical-text、help、wait、progress、crosshair、move、各向 resize 等。
 - 行列调整映射到现有紧凑的水平/垂直晶体调整图形，非额外绘制的分隔条图案。
-- 动态版 normal/working/busy 为 24 帧；正常选择周期 2 秒，后台忙碌/等待周期 1.6 秒。Link 点击线为静态可点击提示，不是按键触发动画。
+- 动态版提供 12 种动效。normal 为 3.2 秒（含静止停留），working 为 48 帧 / 1.6 秒，busy 为 36 帧 / 1.2 秒，旋转均为 30fps。Link 为切面与提示线的循环高光，不是按键触发动画；点击交互层目前仅提供 Windows 版本。
 - 位置/人员选择以 `icegem-location`、`icegem-person` 名称保留，没有宣称 GNOME 会自动调用它们。
 - 未设计的 grab/grabbing、复制拖放等状态继承 Adwaita；软件自己的图片光标不受主题控制。不承诺所有应用所有状态都被替换。
 
@@ -92,7 +92,7 @@ python3 test_install.py
 
 仓库中的构建器读取相邻 `variants/`；安装包中的构建器读取 `source/variants/`。运行验证需要系统 `libXcursor`。
 
-验证记录见 `validation.json`：包括 Xcursor 二进制结构、预乘透明像素、尺寸、热点、动画时长，以及实际 `libXcursor` 文件读取和主题别名解析。安装器测试使用隔离的临时目录及模拟桌面设置。
+4.2 的跨平台结构检查见主题 `preview/motion-4.2-validation.json`。当前 Windows 构建机没有执行新版 `libXcursor` 原生加载；可在 Linux 运行 `python validate.py themes` 验证原生加载及别名解析。仓库 `validation.json` 为历史版本记录。安装器测试使用隔离的临时目录及模拟桌面设置。
 
 **尚未在真实 Zorin OS 18.1 Pro 桌面执行安装、动画播放和多屏/DPI 验收。** 本地库加载通过不能代替 Zorin 实机验证。
 

@@ -9,7 +9,8 @@ from PIL import Image, ImageChops
 HERE = Path(__file__).resolve().parent
 COLORS = ('IceBlue', 'Violet', 'RosePink', 'Mint', 'Amber')
 SIZES = (24, 32, 48, 64, 96)
-ANIMATED = ('normal', 'working', 'busy')
+# 支持原生动画的角色；实际帧数和时长从配色生成器读取。
+ANIMATED = ('normal','working','busy','link','help','location','person','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
 
 
 def hotspot(renderer, name, size):
@@ -55,18 +56,21 @@ def encode(images):
 
 
 def build(variants, output):
+    """复用五色渲染器与时序，生成动态、静态 Xcursor 主题及别名。"""
     output.mkdir(parents=True, exist_ok=True)
-    metadata = {'version': '4.1-linux.1', 'sizes': SIZES, 'themes': [], 'aliases': ALIASES}
+    metadata = {'version': '4.2-linux.1', 'animation': {}, 'sizes': SIZES, 'themes': [], 'aliases': ALIASES}
     for color in COLORS:
         spec = importlib.util.spec_from_file_location('icegem_' + color, variants / color / 'tools/build.py')
         renderer = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(renderer)
         rendered = {}
         for name, _, _ in renderer.NAMES:
-            frames = 24 if name in ANIMATED else 1
-            period = 2000 if name == 'normal' else 1600
+            # 与 Windows 共用 jiffy 时间表，累计取整保证 Linux 周期总长相同。
+            rates = renderer.ANIMATIONS.get(name, (0,))
+            frames = len(rates)
+            metadata['animation'][name] = {'frames': frames, 'periodMs': round(sum(rates)*1000/60)}
             rendered[name] = [(n, hotspot(renderer, name, n),
-                              round((f + 1) * period / frames) - round(f * period / frames) if frames > 1 else 0,
+                              round(sum(rates[:f+1])*1000/60) - round(sum(rates[:f])*1000/60) if frames > 1 else 0,
                               renderer.render(renderer.geometry(name, f), n))
                              for n in SIZES for f in range(frames)]
         for mode in ('Animated', 'Static'):
@@ -79,7 +83,7 @@ def build(variants, output):
             for name, aliases in ALIASES.items():
                 images = rendered[name]
                 if mode == 'Static' and name in ANIMATED:
-                    images = [(n, h, 0, im) for n, h, _, im in images[::24]]
+                    images = [(n, h, 0, im) for n, h, _, im in images[::len(renderer.ANIMATIONS[name])]]
                 canonical = cursors / aliases[0]
                 canonical.write_bytes(encode(images))
                 for alias in aliases[1:]:

@@ -30,11 +30,13 @@ def validate(folder):
     lib.XcursorImagesDestroy.argtypes = [ptr]
     os.environ['XCURSOR_PATH'] = str(folder.resolve()) + ':/usr/share/icons'
     counts = {'themes': 0, 'canonical_files': 0, 'native_file_loads': 0, 'native_alias_loads': 0}
+    # 构建清单记录每个角色的独立节奏，动态和静态验证共用该来源。
+    timing=json.loads((folder.parent/'manifest.json').read_text())['animation']
     for theme in sorted(folder.glob('IceGem-*')):
         counts['themes'] += 1
         for state, aliases in ALIASES.items():
             path = theme / 'cursors' / aliases[0]
-            frames = 24 if theme.name.endswith('Animated') and state in ANIMATED else 1
+            frames = timing[state]['frames'] if theme.name.endswith('Animated') and state in ANIMATED else 1
             b = path.read_bytes()
             magic, header, version, ntoc = struct.unpack_from('<4I', b)
             assert (magic, header, version, ntoc) == (0x72756358, 16, 0x10000, frames * len(SIZES))
@@ -55,7 +57,7 @@ def validate(folder):
                 end = offset + 36 + len(pixels)
             assert end == len(b)
             if frames > 1:
-                assert set(periods.values()) == {2000 if state == 'normal' else 1600}
+                assert set(periods.values()) == {timing[state]['periodMs']}
             for size in SIZES:
                 loaded = lib.XcursorFilenameLoadImages(os.fsencode(path), size)
                 assert loaded and loaded.contents.nimage == frames, path
