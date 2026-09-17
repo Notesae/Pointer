@@ -1,4 +1,4 @@
-# IceGem 4.0 · 冰蓝
+# IceGem 4.1 · 冰蓝
 
 仓库源码目录需要先执行 `python tools/build.py` 生成 cursors；也可直接下载主题 dist 中的完整安装包。生成后双击本目录 Install.cmd 安装并应用 冰蓝 动态方案。Windows 方案名为 IceGem IceBlue Gentle (multi)；Static 为静态版。各颜色方案独立命名，安装过的配色可在鼠标属性中切换。
 

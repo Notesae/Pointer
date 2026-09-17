@@ -56,7 +56,7 @@ def encode(images):
 
 def build(variants, output):
     output.mkdir(parents=True, exist_ok=True)
-    metadata = {'version': '4.0-linux.1', 'sizes': SIZES, 'themes': [], 'aliases': ALIASES}
+    metadata = {'version': '4.1-linux.1', 'sizes': SIZES, 'themes': [], 'aliases': ALIASES}
     for color in COLORS:
         spec = importlib.util.spec_from_file_location('icegem_' + color, variants / color / 'tools/build.py')
         renderer = importlib.util.module_from_spec(spec)

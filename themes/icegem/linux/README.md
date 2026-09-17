@@ -2,13 +2,13 @@
 
 五色原生 Xcursor 主题：IceBlue（冰蓝）、Violet（紫罗兰）、RosePink（玫瑰粉）、Mint（薄荷绿）、Amber（琥珀）。每色提供 Animated / Static 两套，共 10 套主题。
 
-本版基于 Windows 4.0 的已确认造型：保持缩小后的文本选择、紧凑调整光标、宝石主体与加强点击放射线。没有把 CUR/ANI 改扩展名，而是重新编码为 Linux Xcursor 文件。
+本版基于 Windows 4.1 的已确认造型：保持缩小后的文本选择、紧凑调整光标、宝石主体与加强点击放射线。没有把 CUR/ANI 改扩展名，而是重新编码为 Linux Xcursor 文件。
 
-[下载 Linux 4.0 完整安装包](../dist/IceGem-4.0-Linux.tar.gz?raw=true) · [SHA-256 校验值](../dist/IceGem-4.0-Linux.tar.gz.sha256)
+[下载 Linux 4.1 完整安装包](../dist/IceGem-4.1-Linux.tar.gz?raw=true) · [SHA-256 校验值](../dist/IceGem-4.1-Linux.tar.gz.sha256)
 
 ## 安装：不需要 sudo
 
-解压 `IceGem-4.0-Linux.tar.gz`，进入解压出的 `IceGem-Linux` 文件夹，在空白处右键“在终端打开”，执行：
+解压 `IceGem-4.1-Linux.tar.gz`，进入解压出的 `IceGem-Linux` 文件夹，在空白处右键“在终端打开”，执行：
 
 ```bash
 bash Install.sh

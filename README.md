@@ -13,9 +13,9 @@ Windows / Linux 自定义光标主题集合。**每套光标独立目录，主�
 
 ![IceGem 五色预览](themes/icegem/preview/colorways.png)
 
-[下载 IceGem 4.0 Windows 五色安装包](themes/icegem/dist/IceGem-4.0-Color-Collection.zip?raw=true)
+[下载 IceGem 4.1 Windows 五色安装包](themes/icegem/dist/IceGem-4.1-Color-Collection.zip?raw=true)
 
-[下载 IceGem 4.0 Linux 安装包](themes/icegem/dist/IceGem-4.0-Linux.tar.gz?raw=true) · [Linux / Zorin 安装说明](themes/icegem/linux/)
+[下载 IceGem 4.1 Linux 安装包](themes/icegem/dist/IceGem-4.1-Linux.tar.gz?raw=true) · [Linux / Zorin 安装说明](themes/icegem/linux/)
 
 ## 目录约定
 

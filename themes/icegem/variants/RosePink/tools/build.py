@@ -68,6 +68,26 @@ def geometry(name,frame=0):
         inset=[mix(v,center,.065 if large else .11) for v in p]
         line([inset[3],inset[0],inset[1]],'#e7fbff',.38 if large else .26)
         line([inset[1],inset[2]],'#c8c8ff',.33 if large else .23)
+    def orbit(cx,cy,radius,double=False):
+        """用匀速旋转的渐亮弧和晶体端点指示忙碌，保持中心与热点不动。"""
+        # 24 帧均匀覆盖一周；双弧用于区分等待与仍可点击的后台运行。
+        angle=2*math.pi*(frame%FRAMES)/FRAMES-math.pi/2
+        ops.append(('ellipse',(cx,cy,radius,radius),None,'#528cdd70',.55))
+        for offset in ((0,math.pi) if double else (0,)):
+            # 相接的短弧形成由暗到亮的尾迹，避免整圈闪烁。
+            for step in range(8):
+                start=angle+offset-math.radians(112-step*14)
+                end=start+math.radians(15)
+                arc=(f'M {cx+radius*math.cos(start):.4f} {cy+radius*math.sin(start):.4f} '
+                     f'A {radius} {radius} 0 0 1 {cx+radius*math.cos(end):.4f} {cy+radius*math.sin(end):.4f}')
+                curve(arc,'#233e79'+f'{100+step*20:02x}',1.55)
+                curve(arc,'#9bdcff'+f'{95+step*22:02x}',1.05)
+                curve(arc,'#edfaff'+f'{45+step*28:02x}',.4)
+            # 菱形亮点强调旋转方向，并延续冰晶切面语言。
+            x=cx+radius*math.cos(angle+offset)
+            y=cy+radius*math.sin(angle+offset)
+            tip=1.05 if double else .85
+            poly([(x,y-tip),(x+tip,y),(x,y+tip),(x-tip,y)],LIGHT,OUTLINE,.45)
     def main():
         p=[(6,3),(19,16.8),(17,27),(6.7,19.8)]
         # Radial-gradient shadows keep every export deterministic; no unsupported SVG blur.
@@ -80,10 +100,8 @@ def geometry(name,frame=0):
     if name in ['normal','working','help','unavailable','alternate','location','person']:
         main()
         if name=='working':
-            strength=(1-math.cos(2*math.pi*frame/FRAMES))/2
-            ops.append(('ellipse',(25,12,4.3,4.3),None,'#528cdd',1.05))
-            ops.append(('ellipse',(25,12,3.75,3.75),None,'#baf4ff',.38))
-            curve('M 22.1 8.9 A 4.3 4.3 0 0 1 28.2 9.1','#ffffff'+f'{round(40+210*strength):02x}',.8)
+            # 小型单弧与主指针分离，后台工作时仍能辨认点击位置。
+            orbit(25,11.5,4.1)
         if name=='help':
             curve('M 22 10 C 22 6.3 28.8 6.3 28.8 10 C 28.8 12.1 25.4 12.5 25.4 14.7',w=1.12)
             ops.append(('ellipse',(25.4,17.3,.68,.68),OUTLINE,None,0))
@@ -104,6 +122,8 @@ def geometry(name,frame=0):
     elif name=='busy':
         ops.append(('ellipse',(16,28.5,6.4,1.8),'url(#shadow)',None,0))
         ops.append(('ellipse',(16,20,8,10),'url(#halo)',None,0))
+        # 大型双弧环绕稳定晶体，提供比后台运行更明确的等待动效。
+        orbit(16,16,12.2,double=True)
         gem([(16,4),(22,18),(16,27),(10,18)],large=True,animated=True)
     elif name in ('text','vertical-text'):
         def tr(p):return [(32-y,x) for x,y in p] if name=='vertical-text' else p
@@ -216,8 +236,13 @@ def build():
         for n in SIZES:(ROOT/f'cursors/{n}/icegem-{name}.ani').write_bytes(ani(name,(n,)))
         for i in range(FRAMES):(ROOT/f'src/animation/{name}-{i:02}.svg').write_text(svg(geometry(name,i)))
     (ROOT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
-    sheet=Image.new('RGB',(1200,700),'#f5f8fc');d=ImageDraw.Draw(sheet);font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
-    d.text((32,22),'ICEGEM 4.0 / ROSEPINK',fill='#334f7b',font=font)
+    sheet=Image.new('RGB',(1200,700),'#f5f8fc');d=ImageDraw.Draw(sheet)
+    # Linux 优先使用原预览字体；Windows 等环境缺失时使用 Pillow 内置字体。
+    try:
+        font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
+    except OSError:
+        font=ImageFont.load_default(size=17)
+    d.text((32,22),'ICEGEM 4.1 / ROSEPINK',fill='#334f7b',font=font)
     for i,(name,_,_) in enumerate(NAMES):
         x=30+(i%6)*195;y=80+(i//6)*200
         d.rounded_rectangle((x,y,x+180,y+185),12,fill='white')

@@ -1,7 +1,7 @@
 {
   "id": "icegem",
   "name": "IceGem 冰晶宝石",
-  "version": "4.0",
+  "version": "4.1",
   "platform": "Windows",
   "variants": [
     "IceBlue",
@@ -17,5 +17,5 @@
     64
   ],
   "animation_frames": 24,
-  "package": "dist/IceGem-4.0-Color-Collection.zip"
+  "package": "dist/IceGem-4.1-Color-Collection.zip"
 }

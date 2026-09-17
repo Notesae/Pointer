@@ -1,0 +1,102 @@
+{
+  "windows_binary_validation": {
+    "colors": 5,
+    "cur_files": 360,
+    "ani_files": 60,
+    "ani_frames": 1440
+  },
+  "windows_native_load": {
+    "result": "PASS",
+    "loads": 315,
+    "sizes": [
+      32,
+      48,
+      64
+    ]
+  },
+  "windows_package_matching_files": 80,
+  "linux_updated_cursors": 20,
+  "linux_checks": [
+    "Xcursor structure",
+    "premultiplied alpha",
+    "hotspots",
+    "frame delays",
+    "package SHA256"
+  ],
+  "not_run": [
+    "Windows desktop playback and cross-monitor DPI",
+    "Linux native loading and desktop playback"
+  ],
+  "motion": [
+    {
+      "color": "IceBlue",
+      "state": "working",
+      "unique_frames": 24,
+      "seam_delta": 6.072,
+      "max_other_delta": 10.0
+    },
+    {
+      "color": "IceBlue",
+      "state": "busy",
+      "unique_frames": 24,
+      "seam_delta": 34.459,
+      "max_other_delta": 40.869
+    },
+    {
+      "color": "Violet",
+      "state": "working",
+      "unique_frames": 24,
+      "seam_delta": 5.511,
+      "max_other_delta": 10.25
+    },
+    {
+      "color": "Violet",
+      "state": "busy",
+      "unique_frames": 24,
+      "seam_delta": 33.847,
+      "max_other_delta": 41.66
+    },
+    {
+      "color": "RosePink",
+      "state": "working",
+      "unique_frames": 24,
+      "seam_delta": 6.279,
+      "max_other_delta": 9.966
+    },
+    {
+      "color": "RosePink",
+      "state": "busy",
+      "unique_frames": 24,
+      "seam_delta": 34.033,
+      "max_other_delta": 41.211
+    },
+    {
+      "color": "Mint",
+      "state": "working",
+      "unique_frames": 24,
+      "seam_delta": 6.065,
+      "max_other_delta": 10.679
+    },
+    {
+      "color": "Mint",
+      "state": "busy",
+      "unique_frames": 24,
+      "seam_delta": 33.672,
+      "max_other_delta": 42.685
+    },
+    {
+      "color": "Amber",
+      "state": "working",
+      "unique_frames": 24,
+      "seam_delta": 6.065,
+      "max_other_delta": 10.679
+    },
+    {
+      "color": "Amber",
+      "state": "busy",
+      "unique_frames": 24,
+      "seam_delta": 33.672,
+      "max_other_delta": 42.685
+    }
+  ]
+}
