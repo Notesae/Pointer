@@ -11,7 +11,7 @@ roles=('normal','link','working','busy','resize-ew','resize-ns','resize-nwse','r
 frames=[]
 for tick in range(96):
     canvas=Image.new('RGB',(960,450),'#eef4f8');d=ImageDraw.Draw(canvas)
-    d.text((22,14),'ICEGEM 4.2  /  NATIVE MOTION',fill='#294261',font=ImageFont.load_default(size=20))
+    d.text((22,14),'ICEGEM 4.3  /  FIXED ANI MOTION',fill='#294261',font=ImageFont.load_default(size=20))
     for i,role in enumerate(roles):
         rates=m.ANIMATIONS[role];pos=(tick*2)%sum(rates)
         ends=[];total=0
@@ -25,8 +25,8 @@ for tick in range(96):
             tile.alpha_composite(m.render(m.geometry(role,frame),32),(19,92))
             canvas.paste(tile.convert('RGB'),(x+offset,y+24))
     frames.append(canvas)
-frames[0].save(root/'preview/native-motion-4.2.png')
-frames[0].save(root/'preview/native-motion-4.2.gif',save_all=True,append_images=frames[1:],duration=[30,30,40]*32,loop=0)
+frames[0].save(root/'preview/native-motion-4.3.png')
+frames[0].save(root/'preview/native-motion-4.3.gif',save_all=True,append_images=frames[1:],duration=[30,30,40]*32,loop=0)
 # 交互预览来自 C# 运行时导出的帧，本文件只负责封装 GIF。
 images=[Image.open(p).convert('RGB') for p in sorted((root/'companion/preview-frames').glob('frame-*.png'))]
 images[20].save(root/'preview/companion-motion-4.2.png')

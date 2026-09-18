@@ -17,6 +17,10 @@ ANIMATIONS={
     'person': (4,)*36,
     **{name:(3,)*36 for name in ('move','resize-ew','resize-ns','resize-nwse','resize-nesw')},
 }
+ROTATION_AMPLITUDES={
+    'normal':6, 'working':8, 'link':14, 'help':9, 'location':10, 'person':10,
+    'move':8, 'resize-ew':4, 'resize-ns':4, 'resize-nwse':4, 'resize-nesw':4,
+}
 THEME_SHIFT=115
 THEME_NAME='玫瑰粉'
 NAMES=[('normal','正常选择','Arrow'),('working','后台忙碌','AppStarting'),('busy','忙碌 / 等待','Wait'),('help','帮助选择','Help'),('link','链接选择','Hand'),('unavailable','不可用','No'),('text','文本选择','IBeam'),('vertical-text','竖排文本选择',''),('precision','精准选择','Crosshair'),('resize-nwse','对角调整 ↖↘','SizeNWSE'),('resize-nesw','对角调整 ↗↙','SizeNESW'),('resize-ew','水平调整','SizeWE'),('resize-ns','垂直调整','SizeNS'),('move','移动','SizeAll'),('alternate','替代选择','UpArrow'),('handwriting','手写','NWPen'),('location','位置选择','Pin'),('person','人员选择','Person')]
@@ -28,11 +32,21 @@ def geometry(name,frame=0):
     phase=(frame%len(rates))/len(rates)
     shimmer=(frame%len(rates))/24 if name in ('normal','link') else phase
     level=math.sin(math.pi*shimmer)**2
+    rotation=ROTATION_AMPLITUDES.get(name,0)*math.sin(phase*math.tau)
     ops=[]
     def poly(p,c,stroke=OUTLINE,w=.7):ops.append(('poly',p,c,stroke,w))
     def line(p,c=OUTLINE,w=.85):ops.append(('line',p,None,c,w))
     def mix(a,b,t):return (a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t)
     def curve(d,c=OUTLINE,w=1):ops.append(('path',d,None,c,w))
+    def rotated(cx,cy,angle):
+        """创建只包裹晶体本体的旋转分组，使阴影、状态符号与热点保持稳定。"""
+        class RotationGroup:
+            """在上下文范围内向绘制列表写入成对的 SVG 旋转分组标记。"""
+            def __enter__(self):
+                if abs(angle)>1e-8:ops.append(('group-start',(cx,cy,angle),None,None,0))
+            def __exit__(self,*_):
+                if abs(angle)>1e-8:ops.append(('group-end',None,None,None,0))
+        return RotationGroup()
     def gem(p,large=False,animated=False,purple=False):
         a,b,c,d=p
         q=mix(a,c,.61 if large else .57)
@@ -108,10 +122,12 @@ def geometry(name,frame=0):
         # Radial-gradient shadows keep every export deterministic; no unsupported SVG blur.
         ops.append(('ellipse',(13.5,28.3,6.7,2.2),'url(#shadow)',None,0))
         ops.append(('ellipse',(14.5,22,7,8),'url(#halo)',None,0))
-        gem(p,large=True,animated=name in ('normal','working') or (name in ANIMATIONS and level>1e-8),purple=name=='alternate')
+        with rotated(6,3,rotation):
+            gem(p,large=True,animated=name in ('normal','working') or (name in ANIMATIONS and level>1e-8),purple=name=='alternate')
     def arm(angle,inner=1.25,outer=10,width=2.6):
         def tr(x,y):return (16+x*math.cos(angle)-y*math.sin(angle),16+x*math.sin(angle)+y*math.cos(angle))
-        gem([tr(outer,0),tr(inner+2.7,width),tr(inner,0),tr(inner+2.7,-width)],animated=name in ANIMATIONS and level>1e-8)
+        with rotated(16,16,rotation):
+            gem([tr(outer,0),tr(inner+2.7,width),tr(inner,0),tr(inner+2.7,-width)],animated=name in ANIMATIONS and level>1e-8)
     if name in ['normal','working','help','unavailable','alternate','location','person']:
         main()
         if name=='working':
@@ -137,11 +153,22 @@ def geometry(name,frame=0):
             line(ray,'#91e3ff',.72)
             if level>1e-8:line(ray,'#ffffff'+f'{round(210*level):02x}',.5)
     elif name=='busy':
-        ops.append(('ellipse',(16,28.5,6.4,1.8),'url(#shadow)',None,0))
-        ops.append(('ellipse',(16,20,8,10),'url(#halo)',None,0))
-        # 大型双弧环绕稳定晶体，提供比后台运行更明确的等待动效。
-        orbit(16,16,12.2,double=True)
-        gem([(16,4),(22,18),(16,27),(10,18)],large=True,animated=True)
+        # 三颗横向晶体按相位依次放大、上浮并亮起，循环首尾保持连续。
+        for index,cx in enumerate((8,16,24)):
+            # 在每个帧区间的中点采样，避免三次接力交界都生成完全相同的静止帧。
+            progress=((((frame%len(rates))+.5)/len(rates))*3-index)%3
+            if progress<.42:
+                pulse=math.sin(math.pi*.5*progress/.42)**2
+            elif progress<1:
+                pulse=math.cos(math.pi*.5*(progress-.42)/.58)**2
+            else:
+                pulse=0
+            scale=.78+.34*pulse
+            cy=16-1.1*pulse
+            alpha=round(18+58*pulse)
+            ops.append(('ellipse',(cx,cy,3.8*scale,5.8*scale),f'#9bdcff{alpha:02x}',None,0))
+            gem([(cx,cy-5.2*scale),(cx+2.8*scale,cy),(cx,cy+5.2*scale),(cx-2.8*scale,cy)])
+            poly([(cx,cy-4.1*scale),(cx+1.7*scale,cy),(cx,cy+scale),(cx-1.7*scale,cy)],f'#ffffff{round(22+150*pulse):02x}',None)
     elif name in ('text','vertical-text'):
         def tr(p):return [(32-y,x) for x,y in p] if name=='vertical-text' else p
         poly(tr([(15.4,8.3),(16.6,8.3),(16.6,23.7),(15.4,23.7)]),'url(#text)',w=.6)
@@ -191,6 +218,13 @@ def svg(ops):
         if c and c.startswith('#') and len(c)==9:return f'{prop}="{c[:7]}" {prop}-opacity="{int(c[7:9],16)/255:.4f}"'
         return f'{prop}="{c or "none"}"'
     for idx,(typ,p,f,s,w) in enumerate(ops):
+        if typ=='group-start':
+            cx,cy,angle=p
+            parts.append(f'<g transform="rotate({angle:.4f} {cx} {cy})">')
+            continue
+        if typ=='group-end':
+            parts.append('</g>')
+            continue
         points=lambda: ' '.join(f'{x:.4f},{y:.4f}' for x,y in p)
         if typ=='sweep':
             a,c,phase,level=f
@@ -268,7 +302,7 @@ def build():
         font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
     except OSError:
         font=ImageFont.load_default(size=17)
-    d.text((32,22),'ICEGEM 4.2 / ROSEPINK',fill='#334f7b',font=font)
+    d.text((32,22),'ICEGEM 4.3 / ROSEPINK',fill='#334f7b',font=font)
     for i,(name,_,_) in enumerate(NAMES):
         x=30+(i%6)*195;y=80+(i//6)*200
         d.rounded_rectangle((x,y,x+180,y+185),12,fill='white')
@@ -293,5 +327,6 @@ def build():
             elapsed+=rate
         cards.append(f'<article><div class="large anim">'+''.join(frames)+f'</div><h3>{cn}</h3><small>{name} · {slot or "应用专用"}</small><div class="samples">'+''.join(f'<div style="background:{bg}">{svg_image(geometry(name))}</div>' for bg in ['white','#172638','#afb9c8'])+'</div></article>')
     html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 12 种原生动效 / 文本与精确状态保持静止</p><p>后台运行与忙碌均为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
+    html=html.replace('IceGem 4.2','IceGem 4.3')
     (ROOT/'preview/IceGem-Preview.html').write_text(html)
 if __name__=='__main__':build()

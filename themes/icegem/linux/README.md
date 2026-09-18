@@ -2,13 +2,13 @@
 
 五色原生 Xcursor 主题：IceBlue（冰蓝）、Violet（紫罗兰）、RosePink（玫瑰粉）、Mint（薄荷绿）、Amber（琥珀）。每色提供 Animated / Static 两套，共 10 套主题。
 
-本版基于 Windows 4.2 的已确认造型：保持缩小后的文本选择、紧凑调整光标、宝石主体与加强点击放射线。没有把 CUR/ANI 改扩展名，而是重新编码为 Linux Xcursor 文件。
+本版与 Windows 4.3 使用相同造型和固定帧动效：不同状态采用不同旋转幅度，忙碌状态为三颗横向晶体依次放大并亮起。没有把 CUR/ANI 改扩展名，而是重新编码为 Linux Xcursor 文件。
 
-[下载 Linux 4.2 完整安装包](../dist/IceGem-4.2-Linux.tar.gz?raw=true) · [SHA-256 校验值](../dist/IceGem-4.2-Linux.tar.gz.sha256)
+[下载 Linux 4.3 完整安装包](../dist/IceGem-4.3-Linux.tar.gz?raw=true) · [SHA-256 校验值](../dist/IceGem-4.3-Linux.tar.gz.sha256)
 
 ## 安装：不需要 sudo
 
-解压 `IceGem-4.2-Linux.tar.gz`，进入解压出的 `IceGem-Linux` 文件夹，在空白处右键“在终端打开”，执行：
+解压 `IceGem-4.3-Linux.tar.gz`，进入解压出的 `IceGem-Linux` 文件夹，在空白处右键“在终端打开”，执行：
 
 ```bash
 bash Install.sh
@@ -67,7 +67,7 @@ gsettings set org.gnome.desktop.interface cursor-size 32
 
 - 每套有 18 个基础图形及常用 Linux 别名：default/left_ptr、pointer/hand2、text/xterm、vertical-text、help、wait、progress、crosshair、move、各向 resize 等。
 - 行列调整映射到现有紧凑的水平/垂直晶体调整图形，非额外绘制的分隔条图案。
-- 动态版提供 12 种动效。normal 为 3.2 秒（含静止停留），working 为 48 帧 / 1.6 秒，busy 为 36 帧 / 1.2 秒，旋转均为 30fps。Link 为切面与提示线的循环高光，不是按键触发动画；点击交互层目前仅提供 Windows 版本。
+- 动态版提供 12 种动效。normal 为 3.2 秒（含静止停留），working 为 48 帧 / 1.6 秒，busy 为 36 帧 / 1.2 秒；各动作使用预设旋转幅度，busy 使用三晶体接力脉冲。
 - 位置/人员选择以 `icegem-location`、`icegem-person` 名称保留，没有宣称 GNOME 会自动调用它们。
 - 未设计的 grab/grabbing、复制拖放等状态继承 Adwaita；软件自己的图片光标不受主题控制。不承诺所有应用所有状态都被替换。
 

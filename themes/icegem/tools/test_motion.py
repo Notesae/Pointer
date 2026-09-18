@@ -16,6 +16,7 @@ class MotionTests(unittest.TestCase):
             spec.loader.exec_module(renderer)
             self.assertEqual(renderer.ANIMATIONS['working'],(2,)*48)
             self.assertEqual(renderer.ANIMATIONS['busy'],(2,)*36)
+            self.assertGreater(renderer.ROTATION_AMPLITUDES['link'],renderer.ROTATION_AMPLITUDES['normal'])
             self.assertEqual(sum(renderer.ANIMATIONS['normal']),192)
             for name,rates in renderer.ANIMATIONS.items():
                 with self.subTest(color=color,state=name):
@@ -23,6 +24,8 @@ class MotionTests(unittest.TestCase):
                     images=[renderer.render(renderer.geometry(name,f),32) for f in range(len(rates))]
                     self.assertGreater(len({im.tobytes() for im in images}),10)
                     self.assertTrue(all(im.getpixel(renderer.hotspot(name,32))[3]>0 for im in images))
+                    if name in renderer.ROTATION_AMPLITUDES:
+                        self.assertIn('transform="rotate(',renderer.svg(renderer.geometry(name,1)))
                     if name in ('working','busy'):
                         self.assertEqual(len({im.tobytes() for im in images}),len(rates))
                         deltas=[sum(ImageStat.Stat(ImageChops.difference(images[f],images[(f+1)%len(images)])).mean) for f in range(len(images))]

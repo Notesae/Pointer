@@ -1,12 +1,12 @@
 # IceGem · 冰晶宝石光标
 
-> 完整宝石方案已独立为 [Crystal 新主题](../crystal/)，不再作为 IceGem 4.3。IceGem 4.2 的交互动画保留为实验历史。
+> IceGem 4.3 使用原生固定 ANI：不同状态采用不同晶体旋转幅度，忙碌状态改为三颗横向晶体依次放大并亮起。Crystal 仍作为独立主题继续开发。
 
 冰蓝、紫罗兰、玫瑰粉、薄荷绿、琥珀五套配色，沿用修长晶体造型和加强版点击线条。
 
 ![五色预览](preview/colorways.png)
 
-## 4.2 更新 · 晶光随行
+## 4.3 更新 · 晶体旋律
 
 - 12 种原生动画：常态切面流光、后台单弧、忙碌双弧、链接、帮助、位置、人员、移动和四向缩放。
 - 后台 48 帧 / 1.6 秒、忙碌 36 帧 / 1.2 秒，旋转均为 30fps；常态一轮 3.2 秒，包含静止停留。
@@ -23,7 +23,7 @@
 
 ## Windows 下载与安装
 
-[下载 4.2 五色完整安装包](dist/IceGem-4.2-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
+[下载 4.3 五色完整安装包](dist/IceGem-4.3-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
 
 | 颜色 | 文件 |
 |---|---|
@@ -37,7 +37,7 @@
 
 ## Linux / Zorin OS
 
-[下载 Linux 4.2 完整安装包](dist/IceGem-4.2-Linux.tar.gz?raw=true) · [安装、换色、恢复与卸载说明](linux/)
+[下载 Linux 4.3 完整安装包](dist/IceGem-4.3-Linux.tar.gz?raw=true) · [安装、换色、恢复与卸载说明](linux/)
 
 五色动态/静态共十套原生 Xcursor 主题，支持 24/32/48/64/96px。解压后进入 `IceGem-Linux`，运行 `bash Install.sh`，默认应用冰蓝动态版、32px，无需 sudo。Linux 构建器与安装脚本位于 `linux/`，复用 `variants/` 中的配色渲染源码。Zorin 桌面显示、动画及多屏/DPI 尚待实机验收。
 

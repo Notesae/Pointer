@@ -1,4 +1,4 @@
-"""从已构建的五色资源生成 4.2 包；Linux 直接写 tar 链接，支持 Windows 构建机。"""
+"""从已构建的五色资源生成 4.3 包；Linux 直接写 tar 链接，支持 Windows 构建机。"""
 from pathlib import Path
 import argparse
 import hashlib
@@ -9,7 +9,7 @@ import tarfile
 import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
-VERSION='4.2'
+VERSION='4.3'
 COLORS=('IceBlue','Violet','RosePink','Mint','Amber')
 
 
@@ -41,18 +41,18 @@ def package(windows_only=False):
         archive.writestr('IceGem-Colors/Start-Companion.cmd','@echo off\r\ncall "%~dp0companion\\Start.cmd"\r\n')
         # 分色页面直接预览对应安装资源，减少重复内嵌帧与不一致的动画时间表。
         links=''.join(f'<li><a href="{color}/preview/IceGem-Preview.html">{color}</a></li>' for color in COLORS)
-        archive.writestr('IceGem-Colors/IceGem-Colors-Preview.html','<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>IceGem 4.2</title><h1>IceGem 4.2 · 晶光随行</h1><p>选择颜色查看 12 种原生动画。点击、跟随和拖动反馈请运行 Start-Companion.cmd。</p><ul>'+links+'</ul></html>')
-        archive.writestr('IceGem-Colors/README.txt','IceGem 4.2\nInstall: Install-<Color>.cmd\nOptional interaction: Start-Companion.cmd\nCompanion does not change the cursor theme or start automatically at login.\n')
+        archive.writestr('IceGem-Colors/IceGem-Colors-Preview.html',f'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>IceGem {VERSION}</title><h1>IceGem {VERSION} · 晶体旋律</h1><p>选择颜色查看不同幅度的原生晶体旋转和三晶体等待动画。</p><ul>'+links+'</ul></html>')
+        archive.writestr('IceGem-Colors/README.txt',f'IceGem {VERSION}\nInstall: Install-<Color>.cmd\nOptional interaction: Start-Companion.cmd\nCompanion does not change the cursor theme or start automatically at login.\n')
     with zipfile.ZipFile(staged) as archive:
         assert archive.testzip() is None
         assert 'IceGem-Colors/companion/IceGem-Companion.exe' in archive.namelist()
     staged.replace(windows)
-    print('Windows 4.2 packaged',flush=True)
+    print(f'Windows {VERSION} packaged',flush=True)
     if windows_only:
         return
 
     linux=load_module('icegem_linux',ROOT/'linux/build.py')
-    metadata={'version':'4.2-linux.1','sizes':linux.SIZES,'themes':[],'aliases':linux.ALIASES,'animation':{}}
+    metadata={'version':f'{VERSION}-linux.1','sizes':linux.SIZES,'themes':[],'aliases':linux.ALIASES,'animation':{}}
     # payload 只存常规文件；别名独立保存为 tar 符号链接，不需要宿主的 symlink 权限。
     payload={name:(ROOT/'linux'/name).read_bytes() for name in ('Install.sh','install.py','README.md','build.py','requirements-build.txt','validate.py')}
     aliases={}
@@ -93,7 +93,7 @@ def package(windows_only=False):
             archive.addfile(entry)
     staged.replace(target)
     target.with_name(target.name+'.sha256').write_text(hashlib.sha256(target.read_bytes()).hexdigest()+'  '+target.name+'\n',encoding='utf-8')
-    print('Linux 4.2 packaged with SHA256',flush=True)
+    print(f'Linux {VERSION} packaged with SHA256',flush=True)
 
 
 if __name__=='__main__':
