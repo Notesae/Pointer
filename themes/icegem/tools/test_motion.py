@@ -14,6 +14,12 @@ class MotionTests(unittest.TestCase):
             spec=importlib.util.spec_from_file_location(color,ROOT/'variants'/color/'tools/build.py')
             renderer=importlib.util.module_from_spec(spec)
             spec.loader.exec_module(renderer)
+            # 默认多尺寸资源共用材质，各尺寸都保留热点及原动画的静止衔接。
+            for size in (24,32,48,64,96):
+                first=renderer.render(renderer.geometry('normal',0),size)
+                hold=renderer.render(renderer.geometry('normal',96),size)
+                self.assertEqual(first.tobytes(),hold.tobytes())
+                self.assertGreater(first.getpixel(renderer.hotspot('normal',size))[3],0)
             self.assertEqual(renderer.ANIMATIONS['working'],(1,)*96)
             self.assertEqual(renderer.ANIMATIONS['busy'],(2,)*36)
             self.assertGreater(renderer.ROTATION_AMPLITUDES['link'],renderer.ROTATION_AMPLITUDES['normal'])

@@ -109,7 +109,7 @@ def geometry(name,frame=0):
                 poly(points,'url(#clearIce)' if material in ('tableLight','tableIce') else 'url(#clearLilac)',None)
                 # 以法线受光量控制整面色调：背光为蓝紫色，迎光保留冰白亮面，形成稳定体积。
                 shade=(1-light)**1.4
-                poly(points,'#345da7'+f'{round(78*shade):02x}',None)
+                ops.append(('facet-shade',points,shade,None,0))
                 poly(inset,'#efffff'+f'{round(32*light**3):02x}',None)
                 # 面内仅保留一层宽幅折射，反向缓移表现内部深度，不堆叠碎三角。
                 refraction=.46+.1*math.sin(angle+depth/max(radius,.01))
@@ -122,7 +122,7 @@ def geometry(name,frame=0):
                     sliver=[mix(inset[0],inset[1],.15),mix(inset[0],inset[1],.20),
                             mix(inset[1],inset[2],.72),mix(inset[1],inset[2],.77)]
                     poly(sliver,'#ffffff'+f'{round(145*(glint-.35)/.65):02x}',None)
-                line([points[0],points[1]],'#f4ffff'+f'{round(25+85*light):02x}',.18)
+                ops.append(('facet-edge',[points[0],points[1]],light,None,0))
                 # 棱线反射是沿实际边移动的短亮段，以冰蓝柔光衬托白芯，无独立星形。
                 travel=.3+.38*(.5+.5*math.sin(angle+depth/max(radius,.01)))
                 edge_start=mix(inset[0],inset[1],max(.08,travel-.12))
@@ -304,6 +304,7 @@ def raster(document,size):
     """缓存相同 SVG 的超采样结果，供单尺寸及多尺寸光标共用；调用者不得修改图像。"""
     return Image.open(io.BytesIO(cairosvg.svg2png(bytestring=document.encode(),output_width=size*4,output_height=size*4))).convert('RGBA').resize((size,size),Image.Resampling.LANCZOS)
 def svg(ops):
+    """以统一材质绘制所有尺寸，依靠宽切面明暗和集中反射表达宝石体积。"""
     defs = """<defs>
     <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9f8ff"/><stop offset=".55" stop-color="#a1d8fa"/><stop offset="1" stop-color="#d8dcff"/></linearGradient>
     <linearGradient id="crown" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#b9d7ff"/><stop offset=".40" stop-color="#f9ffff"/><stop offset=".70" stop-color="#eafaff"/><stop offset="1" stop-color="#7dcef2"/></linearGradient>
@@ -344,9 +345,17 @@ def svg(ops):
             parts.append('</g>')
             continue
         points=lambda: ' '.join(f'{x:.4f},{y:.4f}' for x,y in p)
+        if typ=='facet-shade':
+            # 拉开整面的受光层次，避免低对比的碎折射在实际指针大小下混成一片。
+            typ,f='poly','#284f91'+f'{min(255,round(78*f+210*f**.5)):02x}'
+        elif typ=='facet-edge':
+            # 保留亚像素抗锯齿，以略宽的亮棱分开相邻切面而不加粗外轮廓。
+            typ,s,w,f='line','#f4ffff'+f'{round(25+125*f):02x}',.42,None
         if typ=='sheen':
             # 使用面内坐标定义移动反射带，透明边缘避免高光接缝，面多边形本身负责裁切。
             position,strength=f
+            # 压低铺满表面的白雾，保留独立窄亮芯和暗面之间的反差。
+            strength*=.6
             left=(p[0][0]*.35+p[1][0]*.65,p[0][1]*.35+p[1][1]*.65)
             right=(p[0][0]*.35+p[2][0]*.65,p[0][1]*.35+p[2][1]*.65)
             start=(left[0]+(right[0]-left[0])*(position-.5),left[1]+(right[1]-left[1])*(position-.5))

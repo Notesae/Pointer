@@ -16,6 +16,8 @@ class PackageTests(unittest.TestCase):
         """安装包中的源文件、二进制及五色所有 CUR/ANI 与本次构建保持一致。"""
         with zipfile.ZipFile(ROOT/'dist/IceGem-4.4-Color-Collection.zip') as archive:
             self.assertIsNone(archive.testzip())
+            # 正式包仅保留默认安装入口，不再要求用户切到专用 32px 方案。
+            self.assertFalse(any('-32px.cmd' in name or name.endswith('/TRIAL.txt') for name in archive.namelist()))
             for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
                 folder=ROOT/'variants'/color
                 self.assertEqual(json.loads(archive.read(f'IceGem-Colors/{color}/theme.json'))['version'],'4.4')
