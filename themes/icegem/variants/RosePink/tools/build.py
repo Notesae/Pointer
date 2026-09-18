@@ -8,13 +8,13 @@ ROOT=Path(__file__).resolve().parents[1]
 SIZES=(32,48,64)
 # 每个角色分别定义 ANI 的 1/60 秒帧时长；静止停留帧避免反复扫光。
 ANIMATIONS={
-    'normal': (2,)*24+(144,),
-    'working': (2,)*48,
+    'normal': (1,)*96+(96,),
+    'working': (1,)*96,
     'busy': (2,)*36,
-    'link': (2,)*24+(72,),
-    'help': (4,)*36,
-    'location': (4,)*36,
-    'person': (4,)*36,
+    'link': (1,)*96+(24,),
+    'help': (1,)*144,
+    'location': (1,)*144,
+    'person': (1,)*144,
     **{name:(3,)*36 for name in ('move','resize-ew','resize-ns','resize-nwse','resize-nesw')},
 }
 ROTATION_AMPLITUDES={
@@ -25,12 +25,22 @@ THEME_SHIFT=115
 THEME_NAME='玫瑰粉'
 NAMES=[('normal','正常选择','Arrow'),('working','后台忙碌','AppStarting'),('busy','忙碌 / 等待','Wait'),('help','帮助选择','Help'),('link','链接选择','Hand'),('unavailable','不可用','No'),('text','文本选择','IBeam'),('vertical-text','竖排文本选择',''),('precision','精准选择','Crosshair'),('resize-nwse','对角调整 ↖↘','SizeNWSE'),('resize-nesw','对角调整 ↗↙','SizeNESW'),('resize-ew','水平调整','SizeWE'),('resize-ns','垂直调整','SizeNS'),('move','移动','SizeAll'),('alternate','替代选择','UpArrow'),('handwriting','手写','NWPen'),('location','位置选择','Pin'),('person','人员选择','Person')]
 OUTLINE='#334f7b'; BLUE='#9bdcff'; LIGHT='#edfaff'; MID='#70bce7'; LILAC='#d3d1fa'
+def motion_phase(name,frame):
+    """统一摆动与自转时钟；带停留动作使用两端速度、加速度归零的五次缓动。"""
+    rates=ANIMATIONS.get(name,(1,))
+    index=frame%len(rates)
+    if name in ('normal','link'):
+        if index==len(rates)-1:return 0.
+        progress=index/(len(rates)-1)
+        return progress**3*(10-15*progress+6*progress**2)
+    return index/len(rates)
+
 def geometry(name,frame=0):
-    """生成固定热点的角色几何，只让切面高光及独立轨道随帧变化。"""
+    """生成固定热点的角色几何，叠加主体纵轴自转、角色摆动及三晶体等待动画。"""
     # 帧数跟随角色，所有几何运动均周期化；第零帧也是静态方案的基准。
     rates=ANIMATIONS.get(name,(1,))
-    phase=(frame%len(rates))/len(rates)
-    shimmer=(frame%len(rates))/24 if name in ('normal','link') else phase
+    phase=motion_phase(name,frame)
+    shimmer=phase
     level=math.sin(math.pi*shimmer)**2
     rotation=ROTATION_AMPLITUDES.get(name,0)*math.sin(phase*math.tau)
     ops=[]
@@ -47,7 +57,110 @@ def geometry(name,frame=0):
             def __exit__(self,*_):
                 if abs(angle)>1e-8:ops.append(('group-end',None,None,None,0))
         return RotationGroup()
-    def gem(p,large=False,animated=False,purple=False):
+    def gem(p,large=False,animated=False,purple=False,spin=False):
+        """绘制原有切面；主体自转时投影真实三维环带，并按深度绘制受光面。"""
+        if spin:
+            # 长轴穿过两端尖点，旋转只改变横截面，尖端位置和点击热点保持固定。
+            a,b,c,d=p
+            length=math.dist(a,c)
+            axis=((c[0]-a[0])/length,(c[1]-a[1])/length)
+            side=(axis[1],-axis[0])
+            radius=max(abs((v[0]-a[0])*side[0]+(v[1]-a[1])*side[1]) for v in (b,d))
+            # 带停留的角色在运动段完成一整圈，停留帧精确回到初始切面。
+            angle=math.tau*phase
+            # 椭圆八面环保留可见厚度；纵轴转动时侧面依次进入正面，而非压扁贴图。
+            ring=[]
+            for index in range(8):
+                theta=math.tau*index/8
+                x=radius*math.cos(theta)
+                z=radius*.68*math.sin(theta)
+                # 最宽环带下移：上段68%、下段32%，两端尖点与热点不动。
+                ring.append((x*math.cos(angle)+z*math.sin(angle),length*.68,
+                             -x*math.sin(angle)+z*math.cos(angle)))
+            faces=[]
+            for index in range(8):
+                for tip in ((0,0,0),(0,length,0)):
+                    vertices=[tip,ring[index],ring[(index+1)%8]]
+                    # 根据面法线与固定左上前光源计算漫反射，背面先画、正面后画。
+                    u=tuple(vertices[1][j]-tip[j] for j in range(3))
+                    v=tuple(vertices[2][j]-tip[j] for j in range(3))
+                    normal=(u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0])
+                    if tip[1]!=0: normal=tuple(-n for n in normal)
+                    norm=math.sqrt(sum(n*n for n in normal))
+                    # 剔除背向切面，避免近乎重合的前后面交换绘制顺序造成闪烁。
+                    if normal[2]<=0:continue
+                    # 光源固定在屏幕左上前方，将局部法线连同摆动一起变换后再求光照。
+                    swing=math.radians(rotation)
+                    nx=side[0]*normal[0]+axis[0]*normal[1]
+                    ny=side[1]*normal[0]+axis[1]*normal[1]
+                    world_x=(nx*math.cos(swing)-ny*math.sin(swing))/norm
+                    world_y=(nx*math.sin(swing)+ny*math.cos(swing))/norm
+                    facing=normal[2]/norm
+                    light=.18+.82*max(0,-.35*world_x-.45*world_y+.82*facing)
+                    points=[(a[0]+axis[0]*y+side[0]*x,a[1]+axis[1]*y+side[1]*x) for x,y,z in vertices]
+                    # 材质绑定物体表面而非屏幕位置，转动时冰蓝和淡紫反射随切面进入视野。
+                    material=('tableLight','tableBlue','tableIce','tableLilac')[index%4]
+                    bevel=('edgeIce','edgeBlue','edgeLilac','edgeIndigo')[index%4]
+                    glint=max(0,-.25*world_x-.2*world_y+.947*facing)**8
+                    faces.append((sum(vertex[2] for vertex in vertices)/3,points,material,bevel,light,glint,facing))
+            for depth,points,material,bevel,light,glint,facing in sorted(faces,key=lambda face:face[0]):
+                # 饱满冰晶底色保留宽切面，以局部浅色透光区表达纵深，避免玻璃纸质感。
+                inset=[mix(point,tuple(sum(v[j] for v in points)/3 for j in range(2)),.055) for point in points]
+                poly(points,'url(#clearIce)' if material in ('tableLight','tableIce') else 'url(#clearLilac)',None)
+                # 以法线受光量控制整面色调：背光为蓝紫色，迎光保留冰白亮面，形成稳定体积。
+                shade=(1-light)**1.4
+                poly(points,'#345da7'+f'{round(78*shade):02x}',None)
+                poly(inset,'#efffff'+f'{round(32*light**3):02x}',None)
+                # 面内仅保留一层宽幅折射，反向缓移表现内部深度，不堆叠碎三角。
+                refraction=.46+.1*math.sin(angle+depth/max(radius,.01))
+                inner=[mix(inset[0],inset[1],.3),mix(inset[0],inset[1],.65),
+                       mix(inset[1],inset[2],.8),mix(inset[0],inset[2],.42)]
+                ops.append(('sheen',inner,(refraction,.1+.25*light*(1-facing*.4)),None,0))
+                # 反射随迎光角度提亮，稳定的宝石底色与移动高光共同表现实体厚度。
+                ops.append(('sheen',inset,(.5+.22*math.sin(angle+depth/max(radius,.01)),.08+.5*glint),None,0))
+                if glint>.35:
+                    sliver=[mix(inset[0],inset[1],.15),mix(inset[0],inset[1],.20),
+                            mix(inset[1],inset[2],.72),mix(inset[1],inset[2],.77)]
+                    poly(sliver,'#ffffff'+f'{round(145*(glint-.35)/.65):02x}',None)
+                line([points[0],points[1]],'#f4ffff'+f'{round(25+85*light):02x}',.18)
+                # 棱线反射是沿实际边移动的短亮段，以冰蓝柔光衬托白芯，无独立星形。
+                travel=.3+.38*(.5+.5*math.sin(angle+depth/max(radius,.01)))
+                edge_start=mix(inset[0],inset[1],max(.08,travel-.12))
+                edge_end=mix(inset[0],inset[1],min(.94,travel+.12))
+                edge_energy=glint**2*math.sin(math.pi*phase)**2
+                line([edge_start,edge_end],'#9bdfff'+f'{round(95*edge_energy):02x}',.8)
+                line([edge_start,edge_end],'#ffffff'+f'{round(220*edge_energy):02x}',.29)
+            # 用投影环带的左右极值封闭外轮廓，保持小尺寸下清晰的宝石边缘。
+            left=min(ring,key=lambda vertex:vertex[0])
+            right=max(ring,key=lambda vertex:vertex[0])
+            outline=[a,(a[0]+axis[0]*right[1]+side[0]*right[0],a[1]+axis[1]*right[1]+side[1]*right[0]),
+                     c,(a[0]+axis[0]*left[1]+side[0]*left[0],a[1]+axis[1]*left[1]+side[1]*left[0])]
+            line(outline+[a],'#233e79',.72)
+            # 外沿亮棱向内收，保持原版玻璃倒角且不增加光标轮廓尺寸。
+            center=mix(a,c,.55)
+            inset=[mix(point,center,.06) for point in outline]
+            line([inset[3],inset[0],inset[1]],'#e7fbff',.38)
+            line([inset[1],inset[2]],'#c8c8ff',.33)
+            # 只让最迎光的切面产生集中反射，亮区始终由真实面内坐标限定，不再外贴星形。
+            if faces:
+                depth,points,material,bevel,light,glint,facing=max(faces,key=lambda face:face[5])
+                brilliance=glint**4*math.sin(math.pi*phase)**2
+                # 两个切面同样迎光时将窄亮芯淡出，避免最亮面切换瞬间反射位置跳跃。
+                runner_up=sorted(face[5] for face in faces)[-2] if len(faces)>1 else 0
+                separation=min(1,max(0,(glint-runner_up)/.12))
+                brilliance*=separation*separation*(3-2*separation)
+                center=tuple(sum(point[j] for point in points)/3 for j in range(2))
+                inner=[mix(point,center,.1) for point in points]
+                # 白亮窄芯与冰蓝肩部沿同一棱线展开，旋转离开迎光角度后平滑回落。
+                ribbon=[mix(inner[0],inner[1],.1),mix(inner[0],inner[1],.22),
+                        mix(inner[1],inner[2],.72),mix(inner[1],inner[2],.86)]
+                poly(ribbon,'#dcfaff'+f'{round(120*brilliance):02x}',None)
+                core=[mix(inner[0],inner[1],.14),mix(inner[0],inner[1],.18),
+                      mix(inner[1],inner[2],.76),mix(inner[1],inner[2],.82)]
+                poly(core,'#ffffff'+f'{round(235*brilliance):02x}',None)
+                line([mix(inner[0],inner[1],.16),mix(inner[1],inner[2],.79)],
+                     '#ffffff'+f'{round(185*brilliance):02x}',.24)
+            return
         a,b,c,d=p
         q=mix(a,c,.61 if large else .57)
         ridge=mix(a,q,.48)
@@ -123,7 +236,7 @@ def geometry(name,frame=0):
         ops.append(('ellipse',(13.5,28.3,6.7,2.2),'url(#shadow)',None,0))
         ops.append(('ellipse',(14.5,22,7,8),'url(#halo)',None,0))
         with rotated(6,3,rotation):
-            gem(p,large=True,animated=name in ('normal','working') or (name in ANIMATIONS and level>1e-8),purple=name=='alternate')
+            gem(p,large=True,animated=name in ('normal','working') or (name in ANIMATIONS and level>1e-8),purple=name=='alternate',spin=name in ROTATION_AMPLITUDES)
     def arm(angle,inner=1.25,outer=10,width=2.6):
         def tr(x,y):return (16+x*math.cos(angle)-y*math.sin(angle),16+x*math.sin(angle)+y*math.cos(angle))
         with rotated(16,16,rotation):
@@ -212,6 +325,11 @@ def svg(ops):
 <linearGradient id="tableIce" x1="0" y1="0" x2="1" y2="1"><stop offset="0.0" stop-color="#d8faff"/><stop offset="0.5" stop-color="#55c3ea"/><stop offset="1.0" stop-color="#f1faff"/></linearGradient>
 <linearGradient id="tableLilac" x1="0" y1="0" x2="1" y2="1"><stop offset="0.0" stop-color="#718bd9"/><stop offset="0.5" stop-color="#d8ddff"/><stop offset="1.0" stop-color="#fcf7ff"/></linearGradient>
 <linearGradient id="reflectedBlue" x1="0" y1="0" x2="1" y2="1"><stop offset="0.0" stop-color="#e8ffff"/><stop offset="0.5" stop-color="#409dcc"/><stop offset="1.0" stop-color="#bbf3ff"/></linearGradient>
+    <linearGradient id="depthGlass" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#385cae" stop-opacity=".24"/><stop offset=".4" stop-color="#80c9ef" stop-opacity=".08"/><stop offset=".72" stop-color="#7183d6" stop-opacity=".27"/><stop offset="1" stop-color="#e0d8ff" stop-opacity=".13"/></linearGradient>
+    <linearGradient id="iceRefraction" x1="0" y1="0" x2="1" y2=".7"><stop stop-color="#58a9df" stop-opacity=".06"/><stop offset=".35" stop-color="#94e8ff" stop-opacity=".36"/><stop offset=".53" stop-color="#f3ffff" stop-opacity=".72"/><stop offset=".65" stop-color="#65c4eb" stop-opacity=".22"/><stop offset="1" stop-color="#b9eaff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="violetRefraction" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#628dd5" stop-opacity="0"/><stop offset=".35" stop-color="#aaa6ef" stop-opacity=".31"/><stop offset=".52" stop-color="#f2eaff" stop-opacity=".59"/><stop offset=".7" stop-color="#8fdaf6" stop-opacity=".18"/><stop offset="1" stop-color="#b5dfff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="clearIce" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efffff" stop-opacity=".98"/><stop offset=".28" stop-color="#b2e5fa" stop-opacity=".94"/><stop offset=".55" stop-color="#e7fbff" stop-opacity=".88"/><stop offset=".78" stop-color="#78bfe5" stop-opacity=".96"/><stop offset="1" stop-color="#d1f2ff" stop-opacity=".98"/></linearGradient>
+    <linearGradient id="clearLilac" x1="0" y1="0" x2="1" y2=".85"><stop stop-color="#88bde6" stop-opacity=".98"/><stop offset=".32" stop-color="#c5e9fa" stop-opacity=".94"/><stop offset=".58" stop-color="#e8f5ff" stop-opacity=".90"/><stop offset=".82" stop-color="#a9bce9" stop-opacity=".96"/><stop offset="1" stop-color="#e3e9ff" stop-opacity=".98"/></linearGradient>
     </defs>"""
     parts=['<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">',defs]
     def paint(c,prop):
@@ -226,6 +344,15 @@ def svg(ops):
             parts.append('</g>')
             continue
         points=lambda: ' '.join(f'{x:.4f},{y:.4f}' for x,y in p)
+        if typ=='sheen':
+            # 使用面内坐标定义移动反射带，透明边缘避免高光接缝，面多边形本身负责裁切。
+            position,strength=f
+            left=(p[0][0]*.35+p[1][0]*.65,p[0][1]*.35+p[1][1]*.65)
+            right=(p[0][0]*.35+p[2][0]*.65,p[0][1]*.35+p[2][1]*.65)
+            start=(left[0]+(right[0]-left[0])*(position-.5),left[1]+(right[1]-left[1])*(position-.5))
+            end=(left[0]+(right[0]-left[0])*(position+.5),left[1]+(right[1]-left[1])*(position+.5))
+            parts.append(f'<defs><linearGradient id="sheen{idx}" gradientUnits="userSpaceOnUse" x1="{start[0]}" y1="{start[1]}" x2="{end[0]}" y2="{end[1]}"><stop stop-color="#e4faff" stop-opacity="0"/><stop offset=".3" stop-color="#d6f5ff" stop-opacity="{strength*.3}"/><stop offset=".5" stop-color="#ffffff" stop-opacity="{strength}"/><stop offset=".7" stop-color="#dfdcff" stop-opacity="{strength*.25}"/><stop offset="1" stop-color="#dfdcff" stop-opacity="0"/></linearGradient></defs><polygon points="{points()}" fill="url(#sheen{idx})"/>')
+            continue
         if typ=='sweep':
             a,c,phase,level=f
             # A long-axis gradient preserves faceted highlights rather than drawing a flat stripe.
@@ -302,7 +429,7 @@ def build():
         font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
     except OSError:
         font=ImageFont.load_default(size=17)
-    d.text((32,22),'ICEGEM 4.3 / ROSEPINK',fill='#334f7b',font=font)
+    d.text((32,22),'ICEGEM 4.4 / ROSEPINK',fill='#334f7b',font=font)
     for i,(name,_,_) in enumerate(NAMES):
         x=30+(i%6)*195;y=80+(i//6)*200
         d.rounded_rectangle((x,y,x+180,y+185),12,fill='white')
@@ -326,7 +453,7 @@ def build():
             frames.append(f'<span style="animation:{key} {sum(rates)/60}s steps(1) infinite">{svg_image(geometry(name,i))}</span>')
             elapsed+=rate
         cards.append(f'<article><div class="large anim">'+''.join(frames)+f'</div><h3>{cn}</h3><small>{name} · {slot or "应用专用"}</small><div class="samples">'+''.join(f'<div style="background:{bg}">{svg_image(geometry(name))}</div>' for bg in ['white','#172638','#afb9c8'])+'</div></article>')
-    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 12 种原生动效 / 文本与精确状态保持静止</p><p>后台运行与忙碌均为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
-    html=html.replace('IceGem 4.2','IceGem 4.3')
+    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 12 种原生动效 / 文本与精确状态保持静止</p><p>主体自转为 60fps，三晶体等待为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
+    html=html.replace('IceGem 4.2','IceGem 4.4')
     (ROOT/'preview/IceGem-Preview.html').write_text(html)
 if __name__=='__main__':build()

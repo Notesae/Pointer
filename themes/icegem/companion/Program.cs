@@ -18,6 +18,9 @@ namespace IceGem {
         private readonly System.Windows.Forms.Timer idle = new System.Windows.Forms.Timer {Interval=1600};
         private readonly Dictionary<IntPtr,Role> roles = new Dictionary<IntPtr,Role>();
         private readonly NotifyIcon tray;
+        // 托盘菜单与图标由宿主持有并释放；菜单打开时刷新实际状态。
+        private readonly ContextMenuStrip trayMenu = new ContextMenuStrip();
+        private Icon trayArtwork;
         private readonly Native.WinEvent cursorCallback;
         private readonly string configPath=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"IceGem-Companion","settings.txt");
         private IntPtr cursorHook, previousCursor;
@@ -34,17 +37,10 @@ namespace IceGem {
             FormBorderStyle=FormBorderStyle.None; ShowInTaskbar=false; TopMost=true;
             Size=new Size(CanvasSize,CanvasSize); StartPosition=FormStartPosition.Manual;
             LoadPreferences();
-            var menu=new ContextMenuStrip();
-            menu.Items.Add("暂停 / 继续",null,delegate { paused=!paused; Wake(); });
-            menu.Items.Add("轻柔 / 生动",null,delegate { motion.Strength=motion.Strength>.7f ? .6f : 1; SavePreferences(); Wake(); });
-            menu.Items.Add("跟随：开 / 关",null,delegate { motion.Follow=!motion.Follow; SavePreferences(); Wake(); });
-            menu.Items.Add("点击：开 / 关",null,delegate { motion.Click=!motion.Click; SavePreferences(); Wake(); });
-            foreach(string value in Artwork.Colors) {
-                string selected=value;
-                menu.Items.Add(selected,null,delegate { color=selected; SavePreferences(); Wake(); });
-            }
-            menu.Items.Add("退出",null,delegate { Close(); });
-            tray=new NotifyIcon {Icon=SystemIcons.Application,Text="IceGem 晶光随行",ContextMenuStrip=menu,Visible=smoke==null};
+            tray=new NotifyIcon {Text="IceGem 晶光随行",ContextMenuStrip=trayMenu};
+            BuildTrayMenu();
+            UpdateTrayIcon();
+            tray.Visible=smoke==null;
             frames.Tick+=delegate { TickMotion(); };
             idle.Tick+=delegate { idle.Stop(); motion.Idle(clock.Elapsed.TotalSeconds); Wake(); };
             cursorCallback=delegate(IntPtr h,uint ev,IntPtr w,int obj,int child,uint thread,uint time) {
@@ -62,6 +58,87 @@ namespace IceGem {
         }
 
         protected override bool ShowWithoutActivation { get { return true; } }
+
+        // 按控制、效果、外观和退出分组；使用原生菜单保留键盘导航及系统高对比度支持。
+        private void BuildTrayMenu() {
+            trayMenu.ShowImageMargin=false;
+            trayMenu.ShowCheckMargin=true;
+            trayMenu.Padding=new Padding(4);
+            var status=new ToolStripMenuItem {Enabled=false};
+            var pause=new ToolStripMenuItem("暂停动画(&P)",null,delegate {
+                paused=!paused; UpdateTrayIcon(); Wake();
+            });
+            var follow=new ToolStripMenuItem("晶片跟随(&F)",null,delegate {
+                motion.Follow=!motion.Follow; SavePreferences(); Wake();
+            });
+            var click=new ToolStripMenuItem("点击闪光(&C)",null,delegate {
+                motion.Click=!motion.Click; SavePreferences(); Wake();
+            });
+            var strength=new ToolStripMenuItem("动效强度(&S)");
+            var gentle=new ToolStripMenuItem("轻柔",null,delegate { motion.Strength=.6f; SavePreferences(); Wake(); });
+            var vivid=new ToolStripMenuItem("生动",null,delegate { motion.Strength=1; SavePreferences(); Wake(); });
+            strength.DropDownItems.AddRange(new ToolStripItem[]{gentle,vivid});
+            var palette=new ToolStripMenuItem("晶体配色(&T)");
+            string[] labels={"冰蓝","紫罗兰","玫瑰粉","薄荷绿","琥珀"};
+            for(int i=0;i<Artwork.Colors.Length;i++) {
+                string selected=Artwork.Colors[i];
+                palette.DropDownItems.Add(new ToolStripMenuItem(labels[i],null,delegate {
+                    color=selected; SavePreferences(); UpdateTrayIcon(); Wake();
+                }) {Tag=selected});
+            }
+            trayMenu.Items.AddRange(new ToolStripItem[]{status,new ToolStripSeparator(),pause,
+                new ToolStripSeparator(),follow,click,strength,palette,new ToolStripSeparator(),
+                new ToolStripMenuItem("退出 IceGem(&X)",null,delegate { Close(); })});
+            // 每次展开读取模型，避免点击、配置恢复或系统动画设置变化后显示过期勾选。
+            trayMenu.Opening+=delegate {
+                status.Text="IceGem · "+(paused ? "已暂停" : reduced ? "系统已关闭动画" : locked ? "会话已锁定" : "运行中");
+                pause.Text=paused ? "继续动画(&P)" : "暂停动画(&P)";
+                follow.Checked=motion.Follow; click.Checked=motion.Click;
+                gentle.Checked=motion.Strength<.7f; vivid.Checked=!gentle.Checked;
+                strength.Text="动效强度 · "+(gentle.Checked ? "轻柔" : "生动");
+                foreach(ToolStripMenuItem item in palette.DropDownItems) {
+                    item.Checked=(string)item.Tag==color;
+                    if(item.Checked) palette.Text="晶体配色 · "+item.Text;
+                }
+            };
+            foreach(ToolStripItem item in trayMenu.Items)
+                if(item is ToolStripMenuItem) item.Padding=new Padding(8,5,12,5);
+        }
+
+        // 用矢量切面绘制透明托盘图标；图标颜色跟随配色，暂停时叠加明确的暂停标记。
+        private void UpdateTrayIcon() {
+            using(var bitmap=new Bitmap(32,32,PixelFormat.Format32bppArgb))
+            using(var g=Graphics.FromImage(bitmap)) {
+                g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                PointF top=new PointF(15,2),left=new PointF(4,13),right=new PointF(28,13),bottom=new PointF(17,29),center=new PointF(15,15);
+                using(var body=new SolidBrush(Artwork.Tint(color)))
+                using(var light=new SolidBrush(Color.FromArgb(225,246,255)))
+                using(var shade=new SolidBrush(Color.FromArgb(61,95,150)))
+                using(var edge=new Pen(Color.FromArgb(35,62,105),1.5f)) {
+                    g.FillPolygon(body,new[]{top,right,bottom,left});
+                    g.FillPolygon(light,new[]{top,left,center});
+                    g.FillPolygon(shade,new[]{right,bottom,center});
+                    g.DrawPolygon(edge,new[]{top,right,bottom,left});
+                }
+                if(paused) {
+                    using(var badge=new SolidBrush(Color.FromArgb(35,48,66))) g.FillEllipse(badge,17,17,15,15);
+                    g.FillRectangle(Brushes.White,21,21,3,7);
+                    g.FillRectangle(Brushes.White,26,21,3,7);
+                }
+                IntPtr handle=bitmap.GetHicon();
+                Icon next;
+                try { using(var borrowed=Icon.FromHandle(handle)) next=(Icon)borrowed.Clone(); }
+                finally { DestroyIcon(handle); }
+                Icon previous=trayArtwork;
+                trayArtwork=next; tray.Icon=next;
+                if(previous!=null) previous.Dispose();
+            }
+            tray.Text="IceGem 晶光随行 · "+(paused ? "已暂停" : "运行中");
+        }
+
+        // GetHicon 返回调用方拥有的原生句柄，克隆为托管图标后立即释放。
+        [DllImport("user32.dll")]
+        private static extern bool DestroyIcon(IntPtr icon);
         protected override CreateParams CreateParams {
             get { var p=base.CreateParams; p.ExStyle|=0x80000|0x20|0x80|0x08000000; return p; }
         }
@@ -215,6 +292,8 @@ namespace IceGem {
             if(cursorHook!=IntPtr.Zero) Native.UnhookWinEvent(cursorHook);
             Native.RegisterRawInputDevices(new[]{new Native.RawDevice {Page=1,Usage=2,Flags=1,Target=IntPtr.Zero}},1,(uint)Marshal.SizeOf(typeof(Native.RawDevice)));
             tray.Visible=false; tray.Dispose();
+            trayMenu.Dispose();
+            if(trayArtwork!=null) trayArtwork.Dispose();
             base.OnFormClosed(e);
         }
     }

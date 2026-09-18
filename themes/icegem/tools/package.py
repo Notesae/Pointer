@@ -1,4 +1,4 @@
-"""从已构建的五色资源生成 4.3 包；Linux 直接写 tar 链接，支持 Windows 构建机。"""
+"""从已构建的五色资源生成 4.4 包；Linux 直接写 tar 链接，支持 Windows 构建机。"""
 from pathlib import Path
 import argparse
 import hashlib
@@ -9,7 +9,7 @@ import tarfile
 import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
-VERSION='4.3'
+VERSION='4.4'
 COLORS=('IceBlue','Violet','RosePink','Mint','Amber')
 
 

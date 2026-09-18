@@ -31,7 +31,7 @@ if([string]::IsNullOrWhiteSpace($localData)){$localData=$env:LOCALAPPDATA}
 if([string]::IsNullOrWhiteSpace($localData)){throw 'Windows did not provide a LocalApplicationData directory.'}
 $root=Join-Path -Path $localData -ChildPath 'IceGem-Managed'
 $backupRoot=Join-Path -Path $localData -ChildPath 'IceGem-Backups'
-Write-Host "IceGem 4.3 Violet installer | Source: $SourceRoot"
+Write-Host "IceGem 4.4 Violet installer | Source: $SourceRoot"
 Write-Host "User data: $localData"
 $baseline=Join-Path $backupRoot 'Before-IceGem.clixml'
 $marker=Join-Path $root '.icegem-managed'
@@ -149,14 +149,14 @@ try {
             Check-Cursor $path
         }
         $linkExpected=@{
-            '32'='04E96BA5EDCA69DCDCBD7BB2B85607535F545B0CDD5DB3D3C6ED119D3977CADB'
-            '48'='B960B7C46A7CF5F95328A26C1855395D22612DC1F1BEF0EB9A02D944111E44FC'
-            '64'='762A62175CDBBC132AF49128CD63818FFECD0FF9A36848D923672CACCA96DC72'
-            'multi'='DC9DB5762E684CCD01A8E21B6D995A67A234A76DBCA7E7FF793E7660908A499D'
+            '32'='05027282471D5B9EDDE71FD0CFC510C24636B918567AD50F334D35774A3BFBEA'
+            '48'='43A8D8788C444687C8D823FF16D9B0FE0BD6E7C9470E276819DE5459EFAC97FF'
+            '64'='EB101EE4AED21C3A24AB019C8542BEA649357E50BF30609D74BEB6895A08B49B'
+            'multi'='A88B15A249AB9682D77C768631D2494D66EA22DFA7AEF6F80903351608C8733E'
         }
         $linkSource=Join-Path $source 'icegem-link.cur'
         if((Get-FileHash -LiteralPath $linkSource -Algorithm SHA256).Hash -ne $linkExpected[$Size]){
-            throw 'Link resource is not the 4.3 Violet rotating crystal. Extract the complete versioned package into a NEW folder.'
+            throw 'Link resource is not the 4.4 Violet rotating crystal. Extract the complete versioned package into a NEW folder.'
         }
         $before=Capture-Settings
         New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null
@@ -203,7 +203,7 @@ try {
         $expectedLink=Join-Path $destination "icegem-link.$linkExtension"
         if($activeLink -ne $expectedLink){throw "Link registry readback mismatch: $activeLink"}
         if((Get-FileHash -LiteralPath $activeLink -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath (Join-Path $source "icegem-link.$linkExtension") -Algorithm SHA256).Hash){throw 'Installed Link hash mismatch.'}
-        Write-Host '[VERIFIED] Link Select = 4.3 Violet ROTATING CRYSTAL (file + registry).' -ForegroundColor Cyan
+        Write-Host '[VERIFIED] Link Select = 4.4 Violet ROTATING CRYSTAL (file + registry).' -ForegroundColor Cyan
         Write-Host "Active Hand: $activeLink"
         $mutationStarted=$false
         Write-Host "Installed and applied: IceGem Violet $Mode ($Size)" -ForegroundColor Green

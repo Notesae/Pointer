@@ -2,6 +2,7 @@
 from pathlib import Path, PurePosixPath
 import hashlib
 import json
+import re
 import struct
 import tarfile
 import unittest
@@ -13,11 +14,20 @@ class PackageTests(unittest.TestCase):
     """直接验证用户下载的安装包，不仅验证本地构建目录。"""
     def test_windows_package(self):
         """安装包中的源文件、二进制及五色所有 CUR/ANI 与本次构建保持一致。"""
-        with zipfile.ZipFile(ROOT/'dist/IceGem-4.3-Color-Collection.zip') as archive:
+        with zipfile.ZipFile(ROOT/'dist/IceGem-4.4-Color-Collection.zip') as archive:
             self.assertIsNone(archive.testzip())
             for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
                 folder=ROOT/'variants'/color
-                self.assertEqual(json.loads(archive.read(f'IceGem-Colors/{color}/theme.json'))['version'],'4.3')
+                self.assertEqual(json.loads(archive.read(f'IceGem-Colors/{color}/theme.json'))['version'],'4.4')
+                # 安装器必须接受当前静态资源，检查器也必须识别对应动态资源。
+                installer=archive.read(f'IceGem-Colors/{color}/Install-IceGem.ps1').decode('utf-8')
+                checker=archive.read(f'IceGem-Colors/{color}/Check-Link.ps1').decode('utf-8')
+                expected=dict(re.findall(r"'(32|48|64|multi)'='([A-F0-9]{64})'",installer))
+                for size in ('32','48','64','multi'):
+                    for ext in ('cur','ani'):
+                        digest=hashlib.sha256(archive.read(f'IceGem-Colors/{color}/cursors/{size}/icegem-link.{ext}')).hexdigest().upper()
+                        self.assertIn(digest,checker)
+                        if ext=='cur':self.assertEqual(expected[size],digest)
                 for path in (folder/'cursors').rglob('*'):
                     if path.is_file():self.assertEqual(archive.read('IceGem-Colors/'+color+'/'+path.relative_to(folder).as_posix()),path.read_bytes())
             for path in (ROOT/'companion').iterdir():
@@ -26,11 +36,11 @@ class PackageTests(unittest.TestCase):
 
     def test_linux_package(self):
         """校验五尺寸、每角色时间表、预乘 Alpha、可见热点以及所有符号链接目标。"""
-        path=ROOT/'dist/IceGem-4.3-Linux.tar.gz'
+        path=ROOT/'dist/IceGem-4.4-Linux.tar.gz'
         self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),path.with_name(path.name+'.sha256').read_text().split()[0])
         with tarfile.open(path) as archive:
             metadata=json.load(archive.extractfile('IceGem-Linux/manifest.json'))
-            self.assertEqual(metadata['version'],'4.3-linux.1')
+            self.assertEqual(metadata['version'],'4.4-linux.1')
             self.assertEqual(len(metadata['themes']),10)
             files={entry.name:entry for entry in archive.getmembers()}
             for line in archive.extractfile('IceGem-Linux/SHA256SUMS').read().decode().splitlines():

@@ -14,10 +14,23 @@ class MotionTests(unittest.TestCase):
             spec=importlib.util.spec_from_file_location(color,ROOT/'variants'/color/'tools/build.py')
             renderer=importlib.util.module_from_spec(spec)
             spec.loader.exec_module(renderer)
-            self.assertEqual(renderer.ANIMATIONS['working'],(2,)*48)
+            self.assertEqual(renderer.ANIMATIONS['working'],(1,)*96)
             self.assertEqual(renderer.ANIMATIONS['busy'],(2,)*36)
             self.assertGreater(renderer.ROTATION_AMPLITUDES['link'],renderer.ROTATION_AMPLITUDES['normal'])
             self.assertEqual(sum(renderer.ANIMATIONS['normal']),192)
+            # 长停留必须与下一轮起点完全一致，起停邻帧差异应小于中段，防止回正跳变。
+            for role in ('normal','link'):
+                count=len(renderer.ANIMATIONS[role])
+                first=renderer.render(renderer.geometry(role,0),32)
+                hold=renderer.render(renderer.geometry(role,count-1),32)
+                self.assertEqual(first.tobytes(),hold.tobytes())
+                near=renderer.render(renderer.geometry(role,1),32)
+                before=renderer.render(renderer.geometry(role,count-2),32)
+                middle=renderer.render(renderer.geometry(role,count//2),32)
+                after=renderer.render(renderer.geometry(role,count//2+1),32)
+                mid_delta=sum(ImageStat.Stat(ImageChops.difference(middle,after)).mean)
+                self.assertLess(sum(ImageStat.Stat(ImageChops.difference(first,near)).mean),mid_delta)
+                self.assertLess(sum(ImageStat.Stat(ImageChops.difference(before,hold)).mean),mid_delta)
             for name,rates in renderer.ANIMATIONS.items():
                 with self.subTest(color=color,state=name):
                     self.assertEqual(renderer.svg(renderer.geometry(name,0)),renderer.svg(renderer.geometry(name,len(rates))))

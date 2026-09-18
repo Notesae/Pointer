@@ -1,19 +1,26 @@
 # IceGem · 冰晶宝石光标
 
-> IceGem 4.3 使用原生固定 ANI：不同状态采用不同晶体旋转幅度，忙碌状态改为三颗横向晶体依次放大并亮起。Crystal 仍作为独立主题继续开发。
+> IceGem 4.4 使用原生固定 ANI：不同状态采用不同晶体旋转幅度，忙碌状态改为三颗横向晶体依次放大并亮起。Crystal 仍作为独立主题继续开发。
 
 冰蓝、紫罗兰、玫瑰粉、薄荷绿、琥珀五套配色，沿用修长晶体造型和加强版点击线条。
 
 ![五色预览](preview/colorways.png)
 
-## 4.3 更新 · 晶体旋律
+## 4.4 更新 · 晶体旋律
 
-- 12 种原生动画：常态切面流光、后台单弧、忙碌双弧、链接、帮助、位置、人员、移动和四向缩放。
-- 后台 48 帧 / 1.6 秒、忙碌 36 帧 / 1.2 秒，旋转均为 30fps；常态一轮 3.2 秒，包含静止停留。
+- 主体比例上长下短（68:32），纵轴自转与摆动同步；迎光、背光和面内反射随角度自然变化。
+- 主体以 60fps 输出，普通状态转动 1.6 秒后停留 1.6 秒；查看[全彩动态预览](preview/spin-lighting-4.4.webp)。
+- Companion 新增随配色变化的冰晶托盘图标、暂停标记及带当前状态的分组菜单。
+- 更新 Companion 前先从旧版托盘退出，再运行新包的 Start-Companion.cmd。
+
+主体晶体在左右摆动基础上绕自身纵轴自转：使用带厚度的八面环带投影与固定光源，让切面、棱线和亮度随角度变化。尖端热点保持固定，三晶体等待动画不变。[自转关键帧](preview/longitudinal-spin-4.4.png) · [当前动效预览](preview/native-motion-4.4.gif)。
+
+- 12 种原生动画：常态纵轴自转、后台单弧、三晶体等待、链接、帮助、位置、人员、移动和四向缩放。
+- 后台 96 帧 / 1.6 秒（60fps）、忙碌 36 帧 / 1.2 秒（30fps）；常态一轮 3.2 秒，包含静止停留。
 - [Windows Companion](companion/)：可选双晶片跟随、悬停点亮、点击折射和拖动收束。安装原生主题后运行包内 `Start-Companion.cmd`，无需设置自启动。
 - 文本、精确、手写、不可用等状态保持静止；这些角色也隐藏伴随装饰。
 - Windows 与 Linux 均提供原生动效；当前交互程序仅支持 Windows x64。
-- [原生动效实帧预览](preview/native-motion-4.2.gif) · [交互绘制器预览](preview/companion-motion-4.2.gif)。
+- [原生动效实帧预览](preview/native-motion-4.4.gif) · [交互绘制器预览](preview/companion-motion-4.2.gif)。
 
 ## 4.1 更新
 
@@ -23,7 +30,7 @@
 
 ## Windows 下载与安装
 
-[下载 4.3 五色完整安装包](dist/IceGem-4.3-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
+[下载 4.4 五色完整安装包](dist/IceGem-4.4-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
 
 | 颜色 | 文件 |
 |---|---|
@@ -37,7 +44,7 @@
 
 ## Linux / Zorin OS
 
-[下载 Linux 4.3 完整安装包](dist/IceGem-4.3-Linux.tar.gz?raw=true) · [安装、换色、恢复与卸载说明](linux/)
+[下载 Linux 4.4 完整安装包](dist/IceGem-4.4-Linux.tar.gz?raw=true) · [安装、换色、恢复与卸载说明](linux/)
 
 五色动态/静态共十套原生 Xcursor 主题，支持 24/32/48/64/96px。解压后进入 `IceGem-Linux`，运行 `bash Install.sh`，默认应用冰蓝动态版、32px，无需 sudo。Linux 构建器与安装脚本位于 `linux/`，复用 `variants/` 中的配色渲染源码。Zorin 桌面显示、动画及多屏/DPI 尚待实机验收。
 

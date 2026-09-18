@@ -1,6 +1,6 @@
 # Pointer
 
-> **新主题设计阶段**：完整宝石本体动画已独立为 [Crystal（切面晶石）](themes/crystal/)，不再作为 IceGem 4.3；IceGem 4.2 交互动效保留为实验。Crystal 静态资源尚未校对完成，仍需继续优化，见[后续待办](themes/crystal/TODO.md)。
+> **IceGem 4.4**：新增宝石纵轴自转、切面光效和托盘菜单优化，使用原生固定 ANI。[Crystal（切面晶石）](themes/crystal/) 仍作为独立主题开发，静态资源尚需校对，见[后续待办](themes/crystal/TODO.md)。
 
 Windows / Linux 自定义光标主题集合。**每套光标独立目录，主题内再区分配色**，方便持续加入不同造型和风格。
 
@@ -16,9 +16,9 @@ Windows / Linux 自定义光标主题集合。**每套光标独立目录，主�
 
 ![IceGem 五色预览](themes/icegem/preview/colorways.png)
 
-[下载 IceGem 4.2 Windows 五色安装包](themes/icegem/dist/IceGem-4.2-Color-Collection.zip?raw=true)
+[下载 IceGem 4.4 Windows 五色安装包](themes/icegem/dist/IceGem-4.4-Color-Collection.zip?raw=true)
 
-[下载 IceGem 4.2 Linux 安装包](themes/icegem/dist/IceGem-4.2-Linux.tar.gz?raw=true) · [Linux / Zorin 安装说明](themes/icegem/linux/)
+[下载 IceGem 4.4 Linux 安装包](themes/icegem/dist/IceGem-4.4-Linux.tar.gz?raw=true) · [Linux / Zorin 安装说明](themes/icegem/linux/)
 
 ## IceGem 无动画稳定基线
 

@@ -3,8 +3,8 @@
   "counts": {
     "cur_files": 72,
     "ani_files": 48,
-    "images": 2640,
-    "ani_frames": 1688
+    "images": 5736,
+    "ani_frames": 3752
   },
   "windows_runtime": "NOT RUN; use tools/Validate-Windows.ps1"
 }

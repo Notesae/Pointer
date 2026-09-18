@@ -1,8 +1,8 @@
-# IceGem 4.3 · 紫罗兰
+# IceGem 4.4 · 紫罗兰
 
 仓库源码目录需要先执行 `python tools/build.py` 生成 cursors；也可直接下载主题 dist 中的完整安装包。生成后双击本目录 Install.cmd 安装并应用 紫罗兰 动态方案。Windows 方案名为 IceGem Violet Gentle (multi)；Static 为静态版。各颜色方案独立命名，安装过的配色可在鼠标属性中切换。
 
-18 种状态，32/48/64px 与 multi，正常/后台忙碌/等待提供 24 帧 ANI。Link 使用加强版点击线；文本尺寸、轮廓、热点与 3.5 一致。禁用符号保持红色，其他材质按主题配色。
+18 种状态，32/48/64px 与 multi，12 种状态提供独立时序 ANI；正常为 96 个动作帧加停留帧，后台为 96 帧，等待为 36 帧。Link 使用加强版点击线；文本尺寸、轮廓、热点与 3.5 一致。禁用符号保持红色，其他材质按主题配色。
 
 Install.cmd -Mode Static：静态版。
 Install.cmd -Action Restore：恢复首次安装前设置。

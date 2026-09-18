@@ -1,5 +1,5 @@
 {
-  "version": "4.3-linux.1",
+  "version": "4.4-linux.1",
   "sizes": [
     24,
     32,
@@ -132,11 +132,11 @@
   },
   "animation": {
     "normal": {
-      "frames": 25,
+      "frames": 97,
       "periodMs": 3200
     },
     "working": {
-      "frames": 48,
+      "frames": 96,
       "periodMs": 1600
     },
     "busy": {
@@ -144,11 +144,11 @@
       "periodMs": 1200
     },
     "help": {
-      "frames": 36,
+      "frames": 144,
       "periodMs": 2400
     },
     "link": {
-      "frames": 25,
+      "frames": 97,
       "periodMs": 2000
     },
     "unavailable": {
@@ -196,11 +196,11 @@
       "periodMs": 0
     },
     "location": {
-      "frames": 36,
+      "frames": 144,
       "periodMs": 2400
     },
     "person": {
-      "frames": 36,
+      "frames": 144,
       "periodMs": 2400
     }
   }

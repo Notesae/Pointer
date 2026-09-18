@@ -58,7 +58,7 @@ def encode(images):
 def build(variants, output):
     """复用五色渲染器与时序，生成动态、静态 Xcursor 主题及别名。"""
     output.mkdir(parents=True, exist_ok=True)
-    metadata = {'version': '4.2-linux.1', 'animation': {}, 'sizes': SIZES, 'themes': [], 'aliases': ALIASES}
+    metadata = {'version': '4.4-linux.1', 'animation': {}, 'sizes': SIZES, 'themes': [], 'aliases': ALIASES}
     for color in COLORS:
         spec = importlib.util.spec_from_file_location('icegem_' + color, variants / color / 'tools/build.py')
         renderer = importlib.util.module_from_spec(spec)
