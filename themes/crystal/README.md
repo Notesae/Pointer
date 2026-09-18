@@ -1,6 +1,6 @@
 # Crystal · 切面晶石
 
-> **未完成：静态资源仍需继续校对和优化。** 当前最新为第10轮工作稿，尚未获得最终确认、尚未接回动画。[后续待办与接续入口](TODO.md)。
+> **主体静态已确认：采用第14轮。** 当前进入功能光标设计阶段，首轮功能造型已否定，文本与缩放正在第02轮重做，尚未接回动画或制作安装包。[后续待办](TODO.md)。
 
 独立的新主题，版本 0.1.0-dev，目前仅有冰蓝动画原型，尚未制作安装包。不是 IceGem 4.3。
 
@@ -45,3 +45,19 @@
 第09轮厚度校准：[整体对照](preview/static-study-09.png) · [SVG](preview/static-study-09.svg)。在固定外轮廓内增加窄侧面填充带与亮倒角，构成亮、灰、暗的腰棱层次；保留圆润尖端和完整台面，尚未替换动画。
 
 第10轮尖端校准：[整体](preview/static-study-10.png) · [双尖端](preview/corner-study-10.png)。肩部侧面厚度保留，两端内缩量降低并柔和淡出亮棱，消除包头式亮圈；中央台面不变，尚未替换动画。
+
+第11轮下侧校准：[整体对照](preview/static-study-11.png) · [下侧局部对照](preview/lower-facets-study-11.png) · [SVG](preview/static-study-11.svg)。左下肩角扩大过渡，右下尖端改为非对称收束；下冠部以共边节点增加主次反射面，保留单一中央台面和窄侧面厚度。外围反光细腻度仍需继续核对，尚未替换动画。
+
+第12轮弧度与切面加强：[整体对照](preview/static-study-12.png) · [局部新旧对照](preview/lower-facets-study-12.png) · [SVG](preview/static-study-12.svg)。明显扩大左下肩角及右下尖端过渡，增加下侧长边弧度；细分12处外围冠面，中央台面保持完整。仅为静态待确认稿，尚未接回动画。
+
+第13轮切面与明暗校准：[整体对照](preview/static-study-13.png) · [第12/13轮局部对照](preview/lower-facets-study-13.png) · [SVG](preview/static-study-13.svg)。新增7处外围冠面细分，在参考取色基础上逐面调整亮灰暗关系，增强侧冠、下冠及右下尖端的反射层次；沿用第12轮轮廓和完整台面。仍为待确认静态稿。
+
+第14轮圆润外缘校准：[整体对照](preview/static-study-14.png) · [第13/14轮局部对照](preview/lower-facets-study-14.png) · [SVG](preview/static-study-14.svg)。扩大四角过渡，以连续切线衔接圆角与长边；外围切面叠加逐层衰减的抛光反光，减轻硬描边，保留切面明暗、侧面厚度及完整台面。仍为静态待确认稿。
+
+## 功能光标 · 第01轮
+
+[深浅背景与32/48/64px预览](preview/roles-01/contact-sheet.png)。新增文本选择、精确选择、移动、水平/垂直/两种斜向缩放，共7个功能角色；独立SVG位于 `preview/roles-01/`。运行 `python tools/preview_roles.py` 可重建。功能角色按中心热点设计，当前SVG为视觉资源，尚未编码CUR热点或进行系统加载验证。主体沿用已确认第14轮。
+
+## 功能光标 · 第02轮重做
+
+第01轮被否定，保留为历史对照。最新为[第02轮深浅预览](preview/roles-02/contact-sheet.png)，先重做文本和四向缩放：文本使用平头晶冠，缩放使用双端菱形晶冠，减薄轮廓并强调实心切面。该方向尚待确认，精确选择与移动暂不沿用第01轮。构建入口仍为 `tools/preview_roles.py`。

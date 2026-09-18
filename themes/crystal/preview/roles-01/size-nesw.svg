@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#daf5ff"/><stop offset=".35" stop-color="#83bde5"/><stop offset=".64" stop-color="#eafaff"/><stop offset="1" stop-color="#406baa"/></linearGradient>
+    <linearGradient id="table" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#94d0f0"/><stop offset=".55" stop-color="#ceeefe"/><stop offset="1" stop-color="#75a8db"/></linearGradient>
+    </defs><g transform="rotate(-45 50 50)"><defs><clipPath id="cut"><path d="M9 48 L27 33 Q30 31 29 35 L27 44 L73 44 L71 35 Q70 31 73 33 L91 48 Q94 50 91 52 L73 67 Q70 69 71 65 L73 56 L27 56 L29 65 Q30 69 27 67 L9 52 Q6 50 9 48 Z"/></clipPath></defs>
+    <path d="M9 48 L27 33 Q30 31 29 35 L27 44 L73 44 L71 35 Q70 31 73 33 L91 48 Q94 50 91 52 L73 67 Q70 69 71 65 L73 56 L27 56 L29 65 Q30 69 27 67 L9 52 Q6 50 9 48 Z" fill="url(#body)" stroke="#365e94" stroke-width="1.8" stroke-linejoin="round"/>
+    <g clip-path="url(#cut)"><path d="M9 50 L27 34 L22 48 L29 50 Z" fill="#c6eaff"/>
+        <path d="M9 50 L29 50 L27 66 Z" fill="#507fb5"/>
+        <path d="M24 48 L76 48 L82 50 L76 53 L24 53 L19 50 Z" fill="url(#table)"/>
+        <path d="M27 44 L73 44 L76 48 L24 48 Z" fill="#eafaff"/>
+        <path d="M24 53 L76 53 L73 56 L27 56 Z" fill="#527eaf"/>
+        <path d="M73 34 L91 50 L79 49 Z" fill="#effbff"/>
+        <path d="M79 49 L91 50 L73 66 L77 54 Z" fill="#5d91c5"/>
+        <path d="M12 50 L23 49 M29 48 L72 48 M81 50 L88 50" stroke="#f3fdff" stroke-width="1.1"/>
+    <path d="M9 48 L27 33 Q30 31 29 35 L27 44 L73 44 L71 35 Q70 31 73 33 L91 48 Q94 50 91 52 L73 67 Q70 69 71 65 L73 56 L27 56 L29 65 Q30 69 27 67 L9 52 Q6 50 9 48 Z" fill="none" stroke="#e3f6ff" stroke-width="3.8" opacity=".72"/>
+    <path d="M9 48 L27 33 Q30 31 29 35 L27 44 L73 44 L71 35 Q70 31 73 33 L91 48 Q94 50 91 52 L73 67 Q70 69 71 65 L73 56 L27 56 L29 65 Q30 69 27 67 L9 52 Q6 50 9 48 Z" fill="none" stroke="#4d79ad" stroke-width="1.2"/></g></g></svg>
