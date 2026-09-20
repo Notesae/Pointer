@@ -15,6 +15,9 @@ ANIMATIONS={
     'help': (1,)*144,
     'location': (1,)*144,
     'person': (1,)*144,
+    # 展台文本动画为 75 帧 / 3 秒；累计取整到 ANI jiffy，帧误差不累积。
+    **{name:tuple(round((i+1)*180/75)-round(i*180/75) for i in range(75))
+       for name in ('text','vertical-text')},
     **{name:(3,)*36 for name in ('move','resize-ew','resize-ns','resize-nwse','resize-nesw')},
 }
 ROTATION_AMPLITUDES={
@@ -35,8 +38,89 @@ def motion_phase(name,frame):
         return progress**3*(10-15*progress+6*progress**2)
     return index/len(rates)
 
+def text_pedestal_svg(frame, vertical=False):
+    """以固定六角晶台和棱柱承托浮动晶石，上端叠加纵轴自转与中心倾摆。"""
+    # 每轮 75 帧、3 秒；归一化索引保证跨周期首帧完全一致。
+    frame %= len(ANIMATIONS['text'])
+    phase = frame / len(ANIMATIONS['text']) * math.tau
+    # 平滑周期运动只作用于上端；中心热点所在支撑柱与底座始终固定。
+    lift = -.7 * math.sin(phase)
+    tilt = 7 * math.sin(phase + .6)
+    # 同一组透色材质用于台面、倒角与棱柱；各切面的明暗随朝向而非宽幅白带变化。
+    stand = theme_svg('''<defs>
+      <linearGradient id="ice" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e7fbff" stop-opacity=".82"/><stop offset=".45" stop-color="#a6d9ef" stop-opacity=".38"/><stop offset="1" stop-color="#6395cd" stop-opacity=".64"/></linearGradient>
+      <linearGradient id="lilac" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#6878b6" stop-opacity=".7"/><stop offset=".55" stop-color="#bbc7ed" stop-opacity=".32"/><stop offset="1" stop-color="#e7eaff" stop-opacity=".72"/></linearGradient>
+      <linearGradient id="refract" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#7bb9e1" stop-opacity=".16"/><stop offset=".48" stop-color="#ecffff" stop-opacity=".82"/><stop offset=".53" stop-color="#9cd2e9" stop-opacity=".27"/><stop offset="1" stop-color="#a1a5e0" stop-opacity=".48"/></linearGradient>
+      <!-- 固定左上光源：各表面独立明暗，底缘压暗，柱身使用连续色阶表现透光深度。 -->
+      <linearGradient id="tableLight" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ecffff" stop-opacity=".9"/><stop offset=".58" stop-color="#b6e0f4" stop-opacity=".62"/><stop offset="1" stop-color="#86a7d1" stop-opacity=".65"/></linearGradient>
+      <linearGradient id="frontLight" x1="0" y1="0" x2=".25" y2="1"><stop stop-color="#d7f7ff" stop-opacity=".88"/><stop offset=".3" stop-color="#94c4e5" stop-opacity=".66"/><stop offset="1" stop-color="#496d9e" stop-opacity=".78"/></linearGradient>
+      <linearGradient id="rightShade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#84a9d5" stop-opacity=".7"/><stop offset=".65" stop-color="#46689b" stop-opacity=".8"/><stop offset="1" stop-color="#797bb7" stop-opacity=".66"/></linearGradient>
+      <linearGradient id="columnLight" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#d2f5ff" stop-opacity=".84"/><stop offset=".3" stop-color="#8bbbe0" stop-opacity=".5"/><stop offset=".62" stop-color="#e4faff" stop-opacity=".9"/><stop offset="1" stop-color="#88a9d4" stop-opacity=".72"/></linearGradient>
+      <linearGradient id="columnShade" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#5378a8" stop-opacity=".78"/><stop offset=".45" stop-color="#a3b8e0" stop-opacity=".5"/><stop offset="1" stop-color="#4b699c" stop-opacity=".8"/></linearGradient>
+      </defs>
+      <!-- 仅保留外壳与互不重叠的表面切面，去掉内部骨架和交叉光带产生的杂质重影。 -->
+      <!-- 底座在上版基础上再缩小 15%，累计为原尺寸的 72.25%，固定柱脚连接点。 -->
+      <g transform="translate(16 25) scale(.7225) translate(-16 -25)">
+      <path d="M10 25 L13 23.8 L19 23.8 L22 25 L22 27.1 L19.4 28.5 L12.6 28.5 L10 27.1 Z" fill="#aed9ed" fill-opacity=".25"/>
+      <!-- 台面仅通过大块透色切面表现折射，不叠加柱脚或内部零件形状。 -->
+      <path d="M10 25 L13 23.8 L15.6 25.6 L13 26.4 Z" fill="url(#tableLight)"/>
+      <path d="M13 23.8 L19 23.8 L15.6 25.6 Z" fill="#d8f6ff" fill-opacity=".68"/>
+      <path d="M19 23.8 L22 25 L19 26.4 L15.6 25.6 Z" fill="url(#lilac)"/>
+      <path d="M13 26.4 L15.6 25.6 L19 26.4 Z" fill="#82b6da" fill-opacity=".6"/>
+      <path d="M10 25 L13 26.4 L12.6 28.5 L10 27.1 Z" fill="url(#frontLight)"/>
+      <path d="M13 26.4 L19 26.4 L16.8 27.45 L12.6 28.5 Z" fill="url(#frontLight)"/>
+      <path d="M19 26.4 L19.4 28.5 L12.6 28.5 L16.8 27.45 Z" fill="url(#rightShade)"/>
+      <path d="M19 26.4 L22 25 L22 27.1 L19.4 28.5 Z" fill="url(#rightShade)"/>
+      <path d="M10 25 L13 23.8 L19 23.8 L22 25 L22 27.1 L19.4 28.5 L12.6 28.5 L10 27.1 Z" fill="none" stroke="#476d99" stroke-opacity=".72" stroke-width=".25"/>
+      <path d="M10.2 25 L13.1 23.95 L18.8 23.95 M10.15 25.1 L13 26.4 L19 26.4 L21.85 25.1 M12.8 28.25 L19.3 28.25" fill="none" stroke="#efffff" stroke-opacity=".87" stroke-width=".2"/>
+      <path d="M13 26.4 L12.6 28.3 M19 26.4 L19.4 28.3" fill="none" stroke="#b4d9f6" stroke-width=".16"/>
+      <!-- 柱体直接连接台面，连续纵向切面代替内部三角碎片与独立底脚。 -->
+      </g>
+      <path d="M15.05 14.5 L16 14.1 L16.95 14.5 L17.1 24.4 L16 25 L14.9 24.4 Z" fill="#b0ddef" fill-opacity=".35"/>
+      <path d="M15.05 14.5 L15.5 14.75 L15.65 24.65 L14.9 24.4 Z" fill="#648bb9" fill-opacity=".7"/>
+      <path d="M15.5 14.75 L16 14.1 L16 25 L15.65 24.65 Z" fill="url(#columnLight)"/>
+      <path d="M16 14.1 L16.95 14.5 L16.45 24.7 L16 25 Z" fill="url(#columnShade)"/>
+      <path d="M16.95 14.5 L17.1 24.4 L16.45 24.7 Z" fill="#5679ad" fill-opacity=".62"/>
+      <path d="M15.05 14.5 L16 14.1 L16.95 14.5 L17.1 24.4 L16 25 L14.9 24.4 Z" fill="none" stroke="#6383ac" stroke-opacity=".68" stroke-width=".19"/>
+      <path d="M15.12 14.7 L14.99 24.2 M15.55 14.9 L15.68 24.5" fill="none" stroke="#f0ffff" stroke-opacity=".9" stroke-width=".14"/>
+      <!-- 柱顶承托台与底座共享透明斜面，保持材料连续。 -->
+      <path d="M13.9 14.2 L16 13.55 L18.1 14.2 L17.6 15.05 L16 15.5 L14.4 15.05 Z" fill="url(#lilac)" stroke="#6383ab" stroke-width=".2"/>
+      <path d="M13.9 14.2 L16 13.55 L16.25 14.6 L16 14.9 Z" fill="url(#ice)"/>
+      <path d="M16 13.55 L18.1 14.2 L16 14.9 L16.25 14.6 Z" fill="url(#refract)"/>
+      <path d="M14.15 14.3 L16 14.9 L17.85 14.3 M14.45 15 L16 15.35" fill="none" stroke="#efffff" stroke-opacity=".8" stroke-width=".16"/>''')
+    # 柔和反光仅落在现有表面，以连续透明度变化呼应晶石运动，不添加内部物体或交叉光带。
+    reflection = .1 + .1 * (.5 + .5 * math.sin(phase - .4))
+    stand += theme_svg(f'''<defs>
+      <linearGradient id="surfaceReflection" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#f0ffff" stop-opacity=".8"/><stop offset=".55" stop-color="#c8eeff" stop-opacity=".18"/><stop offset="1" stop-color="#b4c4ef" stop-opacity="0"/></linearGradient>
+      </defs><g opacity="{reflection:.4f}">
+      <path d="M15.5 14.75 L16 14.1 L16 25 L15.65 24.65 Z" fill="url(#surfaceReflection)"/>
+      <path d="M15.55 14.9 L15.68 24.5" fill="none" stroke="#efffff" stroke-width=".22"/>
+      <!-- 表面反光与底座共用缩放中心，避免高光越出缩小后的轮廓。 -->
+      <g transform="translate(16 25) scale(.7225) translate(-16 -25)">
+      <path d="M10 25 L13 23.8 L15.6 25.6 L13 26.4 Z" fill="url(#surfaceReflection)"/>
+      <path d="M10.2 25.1 L13 26.4 L18.8 26.4" fill="none" stroke="#efffff" stroke-width=".22"/>
+      </g>
+      </g>''')
+    # 自转复用已认可的主晶石材质，浮动与倾摆围绕晶石中点，不牵动展台。
+    transform = (f'translate(0 {lift:.4f}) rotate({tilt:.4f} 16 7.4) '
+                 'translate(16 2.3) rotate(24.624) scale(.39) translate(-6 -3)')
+    # 复用主晶石切面，移除主指针外晕及整体摆动，并隔离渐变标识。
+    import re
+    ops = [op for op in geometry('normal', int(frame * 96 / len(ANIMATIONS['text'])))
+           if op[0] not in ('ellipse', 'group-start', 'group-end')]
+    body = re.sub(r'^<svg[^>]*>|</svg>$', '', svg(ops))
+    body = re.sub(r'id="([^"]+)"', lambda match: f'id="text_{match[1]}"', body)
+    body = re.sub(r'url\(#([^)]+)\)', lambda match: f'url(#text_{match[1]})', body)
+    top = f'<g transform="{transform}">{body}</g>'
+    # 竖排文本围绕固定热点旋转完整展台，材质只换色一次。
+    body = f'<g transform="rotate(90 16 16)">{stand}{top}</g>' if vertical else stand + top
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' + body + '</svg>'
+
 def geometry(name,frame=0):
     """生成固定热点的角色几何，叠加主体纵轴自转、角色摆动及三晶体等待动画。"""
+    # 展台复用现有 CUR/ANI、Xcursor 和预览导出路径。
+    if name in ('text','vertical-text'):
+        return [('document',text_pedestal_svg(frame,name=='vertical-text'),None,None,0)]
     # 帧数跟随角色，所有几何运动均周期化；第零帧也是静态方案的基准。
     rates=ANIMATIONS.get(name,(1,))
     phase=motion_phase(name,frame)
@@ -282,10 +366,6 @@ def geometry(name,frame=0):
             ops.append(('ellipse',(cx,cy,3.8*scale,5.8*scale),f'#9bdcff{alpha:02x}',None,0))
             gem([(cx,cy-5.2*scale),(cx+2.8*scale,cy),(cx,cy+5.2*scale),(cx-2.8*scale,cy)])
             poly([(cx,cy-4.1*scale),(cx+1.7*scale,cy),(cx,cy+scale),(cx-1.7*scale,cy)],f'#ffffff{round(22+150*pulse):02x}',None)
-    elif name in ('text','vertical-text'):
-        def tr(p):return [(32-y,x) for x,y in p] if name=='vertical-text' else p
-        poly(tr([(15.4,8.3),(16.6,8.3),(16.6,23.7),(15.4,23.7)]),'url(#text)',w=.6)
-        for y in (8.3,23.7):poly(tr([(12.8,y),(16,y-.7),(19.2,y),(16,y+.7)]),'url(#crown)',w=.6)
     elif name in ('precision','move','resize-ew','resize-ns','resize-nwse','resize-nesw'):
         angles={'precision':[0,90,180,270],'move':[0,90,180,270],'resize-ew':[0,180],'resize-ns':[90,270],'resize-nwse':[45,225],'resize-nesw':[135,315]}[name]
         for deg in angles:
@@ -305,6 +385,8 @@ def raster(document,size):
     return Image.open(io.BytesIO(cairosvg.svg2png(bytestring=document.encode(),output_width=size*4,output_height=size*4))).convert('RGBA').resize((size,size),Image.Resampling.LANCZOS)
 def svg(ops):
     """以统一材质绘制所有尺寸，依靠宽切面明暗和集中反射表达宝石体积。"""
+    # 展台文档已完成配色，直接返回避免重复偏移色相。
+    if ops and ops[0][0]=='document':return ops[0][1]
     defs = """<defs>
     <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9f8ff"/><stop offset=".55" stop-color="#a1d8fa"/><stop offset="1" stop-color="#d8dcff"/></linearGradient>
     <linearGradient id="crown" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#b9d7ff"/><stop offset=".40" stop-color="#f9ffff"/><stop offset=".70" stop-color="#eafaff"/><stop offset="1" stop-color="#7dcef2"/></linearGradient>
@@ -416,8 +498,8 @@ def ani(name,sizes=SIZES):
     body=b'ACON'+chunk(b'anih',struct.pack('<9I',36,count,count,0,0,32,1,rates[0],1))+chunk(b'rate',struct.pack(f'<{count}I',*rates))+chunk(b'LIST',b'fram'+b''.join(chunk(b'icon',cur(name,i,sizes)) for i in range(count)))
     return b'RIFF'+struct.pack('<I',len(body))+body
 
-def build():
-    """导出静态资源、逐角色时序 ANI 与使用同一时间表的浏览器预览。"""
+def build(text_only=False):
+    """导出资源和同源预览；文本专用构建只重编码两个文本 ANI，保留其他角色动画。"""
     for d in ['src/svg','src/animation','cursors/multi','preview','docs']+[f'cursors/{s}' for s in SIZES]: (ROOT/d).mkdir(parents=True,exist_ok=True)
     manifest=[]
     for name,cn,slot in NAMES:
@@ -428,6 +510,7 @@ def build():
             render(geometry(name),n).save(ROOT/f'preview/icegem-{name}-{n}.png')
         manifest.append(dict(name=name,label=cn,slot=slot or None,hotspots={str(n):hotspot(name,n) for n in SIZES}))
     for name in ANIMATIONS:
+        if text_only and name not in ('text','vertical-text'):continue
         (ROOT/f'cursors/multi/icegem-{name}.ani').write_bytes(ani(name))
         for n in SIZES:(ROOT/f'cursors/{n}/icegem-{name}.ani').write_bytes(ani(name,(n,)))
         for i in range(len(ANIMATIONS[name])):(ROOT/f'src/animation/{name}-{i:02}.svg').write_text(svg(geometry(name,i)))
@@ -462,7 +545,13 @@ def build():
             frames.append(f'<span style="animation:{key} {sum(rates)/60}s steps(1) infinite">{svg_image(geometry(name,i))}</span>')
             elapsed+=rate
         cards.append(f'<article><div class="large anim">'+''.join(frames)+f'</div><h3>{cn}</h3><small>{name} · {slot or "应用专用"}</small><div class="samples">'+''.join(f'<div style="background:{bg}">{svg_image(geometry(name))}</div>' for bg in ['white','#172638','#afb9c8'])+'</div></article>')
-    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 12 种原生动效 / 文本与精确状态保持静止</p><p>主体自转为 60fps，三晶体等待为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
+    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 14 种原生动效 / 文本光标内部折射扫光</p><p>主体自转为 60fps，三晶体等待为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
     html=html.replace('IceGem 4.2','IceGem 4.4')
+    html=html.replace('文本光标内部折射扫光','文本水晶展台：自转、浮动与倾摆')
     (ROOT/'preview/IceGem-Preview.html').write_text(html)
-if __name__=='__main__':build()
+if __name__=='__main__':
+    # 专用入口只缩小动画重建范围，静态造型、概览和 HTML 仍由同一渲染器刷新。
+    import argparse
+    parser=argparse.ArgumentParser(description='IceGem 原生光标构建')
+    parser.add_argument('--text-only',action='store_true',help='仅重建文本状态 ANI；其余动画保留现有资源')
+    build(parser.parse_args().text_only)

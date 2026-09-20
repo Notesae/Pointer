@@ -8,6 +8,20 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class MotionTests(unittest.TestCase):
     """用实际五色渲染器验证用户可感知的动效约束。"""
+    def test_approved_text_preview(self):
+        """以保留的已确认提案为独立基准，阻止正式接入改变五色材质或缩放比例。"""
+        import preview_text_pedestal as approved
+        for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
+            spec=importlib.util.spec_from_file_location(color,ROOT/'variants'/color/'tools/build.py')
+            renderer=importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(renderer)
+            for frame in (0,12,38,56,74):
+                for size in (24,32,48,64,96):
+                    with self.subTest(color=color,frame=frame,size=size):
+                        expected=approved.proposal(renderer,frame,size)
+                        actual=renderer.render(renderer.geometry('text',frame),size)
+                        self.assertEqual(expected.tobytes(),actual.tobytes())
+
     def test_motion_contract(self):
         """旋转帧率、停留节奏、周期、热点及可见边界必须在五色间保持一致。"""
         for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
@@ -55,7 +69,29 @@ class MotionTests(unittest.TestCase):
                             alpha=im.getchannel('A')
                             for box in ((0,0,size,1),(0,size-1,size,size),(0,0,1,size),(size-1,0,size,size)):
                                 self.assertLess(alpha.crop(box).getextrema()[1],16)
-            for name in ('text','vertical-text','precision','unavailable','alternate','handwriting'):
+            # 展台的晶石允许浮动倾摆，热点仍固定在柱身；每轮 75 帧、3 秒并闭合。
+            for name in ('text','vertical-text'):
+                rates=renderer.ANIMATIONS[name]
+                self.assertEqual((len(rates),sum(rates)),(75,180))
+                first=renderer.render(renderer.geometry(name,0),64)
+                hold=renderer.render(renderer.geometry(name,len(rates)),64)
+                middle=renderer.render(renderer.geometry(name,len(rates)//2),64)
+                self.assertEqual(first.tobytes(),hold.tobytes())
+                self.assertNotEqual(first.tobytes(),middle.tobytes())
+                for size in (24,32,48,64,96):
+                    for frame in (0,18,38,56,74):
+                        im=renderer.render(renderer.geometry(name,frame),size)
+                        self.assertEqual(renderer.hotspot(name,size),(round(size/2),round(size/2)))
+                        self.assertGreater(im.getpixel(renderer.hotspot(name,size))[3],0)
+                        for box in ((0,0,size,1),(0,size-1,size,size),(0,0,1,size),(size-1,0,size,size)):
+                            self.assertLess(im.getchannel('A').crop(box).getextrema()[1],16)
+                # 循环接缝不能比运动中段产生更大的像素跳变。
+                before=renderer.render(renderer.geometry(name,len(rates)-1),32)
+                start=renderer.render(renderer.geometry(name,0),32)
+                samples=[renderer.render(renderer.geometry(name,f),32) for f in range(len(rates))]
+                deltas=[sum(ImageStat.Stat(ImageChops.difference(a,b)).mean) for a,b in zip(samples,samples[1:])]
+                self.assertLessEqual(sum(ImageStat.Stat(ImageChops.difference(before,start)).mean),max(deltas)*1.4)
+            for name in ('precision','unavailable','alternate','handwriting'):
                 self.assertEqual(renderer.svg(renderer.geometry(name,0)),renderer.svg(renderer.geometry(name,12)))
 
 if __name__=='__main__':

@@ -20,6 +20,8 @@ class PackageTests(unittest.TestCase):
             self.assertFalse(any('-32px.cmd' in name or name.endswith('/TRIAL.txt') for name in archive.namelist()))
             for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
                 folder=ROOT/'variants'/color
+                # 安装包必须携带当前渲染源码，确保解压后能够重建已确认的展台设计。
+                self.assertEqual(archive.read(f'IceGem-Colors/{color}/tools/build.py'),(folder/'tools/build.py').read_bytes())
                 self.assertEqual(json.loads(archive.read(f'IceGem-Colors/{color}/theme.json'))['version'],'4.4')
                 # 安装器必须接受当前静态资源，检查器也必须识别对应动态资源。
                 installer=archive.read(f'IceGem-Colors/{color}/Install-IceGem.ps1').decode('utf-8')
@@ -44,6 +46,12 @@ class PackageTests(unittest.TestCase):
             metadata=json.load(archive.extractfile('IceGem-Linux/manifest.json'))
             self.assertEqual(metadata['version'],'4.4-linux.1')
             self.assertEqual(len(metadata['themes']),10)
+            # 显式锁定本次文本展台周期，防止旧版扫光资源与自洽但过时的清单一起通过。
+            for role in ('text','vertical-text'):
+                self.assertEqual(metadata['animation'][role],{'frames':75,'periodMs':3000})
+            for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
+                source=archive.extractfile(f'IceGem-Linux/source/variants/{color}/tools/build.py').read()
+                self.assertEqual(source,(ROOT/f'variants/{color}/tools/build.py').read_bytes())
             files={entry.name:entry for entry in archive.getmembers()}
             for line in archive.extractfile('IceGem-Linux/SHA256SUMS').read().decode().splitlines():
                 digest,name=line.split('  ',1)

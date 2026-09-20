@@ -5,13 +5,20 @@ import sys
 import hashlib
 import json
 import re
+import argparse
 
 ROOT = Path(__file__).resolve().parents[1]
+# 文本专项构建跳过未改动的角色 ANI，仍逐色执行完整二进制验证并刷新哈希。
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--text-only',action='store_true',help='只重建文本状态动画')
+args=parser.parse_args()
 for name in ("IceBlue", "Violet", "RosePink", "Mint", "Amber"):
     folder = ROOT / "variants" / name
     print(f"Building {name}", flush=True)
     for script in ("build.py", "validate.py"):
-        subprocess.run([sys.executable, str(folder / "tools" / script)], check=True)
+        command=[sys.executable,str(folder / "tools" / script)]
+        if script=='build.py' and args.text_only:command.append('--text-only')
+        subprocess.run(command,check=True)
     # 从本次生成物计算校验值，避免新造型仍被安装器中的旧版固定哈希拒绝。
     hashes={path.relative_to(folder).as_posix():hashlib.sha256(path.read_bytes()).hexdigest()
             for path in sorted((folder/'cursors').rglob('*')) if path.is_file()}

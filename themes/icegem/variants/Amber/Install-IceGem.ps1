@@ -1,4 +1,4 @@
-﻿#requires -Version 5.1
+#requires -Version 5.1
 <#
 IceGem installer: current user only, no administrator rights required.
 Install: .\Install-IceGem.ps1
@@ -40,7 +40,7 @@ $cursorKey='Control Panel\Cursors'
 $schemeKey='Control Panel\Cursors\Schemes'
 $slots=@('Arrow','Help','AppStarting','Wait','Crosshair','IBeam','NWPen','No','SizeNS','SizeWE','SizeNWSE','SizeNESW','SizeAll','UpArrow','Hand','Pin','Person')
 # 动画角色与构建器保持一致，Static 仍使用全部 CUR 资源。
-$animatedStates=@('normal','working','busy','link','help','location','person','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
+$animatedStates=@('normal','working','busy','link','help','location','person','text','vertical-text','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
 $states=@('normal','help','working','busy','precision','text','handwriting','unavailable','resize-ns','resize-ew','resize-nwse','resize-nesw','move','alternate','link','location','person')
 $schemeNames=@(foreach($prefix in @('IceGem Managed','IceGem IceBlue','IceGem Violet','IceGem RosePink','IceGem Mint','IceGem Amber')){foreach($s in @('multi','32','48','64')){foreach($m in @('Static','Gentle')){"$prefix $m ($s)"}}})
 if(-not ('IceGemNativeV2' -as [type])){

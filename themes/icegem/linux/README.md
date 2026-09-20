@@ -67,7 +67,7 @@ gsettings set org.gnome.desktop.interface cursor-size 32
 
 - 每套有 18 个基础图形及常用 Linux 别名：default/left_ptr、pointer/hand2、text/xterm、vertical-text、help、wait、progress、crosshair、move、各向 resize 等。
 - 行列调整映射到现有紧凑的水平/垂直晶体调整图形，非额外绘制的分隔条图案。
-- 动态版提供 12 种动效。normal 为 3.2 秒（含静止停留），working 为 96 帧 / 1.6 秒（60fps），busy 为 36 帧 / 1.2 秒；各动作使用预设旋转幅度，busy 使用三晶体接力脉冲。
+- 动态版提供 14 种动效。normal 为 3.2 秒（含静止停留），working 为 96 帧 / 1.6 秒（60fps），busy 为 36 帧 / 1.2 秒；文本及竖排文本为 75 帧 / 3 秒的水晶展台，柱身热点固定，上端晶体自转、浮动和倾摆，静态版使用首帧。
 - 位置/人员选择以 `icegem-location`、`icegem-person` 名称保留，没有宣称 GNOME 会自动调用它们。
 - 未设计的 grab/grabbing、复制拖放等状态继承 Adwaita；软件自己的图片光标不受主题控制。不承诺所有应用所有状态都被替换。
 

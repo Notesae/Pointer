@@ -156,12 +156,12 @@
       "periodMs": 0
     },
     "text": {
-      "frames": 1,
-      "periodMs": 0
+      "frames": 75,
+      "periodMs": 3000
     },
     "vertical-text": {
-      "frames": 1,
-      "periodMs": 0
+      "frames": 75,
+      "periodMs": 3000
     },
     "precision": {
       "frames": 1,

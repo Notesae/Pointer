@@ -10,7 +10,7 @@ HERE = Path(__file__).resolve().parent
 COLORS = ('IceBlue', 'Violet', 'RosePink', 'Mint', 'Amber')
 SIZES = (24, 32, 48, 64, 96)
 # 支持原生动画的角色；实际帧数和时长从配色生成器读取。
-ANIMATED = ('normal','working','busy','link','help','location','person','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
+ANIMATED = ('normal','working','busy','link','help','location','person','text','vertical-text','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
 
 
 def hotspot(renderer, name, size):

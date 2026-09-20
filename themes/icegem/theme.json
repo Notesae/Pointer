@@ -17,7 +17,7 @@
     64
   ],
   "package": "dist/IceGem-4.4-Color-Collection.zip",
-  "animated_states": 12,
+  "animated_states": 14,
   "animation_timing": "Per-state jiffy tables in variants/*/tools/build.py",
   "companion": "companion/README.md"
 }
