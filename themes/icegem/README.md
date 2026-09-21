@@ -1,10 +1,20 @@
 # IceGem · 冰晶宝石光标
 
-> IceGem 4.4 使用原生固定 ANI：不同状态采用不同晶体旋转幅度，忙碌状态改为三颗横向晶体依次放大并亮起。Crystal 仍作为独立主题继续开发。
+> IceGem 4.5 使用原生固定 ANI：后台运行新增三晶分离与环绕，小晶体使用独立透光切面和随转向变化的高光。仅更新 Windows；Linux 保留 4.4，不再逐版同步构建。
 
 冰蓝、紫罗兰、玫瑰粉、薄荷绿、琥珀五套配色，沿用修长晶体造型和加强版点击线条。
 
 ![五色预览](preview/colorways.png)
+
+## 4.5 更新 · 三晶分离
+
+- 不可用状态采用已确认的“固定尖端、尾部下垂”：熄光后转向垂直，蓄光后恢复倾角，红色禁止符号固定。125 帧 / 5 秒，热点不变，Static 保留首帧。[动态预览](preview/unavailable-tail-drop-motion/unavailable-tail-drop-motion.gif)。
+
+- 三枚晶石依次从主指针分离，右侧就位后环绕两圈，再收回主体；热点保持固定。
+- 小晶体采用清晰的大切面、中央透光层、暗侧厚度及连续变化的窄棱反光。
+- 五色共用 160 帧 / 6.4 秒循环（25fps），ANI 按累计 jiffy 取整；Static 保留首帧。
+- [已确认的材质与动画预览](preview/working-4.5-split-material/working-crystal-ring.gif)。
+- 默认仅打包 Windows；Linux 历史包不变，手动构建需显式传入 `--with-linux`。
 
 ## 4.4 更新 · 晶体旋律
 
@@ -16,10 +26,10 @@
 
 主体晶体在左右摆动基础上绕自身纵轴自转：使用带厚度的八面环带投影与固定光源，让切面、棱线和亮度随角度变化。尖端热点保持固定，三晶体等待动画不变。[自转关键帧](preview/longitudinal-spin-4.4.png) · [当前动效预览](preview/native-motion-4.4.gif)。
 
-- 14 种原生动画：常态纵轴自转、后台单弧、三晶体等待、链接、帮助、位置、人员、文本与竖排文本水晶展台、移动和四向缩放。
-- 后台 96 帧 / 1.6 秒（60fps）、忙碌 36 帧 / 1.2 秒（30fps）；常态一轮 3.2 秒，包含静止停留。
+- 15 种原生动画：常态纵轴自转、后台三晶分离、三晶体等待、不可用失能下垂、链接、帮助、位置、人员、文本与竖排文本水晶展台、移动和四向缩放。
+- 后台 160 帧 / 6.4 秒（25fps）、忙碌 36 帧 / 1.2 秒（30fps）；常态一轮 3.2 秒，包含静止停留。
 - [Windows Companion](companion/)：可选双晶片跟随、悬停点亮、点击折射和拖动收束。安装原生主题后运行包内 `Start-Companion.cmd`，无需设置自启动。
-- 文本选择采用水晶展台：切面底座为初始提案的 72.25%，支撑柱与中心热点固定，上端晶体自转、浮动和轻微倾摆。75 帧 / 3 秒，ANI 使用累计取整的 jiffy 时长；竖排文本整体旋转 90°，Static 保留首帧。精确、手写、不可用等状态保持静止，这些角色也隐藏伴随装饰。
+- 文本选择采用水晶展台：切面底座为初始提案的 72.25%，支撑柱与中心热点固定，上端晶体自转、浮动和轻微倾摆。75 帧 / 3 秒，ANI 使用累计取整的 jiffy 时长；竖排文本整体旋转 90°，Static 保留首帧。精确、手写、替代选择保持静止，不可用状态采用固定热点下垂动画，这些角色也隐藏伴随装饰。
 - [已确认的文本展台预览](preview/text-pedestal-compact-v2/crystal-pedestal.webp)；安装包内分色预览由正式渲染器输出。
 - Windows 与 Linux 均提供原生动效；当前交互程序仅支持 Windows x64。
 - [原生动效实帧预览](preview/native-motion-4.4.gif) · [交互绘制器预览](preview/companion-motion-4.2.gif)。
@@ -32,7 +42,7 @@
 
 ## Windows 下载与安装
 
-[下载 4.4 五色完整安装包](dist/IceGem-4.4-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
+[下载 4.5 五色完整安装包](dist/IceGem-4.5-Color-Collection.zip?raw=true)。解压完整文件夹后双击对应入口：
 
 | 颜色 | 文件 |
 |---|---|
@@ -53,7 +63,7 @@
 ## 规格与目录
 
 - 每色 18 种状态，32/48/64px 和多分辨率 CUR。
-- 14 种角色提供各自帧数与时长的 ANI，所有帧使用固定热点；Static 方案仍全部使用 CUR。
+- 15 种角色提供各自帧数与时长的 ANI，所有帧使用固定热点；Static 方案仍全部使用 CUR。
 - [查看五色忙碌动画](preview/busy-motion.gif)：每格上方为 64px、下方为 32px，分别展示浅色与深色背景；需要减少动态时安装 Static 方案。
 - Link 保留原晶体＋高对比提示线并加入循环高光；文本采用已确认的紧凑水晶展台。
 - `variants/<配色>/`：SVG 源文件、构建器、安装脚本、热点映射与校验记录。
@@ -68,9 +78,10 @@
 python -m pip install -r themes/icegem/requirements.txt
 python themes/icegem/tools/build_all.py
 python themes/icegem/tools/test_motion.py
-# Windows 编译可选交互程序后，生成两平台安装包
+# Windows 编译可选交互程序后，默认只生成 Windows 安装包
 # powershell -File themes/icegem/companion/Build.ps1
 python themes/icegem/tools/package.py
+# 仅在需要时显式构建 Linux：python themes/icegem/tools/package.py --with-linux
 ```
 
 产物写入每种配色目录中的 cursors、src/animation、preview，随后自动检查 CUR/ANI 结构。此时该配色目录下 Install.cmd 可直接使用。仅查看静态源码无需安装依赖。
@@ -80,6 +91,10 @@ python themes/icegem/tools/package.py
 在解压包目录执行 `Install-IceBlue.cmd -Action Restore` 恢复首次安装前的指针；`Install-IceBlue.cmd -Action Uninstall` 恢复并卸载共同管理的所有 IceGem 配色。不同配色共用首次备份，支持已有 IceGem 版本更新。`Check-Link.cmd` 检查当前 Link 的文件与注册表映射。
 
 ## 验证与边界
+
+不可用下垂动画通过 200 组确认稿逐像素对比（五色 × 八个关键帧 × 五档尺寸），并验证五色 125 帧中的热点可见性、固定红色符号及首尾一致；静态方案保留首帧，不移动热点。
+
+4.5 后台三晶动画通过 200 组确认稿逐像素对比（五色 × 八个关键帧 × 五档尺寸）。五色全部 multi CUR/ANI 通过 480 次 Windows 原生加载；安装包验证覆盖当前源码、版本、资源和安装器哈希。未应用系统指针方案，桌面实际播放及跨 DPI 体验仍需安装后验收。Linux 4.4 历史包仅做完整性回归，不重新构建。
 
 文本展台已通过 125 组已确认预览的逐像素对比，以及五色、双方向、多尺寸的热点、边界和循环衔接检查。Windows 的文本 CUR/ANI 通过 60 次 LoadImage 原生加载与 GetIconInfo 热点读取（五色 × 双方向 × 两种格式 × 三档尺寸）。本次未应用系统方案，桌面连续播放与跨 DPI 切换仍待实机验收。Linux 包执行结构、预乘 Alpha、时序、别名及哈希检查，当前 Windows 构建机未运行 libXcursor 原生加载。32/48/64 表示资源分辨率，不是显示大小选项；竖排文本无独立 Windows 全局槽位，系统方案不覆盖应用自行绘制的全部光标。
 

@@ -11,13 +11,18 @@ ROOT = Path(__file__).resolve().parents[1]
 # 文本专项构建跳过未改动的角色 ANI，仍逐色执行完整二进制验证并刷新哈希。
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--text-only',action='store_true',help='只重建文本状态动画')
+parser.add_argument('--working-only',action='store_true',help='只重建后台运行动画')
+parser.add_argument('--unavailable-only',action='store_true',help='只重建不可用状态动画')
 args=parser.parse_args()
+if sum((args.text_only,args.working_only,args.unavailable_only))>1:parser.error('专项构建选项不能同时使用')
 for name in ("IceBlue", "Violet", "RosePink", "Mint", "Amber"):
     folder = ROOT / "variants" / name
     print(f"Building {name}", flush=True)
     for script in ("build.py", "validate.py"):
         command=[sys.executable,str(folder / "tools" / script)]
         if script=='build.py' and args.text_only:command.append('--text-only')
+        if script=='build.py' and args.working_only:command.append('--working-only')
+        if script=='build.py' and args.unavailable_only:command.append('--unavailable-only')
         subprocess.run(command,check=True)
     # 从本次生成物计算校验值，避免新造型仍被安装器中的旧版固定哈希拒绝。
     hashes={path.relative_to(folder).as_posix():hashlib.sha256(path.read_bytes()).hexdigest()

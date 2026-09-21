@@ -1,6 +1,6 @@
 # Pointer
 
-> **IceGem 4.4**：新增宝石纵轴自转、切面光效和托盘菜单优化，使用原生固定 ANI。[Crystal（切面晶石）](themes/crystal/) 仍作为独立主题开发，静态资源尚需校对，见[后续待办](themes/crystal/TODO.md)。
+> **IceGem 4.5**：后台运行采用三晶分离、环绕与回收动画，优化小晶体切面及光影；仅更新 Windows，Linux 暂留 4.4。[Crystal（切面晶石）](themes/crystal/) 仍作为独立主题开发，静态资源尚需校对，见[后续待办](themes/crystal/TODO.md)。
 
 Windows / Linux 自定义光标主题集合。**每套光标独立目录，主题内再区分配色**，方便持续加入不同造型和风格。
 
@@ -16,7 +16,7 @@ Windows / Linux 自定义光标主题集合。**每套光标独立目录，主�
 
 ![IceGem 五色预览](themes/icegem/preview/colorways.png)
 
-[下载 IceGem 4.4 Windows 五色安装包](themes/icegem/dist/IceGem-4.4-Color-Collection.zip?raw=true)
+[下载 IceGem 4.5 Windows 五色安装包](themes/icegem/dist/IceGem-4.5-Color-Collection.zip?raw=true)
 
 [下载 IceGem 4.4 Linux 安装包](themes/icegem/dist/IceGem-4.4-Linux.tar.gz?raw=true) · [Linux / Zorin 安装说明](themes/icegem/linux/)
 

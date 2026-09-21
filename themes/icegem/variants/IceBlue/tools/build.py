@@ -1,5 +1,5 @@
 from pathlib import Path
-import math, struct, json, io, base64
+import math, struct, json, io, base64, re
 from PIL import Image, ImageDraw, ImageFont
 import cairosvg
 from functools import lru_cache
@@ -8,8 +8,11 @@ ROOT=Path(__file__).resolve().parents[1]
 SIZES=(32,48,64)
 # 每个角色分别定义 ANI 的 1/60 秒帧时长；静止停留帧避免反复扫光。
 ANIMATIONS={
+    # 不可用状态固定尖端、尾部下垂：125 帧 / 5 秒，累计取整保持时长精确。
+    'unavailable': tuple(round((i+1)*300/125)-round(i*300/125) for i in range(125)),
     'normal': (1,)*96+(96,),
-    'working': (1,)*96,
+    # 三晶分离循环共 160 帧 / 6.4 秒，累计 jiffy 取整避免周期漂移。
+    'working': tuple(round((i+1)*384/160)-round(i*384/160) for i in range(160)),
     'busy': (2,)*36,
     'link': (1,)*96+(24,),
     'help': (1,)*144,
@@ -117,14 +120,139 @@ def text_pedestal_svg(frame, vertical=False):
     body = f'<g transform="rotate(90 16 16)">{stand}{top}</g>' if vertical else stand + top
     return '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' + body + '</svg>'
 
-def geometry(name,frame=0):
+def working_crystal_svg( frame, transform, prefix, tilt):
+    """为小尺寸重绘大块透光切面，以固定左上光源计算转动中的亮面和窄棱反射。"""
+    # 保持同源晶石轮廓，减少缩小后会互相干扰的细线；中间台面与深侧面表现厚度。
+    turn = math.radians(tilt)
+    spin = frame / 96 * math.tau
+    ridge = 12.3 + 1.1 * math.sin(spin)
+    vertices = [(6, 3), (19, 16.8), (17, 27), (6.7, 19.8),
+                (ridge, 12.8), (15.2, 18.2), (12.4, 21.6)]
+    facets = ((0, 1, 5, 4), (0, 4, 6, 3), (4, 5, 6), (1, 2, 5), (5, 2, 6), (3, 6, 2))
+    normals = (-1.2, -2.8, -.7, .1, 1.2, 2.5)
+    shapes = []
+    for index, indices in enumerate(facets):
+        # 法线随整体转向及自转偏移，反光保持连续，避免随机闪烁。
+        facing = .5 + .5 * math.cos(turn + normals[index] + .35 * math.sin(spin) + 2.35)
+        brightness = .22 + .64 * facing
+        base = (45, 88, 151) if index in (3, 4, 5) else (77, 142, 190)
+        tint = '#' + ''.join(f'{round(c + (245-c)*brightness):02x}' for c in base)
+        points = ' '.join(f'{vertices[i][0]},{vertices[i][1]}' for i in indices)
+        shapes.append(f'<polygon points="{points}" fill="{tint}"/>')
+    # 透射层沿长轴渐变，只覆盖中央台面，保留深色厚度边而不把整颗晶石漂白。
+    sheen = .18 + .38 * max(0, math.cos(turn + .3 * math.sin(spin) + 2.1))**6
+    material = f'''<defs><linearGradient id="{prefix}_transmit" x1="0" y1="0" x2=".8" y2="1">
+      <stop stop-color="#efffff" stop-opacity=".8"/>
+      <stop offset=".48" stop-color="#b5e8ff" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#748cce" stop-opacity=".5"/>
+      </linearGradient></defs>
+      {''.join(shapes)}
+      <path d="M6 3 L{ridge} 12.8 L15.2 18.2 L12.4 21.6 Z" fill="url(#{prefix}_transmit)"/>
+      <path d="M6 3 L19 16.8 L17 27 L6.7 19.8 Z" fill="none" stroke="#426597" stroke-width=".7" stroke-linejoin="round"/>
+      <path d="M6.5 4.4 L{ridge} 12.8 L12.4 21.6 L7.1 19.5 M{ridge} 12.8 L15.2 18.2 L18.5 16.8" fill="none" stroke="#eeffff" stroke-opacity=".72" stroke-width=".6"/>
+      <path d="M6.8 4.5 L{ridge} 12.8 L15.2 18.2" fill="none" stroke="#f3ffff" stroke-opacity="{sheen}" stroke-width="1.1"/>
+      <path d="M15.2 18.2 L17 26.5" stroke="#a0b6ec" stroke-width=".6"/>
+      '''
+    return f'<g transform="{transform}">{theme_svg(material)}</g>'
+
+
+def ease(value):
+    value = max(0, min(1, value))
+    return value * value * (3 - 2 * value)
+
+
+def working_split_svg(frame):
+    """将分离、就位、双圈环绕、回收串成 6.4 秒闭环，保持主指针原有动画。"""
+    frame %= len(ANIMATIONS['working'])
+    time = frame / 25
+    source_frame = round(frame * 2.4) % 96
+    ops = geometry('working', source_frame, working_base=True)
+    boundary = next(i for i, op in enumerate(ops)
+                    if op[0] == 'ellipse' and op[1] == (25, 11.5, 4.1, 4.1))
+    body = re.sub(r'^<svg[^>]*>|</svg>$', '', svg(ops[:boundary]))
+    # 环绕在三枚全部抵达后才启动，两整圈后停在各自起点，方便原路回收。
+    orbit = math.tau * 2 * ease((time - 1.6) / 3.2)
+    pieces = []
+    for index in range(3):
+        departure = .12 + index * .24
+        arrival = ease((time - departure) / .92)
+        returning = ease((time - 4.85 - (2 - index) * .18) / .95)
+        travel = arrival * (1 - returning)
+        if travel < .001:
+            continue
+        angle = -math.pi / 2 + index * math.tau / 3 + orbit
+        destination = (25 + 3.35 * math.cos(angle), 11.5 + 3.35 * math.sin(angle))
+        # 起点位于主体内部；弧形路径依次向右侧三角阵位展开，不使用拖尾和碎屑。
+        start = (12.4 + index * .45, 14.3 + index * 1.15)
+        control = (19.5, 7.2 + index * 4.2)
+        x = (1-travel)**2 * start[0] + 2*(1-travel)*travel*control[0] + travel**2*destination[0]
+        y = (1-travel)**2 * start[1] + 2*(1-travel)*travel*control[1] + travel**2*destination[1]
+        scale = .165 * ease(travel / .65)
+        tilt = 24.624 + math.degrees(angle) * travel
+        transform = f'translate({x} {y}) rotate({tilt}) scale({scale}) translate(-11.5 -15)'
+        # 小晶石沿用主题配色，以专用的大切面材质保持原尺寸下的清晰度。
+        gem = working_crystal_svg( (source_frame + index * 21) % 96, transform, f'shard{index}', tilt)
+        pieces.append(f'<g opacity="{ease(travel / .3)}">{gem}</g>')
+    document = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' + body + ''.join(pieces) + '</svg>'
+    return document
+
+
+def unavailable_tail_svg(frame=0):
+    """分离光照与位姿时间轴，使失能下垂和恢复倾角存在自然滞后，禁止符号固定。"""
+    time = frame % 125 / 25
+    falling = max(0,min(1,(time-.3)/1.3))
+    rising = max(0,min(1,(time-2.4)/1.5))
+    falling = falling**3*(10-15*falling+6*falling**2)
+    rising = rising**3*(10-15*rising+6*rising**2)
+    level = falling*(1-rising)
+    # 转动滞后于光线：先失去能量再下垂，先蓄光再恢复倾角；五次曲线两端速度归零。
+    descent = max(0,min(1,(time-.65)/1.3))
+    ascent = max(0,min(1,(time-2.95)/1.6))
+    descent = descent**3*(10-15*descent+6*descent**2)
+    ascent = ascent**3*(10-15*ascent+6*ascent**2)
+    drop = descent*(1-ascent)
+    normal = geometry('normal',0)
+    symbol_ops = [('ellipse',(25.5,12,4.4,4.4),None,'#ec647f',1.05),
+                  ('line',[(22.5,15),(28.5,9)],None,'#ec647f',1.05)]
+    body = re.sub(r'^<svg[^>]*>|</svg>$','',svg([op for op in normal if op[0]!='ellipse']))
+    ambient = re.sub(r'^<svg[^>]*>|</svg>$','',svg(symbol_ops))
+
+    def dim_color(match):
+        """保留每个切面的相对明暗及主题色，降低亮度和饱和度而非覆盖一层灰板。"""
+        rgb = [int(match[0][i:i+2],16) for i in (1,3,5)]
+        luminance = .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]
+        return '#' + ''.join(f'{round((.55*c+.45*luminance)*.54+offset):02x}'
+                             for c,offset in zip(rgb,(14,18,24)))
+
+    dim = re.sub(r'#[0-9a-fA-F]{6}(?![0-9a-fA-F])',dim_color,body)
+    dim = re.sub(r'id="([^"]+)"',lambda m:f'id="dim_{m[1]}"',dim)
+    dim = re.sub(r'url\(#([^)]+)\)',lambda m:f'url(#dim_{m[1]})',dim)
+    # 渐变前沿沿尖端到尾端推进，12px 过渡带避免扫描线或突然整面闪灭。
+    edge = -7+44*level
+    mask = f'<defs><linearGradient id="fade" gradientUnits="userSpaceOnUse" x1="0" y1="{edge-6}" x2="0" y2="{edge+6}"><stop stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white" stop-opacity="1"/></linearGradient><mask id="energy" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect width="32" height="32" fill="url(#fade)"/></mask></defs>'
+    # 阴影沿尾部投影向热点下方移动；尖端固定，不平移主体。
+    shadow = theme_svg(f'<defs><radialGradient id="ground"><stop stop-color="#405f88" stop-opacity="{.22+.15*drop}"/><stop offset="1" stop-color="#6b91b5" stop-opacity="0"/></radialGradient></defs><ellipse cx="{13.5-7.5*drop}" cy="30" rx="{6.7-2*drop}" ry="{2.1-.85*drop}" fill="url(#ground)"/>')
+    # 尾端 (17,27) 围绕热点 (6,3) 转至正下方；轻微侧转收窄避免左切面越界。
+    angle = math.degrees(math.atan2(11,24))*drop
+    transform = f'translate(6 3) scale({1-.2*drop} 1) rotate({angle}) translate(-6 -3)'
+    document = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'+shadow+ambient+f'<g transform="{transform}">'+dim+mask+'<g mask="url(#energy)">'+body+'</g></g></svg>'
+    return document
+
+
+def geometry(name,frame=0,working_base=False):
     """生成固定热点的角色几何，叠加主体纵轴自转、角色摆动及三晶体等待动画。"""
+    # 失能文档保留固定热点，静态资源与减少动态预览均使用首帧。
+    if name=='unavailable':
+        return [('document',unavailable_tail_svg(frame),None,None,0)]
+    # working_base 仅供合成时取出原主体，避免嵌套生成三晶文档。
+    if name=='working' and not working_base:
+        return [('document',working_split_svg(frame),None,None,0)]
     # 展台复用现有 CUR/ANI、Xcursor 和预览导出路径。
     if name in ('text','vertical-text'):
         return [('document',text_pedestal_svg(frame,name=='vertical-text'),None,None,0)]
     # 帧数跟随角色，所有几何运动均周期化；第零帧也是静态方案的基准。
     rates=ANIMATIONS.get(name,(1,))
-    phase=motion_phase(name,frame)
+    phase=(frame%96)/96 if name=='working' and working_base else motion_phase(name,frame)
     shimmer=phase
     level=math.sin(math.pi*shimmer)**2
     rotation=ROTATION_AMPLITUDES.get(name,0)*math.sin(phase*math.tau)
@@ -499,8 +627,8 @@ def ani(name,sizes=SIZES):
     body=b'ACON'+chunk(b'anih',struct.pack('<9I',36,count,count,0,0,32,1,rates[0],1))+chunk(b'rate',struct.pack(f'<{count}I',*rates))+chunk(b'LIST',b'fram'+b''.join(chunk(b'icon',cur(name,i,sizes)) for i in range(count)))
     return b'RIFF'+struct.pack('<I',len(body))+body
 
-def build(text_only=False):
-    """导出资源和同源预览；文本专用构建只重编码两个文本 ANI，保留其他角色动画。"""
+def build(text_only=False,working_only=False,unavailable_only=False):
+    """导出资源和同源预览；专项构建只重编码所选 ANI，保留其他角色动画。"""
     for d in ['src/svg','src/animation','cursors/multi','preview','docs']+[f'cursors/{s}' for s in SIZES]: (ROOT/d).mkdir(parents=True,exist_ok=True)
     manifest=[]
     for name,cn,slot in NAMES:
@@ -512,6 +640,8 @@ def build(text_only=False):
         manifest.append(dict(name=name,label=cn,slot=slot or None,hotspots={str(n):hotspot(name,n) for n in SIZES}))
     for name in ANIMATIONS:
         if text_only and name not in ('text','vertical-text'):continue
+        if working_only and name!='working':continue
+        if unavailable_only and name!='unavailable':continue
         (ROOT/f'cursors/multi/icegem-{name}.ani').write_bytes(ani(name))
         for n in SIZES:(ROOT/f'cursors/{n}/icegem-{name}.ani').write_bytes(ani(name,(n,)))
         for i in range(len(ANIMATIONS[name])):(ROOT/f'src/animation/{name}-{i:02}.svg').write_text(svg(geometry(name,i)))
@@ -522,7 +652,7 @@ def build(text_only=False):
         font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
     except OSError:
         font=ImageFont.load_default(size=17)
-    d.text((32,22),'ICEGEM 4.4 / ICEBLUE',fill='#334f7b',font=font)
+    d.text((32,22),'ICEGEM 4.5 / ICEBLUE',fill='#334f7b',font=font)
     for i,(name,_,_) in enumerate(NAMES):
         x=30+(i%6)*195;y=80+(i//6)*200
         d.rounded_rectangle((x,y,x+180,y+185),12,fill='white')
@@ -546,8 +676,8 @@ def build(text_only=False):
             frames.append(f'<span style="animation:{key} {sum(rates)/60}s steps(1) infinite">{svg_image(geometry(name,i))}</span>')
             elapsed+=rate
         cards.append(f'<article><div class="large anim">'+''.join(frames)+f'</div><h3>{cn}</h3><small>{name} · {slot or "应用专用"}</small><div class="samples">'+''.join(f'<div style="background:{bg}">{svg_image(geometry(name))}</div>' for bg in ['white','#172638','#afb9c8'])+'</div></article>')
-    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 14 种原生动效 / 文本光标内部折射扫光</p><p>主体自转为 60fps，三晶体等待为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
-    html=html.replace('IceGem 4.2','IceGem 4.4')
+    html='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IceGem 4.2 光标预览</title><style>body{margin:40px auto;max-width:1100px;padding:20px;background:#f3f6fa;color:#294261;font:16px system-ui}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}article{padding:22px;background:white;border-radius:16px}h3{font-weight:500}small{color:#6a7c95}.large{height:96px;position:relative}.large img{width:80px;height:80px}.samples{display:flex;gap:8px}.samples img{width:32px;height:32px}.samples div{width:44px;height:44px;display:grid;place-items:center}.anim span{position:absolute;opacity:0}'+''.join(styles)+'@media(prefers-reduced-motion:reduce){.anim span{animation:none!important}.anim span:first-child{opacity:1}}</style><h1>IceGem 4.2 · '+THEME_NAME+'</h1><p>晶光随行 / 15 种原生动效 / 文本光标内部折射扫光</p><p>后台三晶分离为 25fps / 6.4 秒，不可用下垂为 25fps / 5 秒，其他主体自转为 60fps，三晶体等待为 30fps。此处为原生帧预览；点击与跟随需要单独启动 Companion。</p><main>'+''.join(cards)+'</main></html>'
+    html=html.replace('IceGem 4.2','IceGem 4.5')
     html=html.replace('文本光标内部折射扫光','文本水晶展台：自转、浮动与倾摆')
     (ROOT/'preview/IceGem-Preview.html').write_text(html)
 if __name__=='__main__':
@@ -555,4 +685,8 @@ if __name__=='__main__':
     import argparse
     parser=argparse.ArgumentParser(description='IceGem 原生光标构建')
     parser.add_argument('--text-only',action='store_true',help='仅重建文本状态 ANI；其余动画保留现有资源')
-    build(parser.parse_args().text_only)
+    parser.add_argument('--working-only',action='store_true',help='仅重建后台运行 ANI，其他角色保持现有资源')
+    parser.add_argument('--unavailable-only',action='store_true',help='仅重建不可用 ANI，其余动画保持现有资源')
+    args=parser.parse_args()
+    if sum((args.text_only,args.working_only,args.unavailable_only))>1:parser.error('专项构建选项不能同时使用')
+    build(args.text_only,args.working_only,args.unavailable_only)

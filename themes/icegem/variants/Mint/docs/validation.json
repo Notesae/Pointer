@@ -2,9 +2,9 @@
   "result": "PASS: binary structure, bounds, alpha, hotspots, animated frame variation",
   "counts": {
     "cur_files": 72,
-    "ani_files": 56,
-    "images": 6636,
-    "ani_frames": 4352
+    "ani_files": 60,
+    "images": 7770,
+    "ani_frames": 5108
   },
   "windows_runtime": "NOT RUN; use tools/Validate-Windows.ps1"
 }

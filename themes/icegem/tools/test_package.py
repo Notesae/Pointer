@@ -1,12 +1,14 @@
 """跨平台复核发行包：版本、资源一致性、Xcursor 结构、别名与校验值。"""
 from pathlib import Path, PurePosixPath
 import hashlib
+import base64
 import json
 import re
 import struct
 import tarfile
 import unittest
 import zipfile
+from urllib.parse import unquote
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -14,17 +16,30 @@ class PackageTests(unittest.TestCase):
     """直接验证用户下载的安装包，不仅验证本地构建目录。"""
     def test_windows_package(self):
         """安装包中的源文件、二进制及五色所有 CUR/ANI 与本次构建保持一致。"""
-        with zipfile.ZipFile(ROOT/'dist/IceGem-4.4-Color-Collection.zip') as archive:
+        with zipfile.ZipFile(ROOT/'dist/IceGem-4.5-Color-Collection.zip') as archive:
             self.assertIsNone(archive.testzip())
             # 正式包仅保留默认安装入口，不再要求用户切到专用 32px 方案。
             self.assertFalse(any('-32px.cmd' in name or name.endswith('/TRIAL.txt') for name in archive.namelist()))
             for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
                 folder=ROOT/'variants'/color
+                # 预览仅改变数据 URL 编码，恢复后必须与正式 HTML 完全一致。
+                html=archive.read(f'IceGem-Colors/{color}/preview/IceGem-Preview.html').decode()
+                restored=re.sub(r'data:image/svg\+xml,([^"]+)',
+                                lambda match:'data:image/svg+xml;base64,'+base64.b64encode(unquote(match[1]).encode()).decode(),
+                                html)
+                self.assertEqual(restored,(folder/'preview/IceGem-Preview.html').read_text(encoding='utf-8'))
                 # 安装包必须携带当前渲染源码，确保解压后能够重建已确认的展台设计。
                 self.assertEqual(archive.read(f'IceGem-Colors/{color}/tools/build.py'),(folder/'tools/build.py').read_bytes())
-                self.assertEqual(json.loads(archive.read(f'IceGem-Colors/{color}/theme.json'))['version'],'4.4')
+                self.assertEqual(json.loads(archive.read(f'IceGem-Colors/{color}/theme.json'))['version'],'4.5')
                 # 安装器必须接受当前静态资源，检查器也必须识别对应动态资源。
                 installer=archive.read(f'IceGem-Colors/{color}/Install-IceGem.ps1').decode('utf-8')
+                # 动态安装映射必须包含不可用状态，不能只生成 ANI 却仍安装 CUR。
+                animated=re.search(r"\$animatedStates=@\(([^)]+)\)",installer).group(1)
+                self.assertIn("'unavailable'",animated)
+                for size in ('32','48','64','multi'):
+                    data=archive.read(f'IceGem-Colors/{color}/cursors/{size}/icegem-unavailable.ani')
+                    self.assertEqual(data[:4],b'RIFF')
+                    self.assertEqual(struct.unpack_from('<3I',data,20),(36,125,125))
                 checker=archive.read(f'IceGem-Colors/{color}/Check-Link.ps1').decode('utf-8')
                 expected=dict(re.findall(r"'(32|48|64|multi)'='([A-F0-9]{64})'",installer))
                 for size in ('32','48','64','multi'):
@@ -51,7 +66,8 @@ class PackageTests(unittest.TestCase):
                 self.assertEqual(metadata['animation'][role],{'frames':75,'periodMs':3000})
             for color in ('IceBlue','Violet','RosePink','Mint','Amber'):
                 source=archive.extractfile(f'IceGem-Linux/source/variants/{color}/tools/build.py').read()
-                self.assertEqual(source,(ROOT/f'variants/{color}/tools/build.py').read_bytes())
+                # Linux 固定保留 4.4 历史发行，不再与 Windows 当前源码强制同步。
+                self.assertIn(b"'working': (1,)*96",source)
             files={entry.name:entry for entry in archive.getmembers()}
             for line in archive.extractfile('IceGem-Linux/SHA256SUMS').read().decode().splitlines():
                 digest,name=line.split('  ',1)

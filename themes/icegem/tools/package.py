@@ -1,15 +1,18 @@
-"""从已构建的五色资源生成 4.4 包；Linux 直接写 tar 链接，支持 Windows 构建机。"""
+"""从已构建的五色资源生成 4.5 Windows 包；Linux 仅在显式要求时构建。"""
 from pathlib import Path
 import argparse
+import base64
 import hashlib
 import importlib.util
 import io
 import json
+import re
 import tarfile
 import zipfile
+from urllib.parse import quote
 
 ROOT=Path(__file__).resolve().parents[1]
-VERSION='4.4'
+VERSION='4.5'
 COLORS=('IceBlue','Violet','RosePink','Mint','Amber')
 
 
@@ -20,7 +23,7 @@ def load_module(name,path):
     return module
 
 
-def package(windows_only=False):
+def package(windows_only=True):
     """打包当前构建资源与安装器，保持历史发行包不变并生成新校验清单。"""
     dist=ROOT/'dist'
     dist.mkdir(exist_ok=True)
@@ -32,7 +35,15 @@ def package(windows_only=False):
             for path in sorted(folder.rglob('*')):
                 if not path.is_file() or '__pycache__' in path.parts or 'animation' in path.parts:
                     continue
-                archive.write(path,'IceGem-Colors/'+color+'/'+path.relative_to(folder).as_posix())
+                entry='IceGem-Colors/'+color+'/'+path.relative_to(folder).as_posix()
+                if path.name=='IceGem-Preview.html':
+                    # SVG 内容不变，仅将 Base64 改成 URL 编码，便于 ZIP 复用相同文本片段。
+                    html=re.sub(r'data:image/svg\+xml;base64,([A-Za-z0-9+/=]+)',
+                                lambda match:'data:image/svg+xml,'+quote(base64.b64decode(match[1]).decode(),safe='/= :;(),.-_'),
+                                path.read_text(encoding='utf-8'))
+                    archive.writestr(entry,html)
+                else:
+                    archive.write(path,entry)
             launcher=f'@echo off\r\npushd "%~dp0{color}"\r\ncall Install.cmd %*\r\npopd\r\n'
             archive.writestr(f'IceGem-Colors/Install-{color}.cmd',launcher)
         for path in sorted((ROOT/'companion').iterdir()):
@@ -99,5 +110,8 @@ def package(windows_only=False):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--windows-only',action='store_true',help='Only repack Windows resources and companion')
+    # Linux 不再跟随日常发行，仅显式要求时才重新编码 Xcursor。
+    parser.add_argument('--with-linux',action='store_true',help='显式同时生成 Linux 包；默认仅 Windows')
     args=parser.parse_args()
-    package(args.windows_only)
+    if args.windows_only and args.with_linux:parser.error('平台选项不能同时使用')
+    package(windows_only=not args.with_linux)

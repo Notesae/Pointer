@@ -31,7 +31,7 @@ if([string]::IsNullOrWhiteSpace($localData)){$localData=$env:LOCALAPPDATA}
 if([string]::IsNullOrWhiteSpace($localData)){throw 'Windows did not provide a LocalApplicationData directory.'}
 $root=Join-Path -Path $localData -ChildPath 'IceGem-Managed'
 $backupRoot=Join-Path -Path $localData -ChildPath 'IceGem-Backups'
-Write-Host "IceGem 4.4 RosePink installer | Source: $SourceRoot"
+Write-Host "IceGem 4.5 RosePink installer | Source: $SourceRoot"
 Write-Host "User data: $localData"
 $baseline=Join-Path $backupRoot 'Before-IceGem.clixml'
 $marker=Join-Path $root '.icegem-managed'
@@ -40,7 +40,8 @@ $cursorKey='Control Panel\Cursors'
 $schemeKey='Control Panel\Cursors\Schemes'
 $slots=@('Arrow','Help','AppStarting','Wait','Crosshair','IBeam','NWPen','No','SizeNS','SizeWE','SizeNWSE','SizeNESW','SizeAll','UpArrow','Hand','Pin','Person')
 # 动画角色与构建器保持一致，Static 仍使用全部 CUR 资源。
-$animatedStates=@('normal','working','busy','link','help','location','person','text','vertical-text','move','resize-ew','resize-ns','resize-nwse','resize-nesw')
+# 不可用状态也使用原生 ANI；Static 模式仍通过现有 CUR 分支保持静止。
+$animatedStates=@('normal','working','busy','link','help','location','person','text','vertical-text','move','resize-ew','resize-ns','resize-nwse','resize-nesw','unavailable')
 $states=@('normal','help','working','busy','precision','text','handwriting','unavailable','resize-ns','resize-ew','resize-nwse','resize-nesw','move','alternate','link','location','person')
 $schemeNames=@(foreach($prefix in @('IceGem Managed','IceGem IceBlue','IceGem Violet','IceGem RosePink','IceGem Mint','IceGem Amber')){foreach($s in @('multi','32','48','64')){foreach($m in @('Static','Gentle')){"$prefix $m ($s)"}}})
 if(-not ('IceGemNativeV2' -as [type])){
@@ -156,7 +157,7 @@ try {
         }
         $linkSource=Join-Path $source 'icegem-link.cur'
         if((Get-FileHash -LiteralPath $linkSource -Algorithm SHA256).Hash -ne $linkExpected[$Size]){
-            throw 'Link resource is not the 4.4 RosePink rotating crystal. Extract the complete versioned package into a NEW folder.'
+            throw 'Link resource is not the 4.5 RosePink rotating crystal. Extract the complete versioned package into a NEW folder.'
         }
         $before=Capture-Settings
         New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null
@@ -203,7 +204,7 @@ try {
         $expectedLink=Join-Path $destination "icegem-link.$linkExtension"
         if($activeLink -ne $expectedLink){throw "Link registry readback mismatch: $activeLink"}
         if((Get-FileHash -LiteralPath $activeLink -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath (Join-Path $source "icegem-link.$linkExtension") -Algorithm SHA256).Hash){throw 'Installed Link hash mismatch.'}
-        Write-Host '[VERIFIED] Link Select = 4.4 RosePink ROTATING CRYSTAL (file + registry).' -ForegroundColor Cyan
+        Write-Host '[VERIFIED] Link Select = 4.5 RosePink ROTATING CRYSTAL (file + registry).' -ForegroundColor Cyan
         Write-Host "Active Hand: $activeLink"
         $mutationStarted=$false
         Write-Host "Installed and applied: IceGem RosePink $Mode ($Size)" -ForegroundColor Green
